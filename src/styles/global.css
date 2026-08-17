@@ -1,0 +1,172 @@
+@import "tailwindcss";
+@import "./fonts.css";
+@import "./tokens.css";
+
+/* ============================================================================
+   NAVADISHA — GLOBAL BASE
+   Phase-0 doc §6.4 (accessibility) and §9.2 (typography, motion).
+   Components style through SEMANTIC tokens only. If you find yourself reaching
+   for a raw palette step (--color-base-700) outside tokens.css, add a semantic
+   token instead — that discipline is what keeps a rebrand to one file.
+============================================================================ */
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 5.5rem;          /* sticky header clearance for #anchors */
+  }
+
+  body {
+    /* Explicit background: the page composites over a ground painted in the
+       viewer's theme, so a transparent body borrows the host's. */
+    background-color: var(--surface-page);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: var(--text-body-md);
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    /* INHERIT, never force. Forcing --text-primary here made every heading on
+       an inverse section the same tone as its own background — invisible in
+       both themes. body sets --text-primary, so normal sections are unchanged. */
+    color: inherit;
+  }
+
+  p { text-wrap: pretty; }
+
+  /**
+   * INLINE LINKS MUST NOT RELY ON COLOUR ALONE (WCAG 1.4.1).
+   *
+   * A link sitting inside a sentence has to be distinguishable from the text
+   * around it by something other than hue — our accent measured 1.12:1 against
+   * body text, so a colour-blind reader cannot see it is a link at all.
+   *
+   * `:only-child` is excluded deliberately: a paragraph whose entire content is
+   * one link is a standalone call to action with no surrounding text to be
+   * confused with, so it keeps the arrow-link treatment.
+   */
+  /**
+   * ALL links inside a paragraph are underlined.
+   *
+   * An earlier attempt tried to exempt standalone CTA paragraphs with
+   * `:only-child` — that was wrong. `:only-child` counts ELEMENT children and
+   * ignores text nodes, so a link surrounded by prose is still its parent's
+   * only element child. The selector therefore excluded exactly the links it
+   * was meant to underline.
+   *
+   * No CSS selector can distinguish "link amid text" from "paragraph that is
+   * only a link", so every one gets the underline. Accessibility takes
+   * priority, the arrow-link treatment survives it, and this is the browser
+   * default behaviour users already expect.
+   *
+   * The -webkit- alias is set explicitly: Tailwind preflight sets
+   * `-webkit-text-decoration: inherit`, and without matching it the underline
+   * silently loses in Blink.
+   */
+  p a {
+    -webkit-text-decoration: underline;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: 1px;
+  }
+
+  /* Visible focus is a launch gate, not a preference (§6.4). */
+  :focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* Tabular figures wherever digits line up — metrics, dates, fees (§9.2). */
+  table, .tabular { font-variant-numeric: tabular-nums; }
+
+  ::selection {
+    background-color: var(--text-primary);
+    color: var(--surface-page);
+  }
+}
+
+@layer components {
+  /* Skip link — first tab stop on every page (§6.4). */
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 100;
+    padding: 0.75rem 1.25rem;
+    background-color: var(--action-primary-default);
+    color: var(--action-primary-text);
+    font-family: var(--font-display);
+    font-weight: 600;
+  }
+  .skip-link:focus { left: 0.5rem; top: 0.5rem; }
+
+  /* Prose measure: 60–75ch. Non-negotiable for institutional long-read (§9.2). */
+  .measure { max-width: var(--container-prose); }
+
+  /* Wide content scrolls inside its own container so the body never
+     scrolls sideways (§6.4). */
+  .scroll-x { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  /* Pillar retint. Set on a section/page root; children read --pillar / --pillar-fill.
+     --pillar is contrast-safe for TEXT; --pillar-fill is the brand hex, for
+     borders, bars and graphic fills only. See the contrast note in tokens.css. */
+  [data-pillar="education"] {
+    --pillar: var(--pillar-edu);
+    --pillar-fill: var(--pillar-edu-fill);
+    --pillar-surface: var(--pillar-edu-surface);
+  }
+  [data-pillar="technology"] {
+    --pillar: var(--pillar-tech);
+    --pillar-fill: var(--pillar-tech-fill);
+    --pillar-surface: var(--pillar-tech-surface);
+  }
+
+  /**
+   * INVERSE BANDS REDEFINE THE TEXT TOKENS THEMSELVES.
+   *
+   * `--surface-inverse` flips tone between themes — dark in light mode, light
+   * in dark mode — so any element inside it that reaches for a page-ground
+   * token (`--text-secondary`, `--text-tertiary`) is invisible in one theme.
+   *
+   * Scoping the COMPONENT does not fix it, because most of these are set via
+   * inline `style` attributes and inline always beats a class. Redefining the
+   * custom properties on the band does fix it: custom properties cascade, so
+   * `style="color: var(--text-tertiary)"` inside an inverse section now
+   * resolves to the inverse-appropriate value automatically.
+   *
+   * One rule, and it covers every current and future case.
+   */
+  [data-tone='inverse'] {
+    --text-primary: var(--text-on-inverse);
+    --text-secondary: var(--text-on-inverse-muted);
+    --text-tertiary: var(--text-on-inverse-faint);
+    --text-decorative: var(--text-on-inverse-faint);
+    --border-subtle: color-mix(in srgb, var(--text-on-inverse) 20%, transparent);
+    --border-default: color-mix(in srgb, var(--text-on-inverse) 32%, transparent);
+  }
+
+  /* Devanagari runs pick up the companion face automatically. */
+  :lang(ne), .deva { font-family: var(--font-deva); }
+}
+
+/* Entrance animations only, and only for viewers who want them (§9.2).
+   Content is fully readable with JS disabled — motion enhances a page that
+   already works. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

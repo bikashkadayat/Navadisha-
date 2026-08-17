@@ -1,0 +1,235 @@
+---
+/**
+ * STUDENTS HUB
+ *
+ * MOBILE-FIRST. This audience is mobile-only, on Android, frequently on paid
+ * data. Budget: under 400KB, under 3s LCP on throttled 4G.
+ *
+ * POSITIONING GUARDS — Navadisha is NOT a study-abroad consultancy, NOT
+ * commission-based, NOT an admission agent. The non-commission statement is
+ * placed HIGH on the page, not in the FAQ: it is the single sharpest
+ * differentiator available in this segment, and burying it wastes it.
+ *
+ * The peer-proximate framing is honest and load-bearing. Both founders are
+ * currently BSc CSIT students. On the institutional pages that is a constraint
+ * to work around; here it is the strongest thing about the offer.
+ *
+ * CONVERSION PRIORITY (approved): WhatsApp first, then register interest.
+ */
+import Base from '../../layouts/Base.astro';
+import Section from '../../components/Section.astro';
+import PageHero from '../../components/PageHero.astro';
+import CompassRule from '../../components/CompassRule.astro';
+import Button from '../../components/Button.astro';
+import { getCollection } from 'astro:content';
+import { company, whatsappLink, hasContactData } from '../../data/company.ts';
+
+const wa = whatsappLink('Hi Navadisha — I am a student and I have a question about ');
+const team = (await getCollection('team')).sort((a, b) => a.data.order - b.data.order);
+
+const offers = [
+  {
+    title: 'Practical technology workshops',
+    body: 'Short, hands-on sessions on things you can actually use. The first is AI for Students — one day, for school and college students.',
+    status: 'Planned · tentatively October 2026',
+  },
+  {
+    title: 'Straight answers about technology careers',
+    body: 'What the work is really like, what you need to learn, and what is hype. From people currently doing it, not people describing it from a distance.',
+    status: null,
+  },
+  {
+    title: 'Industry exposure',
+    body: 'Connecting what you are studying to what employers actually use. We work with institutions on the same problem from the other side.',
+    status: null,
+  },
+];
+
+const notUs = [
+  'A study-abroad consultancy',
+  'An admission agent',
+  'Paid by any institution to recommend it',
+];
+---
+
+<Base
+  title="For Students | Navadisha"
+  description="Practical technology workshops and straight answers about technology careers, from people currently doing the work. No commission, no sales pitch."
+>
+  <PageHero
+    crumbs={[{ label: 'Home', href: '/' }, { label: 'Students' }]}
+    eyebrow="For students"
+    title="Straight answers about technology, from people two years ahead of you."
+    lede="We run practical workshops and answer honest questions about technology careers. Nobody pays us to send you anywhere."
+  >
+    <div class="mt-10 flex flex-wrap gap-4">
+      {wa && <Button href={wa} note="Usually a reply within a day" arrow>Message us on WhatsApp</Button>}
+      <Button href="/programs/ai-for-students/" variant="secondary">See the AI workshop</Button>
+    </div>
+  </PageHero>
+
+  {/* ── NON-COMMISSION STATEMENT — high on the page, deliberately not in the
+       FAQ. This is the sharpest differentiator available in this segment. ── */}
+  <Section tone="sunken" labelledby="commission-h">
+    <div
+      class="rounded-xl border p-8 sm:p-10"
+      style="background-color: var(--surface-raised); border-color: var(--border-subtle); border-left-width: 4px; border-left-color: var(--pillar-edu-fill);"
+    >
+      <h2
+        id="commission-h"
+        class="measure"
+        style="font-family: var(--font-display); font-size: var(--text-heading-lg); font-weight: 760; letter-spacing: -0.024em; line-height: 1.25;"
+      >
+        We are not paid by any institution to send students to them.
+      </h2>
+
+      <p class="mt-6 measure" style="color: var(--text-secondary);">
+        A lot of the advice you will be offered is paid for by the college or the agency at the
+        other end of it. That does not make all of it wrong, but it does mean the person advising
+        you has a reason to prefer one answer.
+      </p>
+      <p class="mt-4 measure" style="color: var(--text-secondary);">
+        We do not take commission, referral fees or placement payments from any institution. If
+        we suggest something, it is because we think it is right — and if we do not know, we will
+        say we do not know.
+      </p>
+
+      <div class="mt-8">
+        <p class="text-[0.6875rem] font-bold uppercase tracking-[0.13em]" style="color: var(--text-tertiary);">
+          To be explicit — we are not
+        </p>
+        <ul class="mt-4 space-y-2">
+          {
+            notUs.map((n) => (
+              <li class="text-sm" style="color: var(--text-secondary);">
+                {n}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </Section>
+
+  {/* ── What is available ── */}
+  <Section labelledby="offers-h">
+    <CompassRule />
+    <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--text-tertiary);">
+      What we offer
+    </p>
+    <h2 id="offers-h" class="mt-4" style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;">
+      What is actually available right now.
+    </h2>
+    <p class="mt-6 measure" style="font-size: var(--text-body-lg); color: var(--text-secondary);">
+      We are a young practice and the student side is new. Here is what exists today rather than
+      what we intend to build.
+    </p>
+
+    <div class="mt-12 space-y-4">
+      {
+        offers.map((o) => (
+          <div
+            class="rounded-xl border p-7"
+            style="background-color: var(--surface-raised); border-color: var(--border-subtle);"
+          >
+            <div class="flex flex-wrap items-center gap-3">
+              <h3 style="font-family: var(--font-display); font-size: var(--text-heading-sm); font-weight: 720; letter-spacing: -0.012em;">
+                {o.title}
+              </h3>
+              {o.status && (
+                <span
+                  class="rounded-full px-2.5 py-1 text-[0.625rem] font-bold uppercase tracking-[0.09em]"
+                  style="background-color: var(--pillar-edu-surface); color: var(--pillar-edu);"
+                >
+                  {o.status}
+                </span>
+              )}
+            </div>
+            <p class="mt-3 measure text-sm" style="color: var(--text-secondary);">{o.body}</p>
+          </div>
+        ))
+      }
+    </div>
+  </Section>
+
+  {/* ── Who we are — the peer-proximate framing ── */}
+  <Section tone="sunken" labelledby="who-h">
+    <CompassRule />
+    <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--text-tertiary);">
+      Who we are
+    </p>
+    <h2 id="who-h" class="mt-4 measure" style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;">
+      Both of us are still students too.
+    </h2>
+
+    <div class="mt-8 measure space-y-5" style="color: var(--text-secondary);">
+      <p>
+        Navadisha was founded by two BSc CSIT students. That is not a disclaimer — it is the
+        reason this part of the practice exists. We are close enough to the decisions you are
+        making to remember them accurately, and far enough along to have built real things.
+      </p>
+      <p>
+        One of us works as a full-stack developer and digital literacy trainer, and on community
+        network and connectivity projects. The other works on marketing, partnerships and running
+        events. Between us we build software and run programmes, so what we tell you about
+        technology work comes from doing it rather than reading about it.
+      </p>
+      <p>
+        We will not pretend to know things we do not. If your question is about medicine,
+        migration or a field we have no standing in, we will tell you that instead of guessing.
+      </p>
+    </div>
+
+    <ul class="mt-10 grid gap-4 sm:grid-cols-2">
+      {
+        team.map((m) => (
+          <li
+            class="rounded-xl border p-6"
+            style="background-color: var(--surface-raised); border-color: var(--border-subtle);"
+          >
+            <p style="font-family: var(--font-display); font-size: var(--text-heading-sm); font-weight: 720;">
+              {m.data.name}
+            </p>
+            <p class="mt-1 text-sm" style="color: var(--text-accent);">{m.data.role}</p>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="mt-8">
+      <a href="/about/team/" class="text-sm font-semibold" style="color: var(--text-accent);">
+        More about both of us →
+      </a>
+    </p>
+  </Section>
+
+  {/* ── Conversion — WhatsApp first, per approved priority ── */}
+  <Section tone="inverse" labelledby="talk-h">
+    <h2 id="talk-h" style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;">
+      Ask us something.
+    </h2>
+    <p class="mt-5 measure" style="font-size: var(--text-body-lg); color: var(--text-on-inverse-muted);">
+      There is no form to fill in and nothing to pay. Message us and ask. If we cannot help, we
+      will say so.
+    </p>
+
+    <div class="mt-10 flex flex-wrap gap-4">
+      {wa && <Button href={wa} note="Usually a reply within a day" arrow>Message us on WhatsApp</Button>}
+      <Button href="/programs/ai-for-students/" variant="secondary" note="No payment, no commitment">
+        Register interest in the workshop
+      </Button>
+    </div>
+
+    {
+      hasContactData() && (
+        <p class="mt-8 text-sm" style="color: var(--text-on-inverse-faint);">
+          Prefer to call?{' '}
+          <a href={`tel:${company.contact.phone}`} style="color: var(--text-on-inverse);">
+            {company.contact.phoneDisplay}
+          </a>
+          {company.contact.officeHours && ` · ${company.contact.officeHours}`}
+        </p>
+      )
+    }
+  </Section>
+</Base>

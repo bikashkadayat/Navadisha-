@@ -1,0 +1,229 @@
+---
+/**
+ * AI FOR STUDENTS — the strategic page.
+ *
+ * This is the target of Colleges → AI for Students, identified in the
+ * navigation audit as the single highest-value link on the site: the one place
+ * the bridge between Education, Technology and Industry is DEMONSTRATED rather
+ * than described, because an institutional visitor is handed a concrete thing
+ * to do for their students.
+ *
+ * DUAL PATH — the page serves two buyers at once and must not privilege either:
+ *   · a student registering personal interest
+ *   · an institution booking it for their students (higher value)
+ *
+ * ⛔ MUST NOT APPEAR (nothing here is verified):
+ *   syllabus · module list · learning outcomes beyond the single approved line
+ *   · certification · fee · hour-by-hour timing · past attendance · testimonials
+ *   · trainer credentials beyond those on the team page
+ *
+ * ⛔ MUST NOT IMPLY: enrolment open · confirmed cohorts · confirmed
+ *   certification · outcomes already proven.
+ */
+import Base from '../../../layouts/Base.astro';
+import Section from '../../../components/Section.astro';
+import PageHero from '../../../components/PageHero.astro';
+import CompassRule from '../../../components/CompassRule.astro';
+import ProgramStatusBlock from '../../../components/ProgramStatusBlock.astro';
+import TeamCard from '../../../components/TeamCard.astro';
+import Button from '../../../components/Button.astro';
+import ConversionBand from '../../../components/ConversionBand.astro';
+import { getCollection } from 'astro:content';
+import { whatsappLink } from '../../../data/company.ts';
+
+const team = await getCollection('team');
+const trainer = team.find((m) => m.id === 'bikash-kadayat');
+
+const waStudent = whatsappLink('Hi Navadisha — I am a student interested in the AI for Students workshop. ');
+const waInstitution = whatsappLink(
+  'Hello Navadisha — we would like to discuss running AI for Students at our institution. ',
+);
+
+/** Verified facts only. Every one of these was supplied and approved. */
+const facts = [
+  { label: 'Format', value: 'One-day workshop' },
+  { label: 'For', value: 'School and college students' },
+  { label: 'Mode', value: 'On-site or hybrid' },
+  { label: 'Timing', value: 'Tentatively October 2026' },
+  { label: 'Trainer', value: 'Bikash Kadayat' },
+];
+
+/**
+ * `Course` schema. Deliberately omits `hasCourseInstance`, `offers` and
+ * `educationalCredentialAwarded` — no confirmed dates, no published fee and no
+ * certification exist, and asserting them in structured data would be the same
+ * fabrication as putting them on the page.
+ */
+const courseSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Course',
+  name: 'AI for Students',
+  description:
+    'A one-day practical introduction to AI for school and college students, delivered on site or hybrid.',
+  provider: {
+    '@type': 'Organization',
+    name: 'NAVADISHA Consulting & Innovations Pvt. Ltd.',
+  },
+};
+---
+
+<Base
+  title="AI for Students — One-Day Workshop | Navadisha"
+  description="A one-day practical introduction to AI for school and college students in Nepal. On site or hybrid. Status: planned, dates being confirmed."
+  pillar="education"
+  schema={courseSchema}
+>
+  <PageHero
+    crumbs={[
+      { label: 'Home', href: '/' },
+      { label: 'Programmes', href: '/programs/' },
+      { label: 'AI for Students' },
+    ]}
+    eyebrow="Programme · AI Training"
+    title="AI for Students"
+    lede="A one-day practical introduction to AI for school and college students, delivered at your institution or in hybrid format."
+  />
+
+  {/* ── Status, high on the page ── */}
+  <Section tone="sunken" labelledby="status-h">
+    <h2 id="status-h" class="sr-only">Programme status and details</h2>
+    <div class="grid gap-8 lg:grid-cols-12">
+      <div class="lg:col-span-5">
+        <ProgramStatusBlock
+          status="planned"
+          facts={facts}
+          note="This workshop has not run yet. Dates are tentative and are being confirmed — registering interest costs nothing and commits you to nothing."
+        />
+      </div>
+
+      <div class="lg:col-span-7">
+        <CompassRule pillar />
+        <h3
+          class="mt-6"
+          style="font-family: var(--font-display); font-size: var(--text-heading-lg); font-weight: 760; letter-spacing: -0.024em;"
+        >
+          What this is, and what it is not yet.
+        </h3>
+        <div class="mt-6 space-y-5 measure" style="color: var(--text-secondary);">
+          <p>
+            A practical, one-day introduction to AI for students in school and college. It is
+            designed to sit alongside the syllabus rather than compete with it, and it requires no
+            curriculum change or affiliating-body approval.
+          </p>
+          <p>
+            <strong style="color: var(--text-primary);">It has not been delivered yet.</strong>{' '}
+            The programme is at planned status. There is no published syllabus, no fee, no
+            certification and no cohort you can enrol in today — and we would rather say that
+            plainly than present a detailed page for something that has not happened.
+          </p>
+          <p>
+            What we can tell you is who is running it, what format it takes, and roughly when. If
+            you would like to be told when dates are confirmed, register your interest below.
+          </p>
+        </div>
+      </div>
+    </div>
+  </Section>
+
+  {/* ── Who runs it ── */}
+  {
+    trainer && (
+      <Section labelledby="trainer-h">
+        <CompassRule pillar />
+        <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--pillar);">
+          Who runs it
+        </p>
+        <h2 id="trainer-h" class="mt-4" style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;">
+          Delivered by a practitioner, not a training arm.
+        </h2>
+        <p class="mt-6 measure" style="font-size: var(--text-body-lg); color: var(--text-secondary);">
+          The session is run by someone currently building software and delivering digital
+          literacy training, rather than by a separate department reading from a deck.
+        </p>
+
+        <div class="mt-10 max-w-xl">
+          <TeamCard member={trainer}>
+            Full-stack developer, digital literacy trainer and community network leader, working
+            across the education and technology practices.
+          </TeamCard>
+        </div>
+
+        <p class="mt-8">
+          <a href="/about/team/" class="text-sm font-semibold" style="color: var(--text-accent);">
+            More about the team →
+          </a>
+        </p>
+      </Section>
+    )
+  }
+
+  {/* ── DUAL PATH — student and institution given equal structural weight ── */}
+  <Section tone="sunken" labelledby="paths-h">
+    <CompassRule pillar />
+    <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--pillar);">
+      Two ways in
+    </p>
+    <h2 id="paths-h" class="mt-4" style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;">
+      Register as a student, or bring it to your institution.
+    </h2>
+
+    <div class="mt-12 grid gap-6 lg:grid-cols-2">
+      <div
+        class="rounded-xl border p-8"
+        style="background-color: var(--surface-raised); border-color: var(--border-subtle); border-left-width: 3px; border-left-color: var(--pillar-edu-fill);"
+      >
+        <p class="text-[0.6875rem] font-bold uppercase tracking-[0.13em]" style="color: var(--pillar);">
+          For students
+        </p>
+        <h3
+          class="mt-4"
+          style="font-family: var(--font-display); font-size: var(--text-heading-md); font-weight: 720; letter-spacing: -0.018em;"
+        >
+          Tell us you are interested
+        </h3>
+        <p class="mt-3 text-sm" style="color: var(--text-secondary);">
+          No payment and no commitment. We will let you know when dates are confirmed, and you can
+          decide then.
+        </p>
+        <div class="mt-7">
+          {waStudent && <Button href={waStudent} note="Usually a reply within a day" arrow>Register interest</Button>}
+        </div>
+      </div>
+
+      <div
+        class="rounded-xl border p-8"
+        style="background-color: var(--surface-raised); border-color: var(--border-subtle); border-left-width: 3px; border-left-color: var(--pillar-tech-fill);"
+      >
+        <p class="text-[0.6875rem] font-bold uppercase tracking-[0.13em]" style="color: var(--pillar-tech);">
+          For institutions
+        </p>
+        <h3
+          class="mt-4"
+          style="font-family: var(--font-display); font-size: var(--text-heading-md); font-weight: 720; letter-spacing: -0.018em;"
+        >
+          Run it for your students
+        </h3>
+        <p class="mt-3 text-sm" style="color: var(--text-secondary);">
+          Delivered on your campus or hybrid. Tell us roughly how many students and when suits
+          your calendar, and we will include you when scheduling.
+        </p>
+        <div class="mt-7 flex flex-wrap gap-3">
+          <Button href="/contact/" note="No cost, no obligation" arrow>Discuss for your institution</Button>
+          {waInstitution && <Button href={waInstitution} variant="secondary">WhatsApp</Button>}
+        </div>
+      </div>
+    </div>
+
+    <p class="mt-10 text-sm" style="color: var(--text-secondary);">
+      Working at a college?{' '}
+      <a href="/institutions/colleges/" style="color: var(--text-accent); font-weight: 600;">
+        See how this fits alongside institutional work →
+      </a>
+    </p>
+  </Section>
+
+  <ConversionBand
+    heading="Questions about the workshop?"
+    lede="Ask before committing to anything. If it is not right for your students, we would rather tell you now."
+  />
+</Base>

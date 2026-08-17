@@ -1,0 +1,147 @@
+---
+/**
+ * PROGRAMMES INDEX
+ *
+ * Four lines, one linkable. The status taxonomy is the entire design problem
+ * here: training buyers read vagueness as "not built yet", and they are right
+ * to. So the page states status per line rather than presenting four
+ * equivalent-looking offerings.
+ *
+ * ⛔ NO DEAD LINKS. `in-development` lines render without an href, because
+ * there is nothing behind them and a link implies there is. Enforced by
+ * `isLinkable()` in data/programs.ts, not by remembering.
+ */
+import Base from '../../layouts/Base.astro';
+import Section from '../../components/Section.astro';
+import PageHero from '../../components/PageHero.astro';
+import CompassRule from '../../components/CompassRule.astro';
+import ProgramCard from '../../components/ProgramCard.astro';
+import Button from '../../components/Button.astro';
+import ConversionBand from '../../components/ConversionBand.astro';
+import { programLines } from '../../data/programs.ts';
+import { whatsappLink } from '../../data/company.ts';
+
+const wa = whatsappLink('Hello Navadisha — I would like to ask about your training programmes. ');
+const planned = programLines.filter((p) => p.status !== 'in-development');
+const inDev = programLines.filter((p) => p.status === 'in-development');
+---
+
+<Base
+  title="Training Programmes | Navadisha"
+  description="Navadisha's training practice — practical technology programmes for students, institutions and organisations. Published when ready to deliver, not before."
+  pillar="education"
+>
+  <PageHero
+    crumbs={[{ label: 'Home', href: '/' }, { label: 'Programmes' }]}
+    eyebrow="Programmes"
+    title="Training built around what institutions and students actually need."
+    lede="Our training practice is being developed deliberately. We publish a programme when it is ready to deliver, not before — so this page is shorter than it will be."
+  />
+
+  {/* ── Available now ── */}
+  <Section tone="sunken" labelledby="available-h">
+    <CompassRule pillar />
+    <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--pillar);">
+      Available to discuss
+    </p>
+    <h2 id="available-h" class="mt-4" style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;">
+      {planned.length === 1 ? 'One programme, at planned status.' : 'Programmes'}
+    </h2>
+
+    <div class="mt-10 space-y-3">
+      {
+        planned.map((p) => (
+          <ProgramCard
+            title={p.title}
+            status={p.status}
+            href={p.href}
+            detail={p.detail}
+            timing={p.timing}
+          />
+        ))
+      }
+    </div>
+
+    <p class="mt-8 measure text-sm" style="color: var(--text-secondary);">
+      Planned means defined, with a named trainer, but not yet delivered. Dates are tentative and
+      registering interest commits you to nothing.
+    </p>
+  </Section>
+
+  {/* ── In development — listed, deliberately not linked ── */}
+  <Section labelledby="dev-h">
+    <CompassRule pillar />
+    <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--text-tertiary);">
+      In development
+    </p>
+    <h2 id="dev-h" class="mt-4" style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;">
+      Where the practice is going next.
+    </h2>
+    <p class="mt-6 measure" style="font-size: var(--text-body-lg); color: var(--text-secondary);">
+      These are declared intentions, not offerings. There is no syllabus, trainer or date behind
+      them yet — which is exactly why they have a status and no page.
+    </p>
+
+    <div class="mt-10 space-y-3">
+      {inDev.map((p) => <ProgramCard title={p.title} status={p.status} />)}
+    </div>
+
+    <p class="mt-8 measure text-sm" style="color: var(--text-secondary);">
+      If one of these is what you need, tell us. Knowing there is real demand changes what we
+      build first, and we will be honest about the timeline.
+    </p>
+
+    <div class="mt-8 flex flex-wrap gap-4">
+      <Button href="/contact/" note="No cost, no obligation" arrow>Tell us what you need</Button>
+      {wa && <Button href={wa} variant="secondary">WhatsApp us</Button>}
+    </div>
+  </Section>
+
+  {/* ── Who this is for ── */}
+  <Section tone="sunken" labelledby="who-h">
+    <CompassRule pillar />
+    <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--pillar);">
+      Who trains with us
+    </p>
+    <h2 id="who-h" class="mt-4" style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;">
+      Two routes into the same programmes.
+    </h2>
+
+    <div class="mt-12 grid gap-6 lg:grid-cols-2">
+      <div class="rounded-xl border p-8" style="background-color: var(--surface-raised); border-color: var(--border-subtle);">
+        <h3 style="font-family: var(--font-display); font-size: var(--text-heading-sm); font-weight: 720;">
+          Students, directly
+        </h3>
+        <p class="mt-3 text-sm" style="color: var(--text-secondary);">
+          Register interest in an open session and we will tell you when dates are confirmed. No
+          payment at the point of registering.
+        </p>
+        <p class="mt-5">
+          <a href="/students/" class="text-sm font-semibold" style="color: var(--text-accent);">
+            For students →
+          </a>
+        </p>
+      </div>
+
+      <div class="rounded-xl border p-8" style="background-color: var(--surface-raised); border-color: var(--border-subtle);">
+        <h3 style="font-family: var(--font-display); font-size: var(--text-heading-sm); font-weight: 720;">
+          Institutions, for their students or staff
+        </h3>
+        <p class="mt-3 text-sm" style="color: var(--text-secondary);">
+          Delivered on your campus or hybrid, scheduled around your academic calendar. This is the
+          more common route and usually the more useful one.
+        </p>
+        <p class="mt-5">
+          <a href="/institutions/colleges/" class="text-sm font-semibold" style="color: var(--text-accent);">
+            For colleges →
+          </a>
+        </p>
+      </div>
+    </div>
+  </Section>
+
+  <ConversionBand
+    heading="Tell us what your students need."
+    lede="The training practice is being built around real demand rather than a catalogue. If you tell us what would actually be useful, it affects what we build next."
+  />
+</Base>

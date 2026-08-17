@@ -1,0 +1,105 @@
+---
+/**
+ * Phase-2 design §11 S9. Closes every page.
+ *
+ * Three channels, because the three audiences convert differently: institutions
+ * want a record and something forwardable, students want WhatsApp, everyone
+ * trusts a phone number. Each carries a supporting line stating cost,
+ * obligation or response time — the single highest-leverage friction reducer
+ * available (§08).
+ *
+ * The physical address matters more than any design decision in this band. In
+ * Nepal a verifiable address is a stronger trust signal than anything visual.
+ */
+import Section from './Section.astro';
+import Button from './Button.astro';
+import LayeredHorizon from './LayeredHorizon.astro';
+import { company, whatsappLink, hasContactData } from '../data/company.ts';
+
+interface Props {
+  heading?: string;
+  lede?: string;
+  /** Suppress the horizon when the preceding section is already inverse. */
+  horizon?: boolean;
+}
+const {
+  heading = 'Start with a conversation.',
+  lede = 'Tell us what is not working. If we are not the right people for it, we will say so.',
+  horizon = true,
+} = Astro.props;
+
+const wa = whatsappLink('Hello Navadisha — I would like to talk about ');
+const addr = [company.contact.address.street, company.contact.address.city]
+  .filter(Boolean)
+  .join(', ');
+---
+
+{horizon && <LayeredHorizon to="var(--surface-inverse)" />}
+
+<Section tone="inverse" labelledby="conv-h">
+  <div class="grid gap-12 lg:grid-cols-12">
+    <div class="lg:col-span-7">
+      <h2 id="conv-h" style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;">
+        {heading}
+      </h2>
+      <p class="mt-5 measure" style="font-size: var(--text-body-lg); color: var(--text-on-inverse-muted);">
+        {lede}
+      </p>
+
+      <div class="mt-10 flex flex-wrap gap-4">
+        <Button href="/contact/" note="No cost, no obligation">Book a conversation</Button>
+        {wa && <Button href={wa} variant="secondary" note="We usually reply within a day">WhatsApp us</Button>}
+      </div>
+    </div>
+
+    <div class="lg:col-span-5 lg:pl-8">
+      <dl class="space-y-6 text-sm">
+        {
+          hasContactData() && (
+            <div>
+              <dt class="text-[0.6875rem] font-bold uppercase tracking-[0.13em]" style="color: var(--text-on-inverse-faint);">
+                Call
+              </dt>
+              <dd class="mt-2">
+                <a href={`tel:${company.contact.phone}`} style="color: var(--text-on-inverse);">
+                  {company.contact.phoneDisplay}
+                </a>
+                {company.contact.officeHours && (
+                  <p class="mt-1" style="color: var(--text-on-inverse-faint);">{company.contact.officeHours}</p>
+                )}
+              </dd>
+            </div>
+          )
+        }
+
+        {
+          company.contact.email && (
+            <div>
+              <dt class="text-[0.6875rem] font-bold uppercase tracking-[0.13em]" style="color: var(--text-on-inverse-faint);">
+                Email
+              </dt>
+              <dd class="mt-2">
+                <a href={`mailto:${company.contact.email}`} style="color: var(--text-on-inverse);">
+                  {company.contact.email}
+                </a>
+              </dd>
+            </div>
+          )
+        }
+
+        {
+          addr && (
+            <div>
+              <dt class="text-[0.6875rem] font-bold uppercase tracking-[0.13em]" style="color: var(--text-on-inverse-faint);">
+                Office
+              </dt>
+              <dd class="mt-2" style="color: var(--text-on-inverse);">{addr}</dd>
+            </div>
+          )
+        }
+      </dl>
+
+      <p class="mt-8 text-sm" style="color: var(--text-on-inverse-faint);">{company.responseCommitment}</p>
+    </div>
+  </div>
+</Section>

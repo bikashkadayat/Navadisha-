@@ -1,0 +1,285 @@
+---
+/**
+ * CONTACT — the site's most important conversion page.
+ *
+ * Three audiences convert on three different channels at three different
+ * speeds, so the page leads with a channel choice rather than dropping everyone
+ * into one form. Institutions want a record and something forwardable; students
+ * want WhatsApp; everyone trusts a phone number.
+ *
+ * The registration status appears here rather than only on /about/company/,
+ * because a procurement-minded buyer who is about to make contact is exactly
+ * the person who needs to know it before the conversation starts.
+ */
+import Base from '../../layouts/Base.astro';
+import Section from '../../components/Section.astro';
+import PageHero from '../../components/PageHero.astro';
+import CompassRule from '../../components/CompassRule.astro';
+import ContactForm from '../../components/ContactForm.astro';
+import FaqList from '../../components/FaqList.astro';
+import { faqSchema } from '../../data/schema.ts';
+import {
+  company,
+  whatsappLink,
+  hasContactData,
+  registrationNotice,
+} from '../../data/company.ts';
+
+const wa = whatsappLink('Hello Navadisha — ');
+const notice = registrationNotice();
+const addr = [company.contact.address.street, company.contact.address.city, 'Nepal']
+  .filter(Boolean)
+  .join(', ');
+
+const channels = [
+  {
+    name: 'Send a message',
+    body: 'Best if you want a record of what you asked, or something you can forward to a colleague. Use the form below.',
+    best: 'Institutions and organisations',
+    href: '#message',
+    action: 'Go to the form',
+  },
+  {
+    name: 'WhatsApp',
+    body: 'Fastest for a short question. No form, no follow-up sales calls.',
+    best: 'Students and quick enquiries',
+    href: wa,
+    action: 'Open WhatsApp',
+  },
+  {
+    name: 'Telephone',
+    body: hasContactData()
+      ? `${company.contact.phoneDisplay} · ${company.contact.officeHours}`
+      : 'Available during office hours.',
+    best: 'Anyone who would rather just talk',
+    href: hasContactData() ? `tel:${company.contact.phone}` : null,
+    action: 'Call now',
+  },
+];
+
+const expectations = [
+  {
+    title: 'Within one working day',
+    body: 'A real reply from one of the founders — not an automated acknowledgement followed by silence. If we cannot help, that is what the reply will say.',
+  },
+  {
+    title: 'No sales sequence',
+    body: 'You will not be added to a mailing list, and nobody will call you repeatedly. One reply, and then it is your move.',
+  },
+  {
+    title: 'A first conversation costs nothing',
+    body: 'Thirty minutes, no obligation, and no requirement to continue. If your problem is not something we should be doing, we would rather tell you early.',
+  },
+];
+
+const faqs = [
+  {
+    q: 'What happens after I send a message?',
+    a: 'One of the two founders reads it and replies within one working day. If it looks like something we can help with, we will suggest a 30-minute conversation. If it does not, we will say so and, where we can, point you at someone better suited.',
+  },
+  {
+    q: 'How much do you charge?',
+    a: 'We quote after a first conversation rather than publishing a rate card, because pricing work before understanding it produces a number that has to be revised. The diagnostic stage is a fixed fee, and delivery is scoped after it — so you can stop after the diagnostic if the plan is not right for you.',
+  },
+  {
+    q: 'Can you work with organisations outside Kathmandu?',
+    a: 'Yes. Diagnostic work benefits from time on site; most of the rest runs remotely with periodic visits. Training can be delivered on site, remote or hybrid.',
+  },
+  {
+    q: 'Do you take on very small pieces of work?',
+    a: 'Sometimes. Tell us what you need and we will be straight about whether it is worth engaging us for it, or whether you would be better served doing it internally or with a freelancer.',
+  },
+  {
+    q: 'Are you registered, and can you invoice?',
+    a: 'Company registration is in progress. Where your procurement process requires a registration certificate, PAN/VAT or tax clearance as a condition of contracting, we are not yet eligible — and we will tell you that in the first reply rather than partway through.',
+  },
+];
+---
+
+<Base
+  title="Contact | Navadisha"
+  description="Talk to Navadisha about digital systems, institutional work or training. Message, WhatsApp or call — a reply from a founder within one working day."
+  schema={faqSchema(faqs)}
+>
+  <PageHero
+    crumbs={[{ label: 'Home', href: '/' }, { label: 'Contact' }]}
+    eyebrow="Contact"
+    title="Tell us what is not working."
+    lede="You will be talking to one of the two founders. If we are not the right people for it, we will say so — that is a more useful answer than a proposal."
+  />
+
+  {/* ── Channels ── */}
+  <Section tone="sunken" labelledby="channels-h">
+    <CompassRule />
+    <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--text-tertiary);">
+      Choose a channel
+    </p>
+    <h2 id="channels-h" class="mt-4" style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;">
+      Three ways to reach us. All of them go to the same two people.
+    </h2>
+
+    <ul class="mt-12 grid gap-6 md:grid-cols-3">
+      {
+        channels.map((c) => (
+          <li
+            class="flex flex-col rounded-xl border p-7"
+            style="background-color: var(--surface-raised); border-color: var(--border-subtle);"
+          >
+            <h3 style="font-family: var(--font-display); font-size: var(--text-heading-sm); font-weight: 720; letter-spacing: -0.012em;">
+              {c.name}
+            </h3>
+            <p class="mt-3 text-sm" style="color: var(--text-secondary);">{c.body}</p>
+            <p class="mt-4 text-xs" style="color: var(--text-tertiary);">
+              Best for: {c.best}
+            </p>
+            {c.href && (
+              <p class="mt-auto pt-6">
+                <a href={c.href} class="text-sm font-semibold" style="color: var(--text-accent);">
+                  {c.action} →
+                </a>
+              </p>
+            )}
+          </li>
+        ))
+      }
+    </ul>
+  </Section>
+
+  {/* ── Form ── */}
+  <Section id="message" labelledby="form-h">
+    <div class="grid gap-12 lg:grid-cols-12">
+      <div class="lg:col-span-7">
+        <CompassRule />
+        <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--text-tertiary);">
+          Send a message
+        </p>
+        <h2 id="form-h" class="mt-4" style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;">
+          Six fields, two of them optional.
+        </h2>
+        <p class="mt-6 measure" style="color: var(--text-secondary);">
+          We ask only what we need to reply usefully. Everything else belongs in the conversation.
+        </p>
+
+        <div class="mt-10">
+          <ContactForm />
+        </div>
+      </div>
+
+      {/* ── Expectations + office ── */}
+      <div class="lg:col-span-5 lg:pl-6">
+        <div
+          class="rounded-xl border p-8"
+          style="background-color: var(--surface-raised); border-color: var(--border-subtle); border-left-width: 3px; border-left-color: var(--action-primary-default);"
+        >
+          <h2 class="text-[0.6875rem] font-bold uppercase tracking-[0.13em]" style="color: var(--text-tertiary);">
+            What to expect
+          </h2>
+          <ul class="mt-6 space-y-6">
+            {
+              expectations.map((x) => (
+                <li>
+                  <h3 style="font-family: var(--font-display); font-size: var(--text-heading-sm); font-weight: 700; letter-spacing: -0.012em;">
+                    {x.title}
+                  </h3>
+                  <p class="mt-2 text-sm" style="color: var(--text-secondary);">{x.body}</p>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div
+          class="mt-6 rounded-xl border p-8"
+          style="background-color: var(--surface-raised); border-color: var(--border-subtle);"
+        >
+          <h2 class="text-[0.6875rem] font-bold uppercase tracking-[0.13em]" style="color: var(--text-tertiary);">
+            Office
+          </h2>
+          <dl class="mt-6 space-y-5 text-sm">
+            <div>
+              <dt style="color: var(--text-tertiary);">Location</dt>
+              <dd class="mt-1" style="font-weight: 620;">{addr}</dd>
+            </div>
+            {
+              hasContactData() && (
+                <div>
+                  <dt style="color: var(--text-tertiary);">Telephone</dt>
+                  <dd class="mt-1">
+                    <a href={`tel:${company.contact.phone}`} style="font-weight: 620; color: var(--text-primary);">
+                      {company.contact.phoneDisplay}
+                    </a>
+                  </dd>
+                </div>
+              )
+            }
+            {
+              company.contact.email && (
+                <div>
+                  <dt style="color: var(--text-tertiary);">Email</dt>
+                  <dd class="mt-1">
+                    <a
+                      href={`mailto:${company.contact.email}`}
+                      style="font-weight: 620; color: var(--text-primary); word-break: break-word;"
+                    >
+                      {company.contact.email}
+                    </a>
+                  </dd>
+                </div>
+              )
+            }
+            {
+              company.contact.officeHours && (
+                <div>
+                  <dt style="color: var(--text-tertiary);">Hours</dt>
+                  <dd class="mt-1" style="font-weight: 620;">{company.contact.officeHours}</dd>
+                </div>
+              )
+            }
+          </dl>
+          {/* No map embed. Third-party JS, a cookie surface and ~100KB, to show a
+              street a visitor can find faster in their own map app. */}
+        </div>
+
+        {
+          notice && (
+            <div
+              class="mt-6 rounded-xl border p-8"
+              style="background-color: var(--surface-sunken); border-color: var(--border-subtle); border-left-width: 3px; border-left-color: var(--color-warning);"
+            >
+              <h2 class="text-[0.6875rem] font-bold uppercase tracking-[0.13em]" style="color: var(--text-tertiary);">
+                Registration status
+              </h2>
+              <p class="mt-4 text-sm" style="color: var(--text-secondary);">{notice}</p>
+              <p class="mt-4">
+                <a href="/about/company/" class="text-sm font-semibold" style="color: var(--text-accent);">
+                  What this means for procurement →
+                </a>
+              </p>
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </Section>
+
+  {/* ── FAQ ── */}
+  <Section tone="sunken" labelledby="faq-h">
+    <CompassRule />
+    <div class="mt-6"><FaqList faqs={faqs} headingId="faq-h" /></div>
+  </Section>
+
+  {/* ── Closing CTA — not the standard ConversionBand, which would duplicate
+       the channels above on the one page where that is redundant. ── */}
+  <Section tone="inverse" labelledby="close-h">
+    <h2 id="close-h" class="measure" style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;">
+      Not sure whether it is worth asking?
+    </h2>
+    <p class="mt-5 measure" style="font-size: var(--text-body-lg); color: var(--text-on-inverse-muted);">
+      Ask anyway. The worst outcome is a straight answer that we are not the right people, which
+      still leaves you better informed than you were.
+    </p>
+    <p class="mt-8 text-sm" style="color: var(--text-on-inverse-faint);">
+      {company.responseCommitment}
+    </p>
+  </Section>
+</Base>

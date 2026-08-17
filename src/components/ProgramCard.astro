@@ -1,0 +1,65 @@
+---
+/**
+ * Phase-2 design §11 S7. A catalogue row, deliberately more product-like than
+ * a service card — this is a product surface and should feel like one.
+ *
+ * STATUS IS LOAD-BEARING. Training buyers read vagueness as "not built yet",
+ * and they are correct to. The status taxonomy (Phase-1 plan §05):
+ *
+ *   running          delivered at least once  → links to a detail page
+ *   planned          defined, trainer named   → links, status visible
+ *   in-development   named intent only        → NO link, status only
+ *
+ * A card with status 'in-development' must not link anywhere. There is nothing
+ * behind it, and a link implies there is.
+ */
+interface Props {
+  title: string;
+  status: 'running' | 'planned' | 'in-development';
+  href?: string;
+  /** Verified facts only. Never a syllabus, fee or outcome for unbuilt work. */
+  detail?: string;
+  timing?: string;
+}
+const { title, status, href, detail, timing } = Astro.props;
+
+const statusLabel = {
+  running: 'Running',
+  planned: 'Planned',
+  'in-development': 'In development',
+}[status];
+
+const statusStyle = {
+  running: 'background-color: var(--pillar-tech-surface); color: var(--pillar-tech);',
+  planned: 'background-color: var(--pillar-edu-surface); color: var(--pillar-edu);',
+  'in-development': 'background-color: var(--surface-sunken); color: var(--text-tertiary);',
+}[status];
+
+const linkable = Boolean(href) && status !== 'in-development';
+const Tag = linkable ? 'a' : 'div';
+---
+
+<Tag
+  href={linkable ? href : undefined}
+  class="flex flex-wrap items-center gap-x-6 gap-y-3 rounded-xl border px-6 py-5 transition-colors duration-150"
+  style={`background-color: var(--surface-raised); border-color: var(--border-subtle); ${linkable ? '' : 'cursor: default;'}`}
+>
+  <span
+    class="min-w-0"
+    style="font-family: var(--font-display); font-size: var(--text-heading-sm); font-weight: 720; letter-spacing: -0.012em;"
+  >
+    {title}
+  </span>
+
+  {detail && <span class="text-sm" style="color: var(--text-secondary);">{detail}</span>}
+  {timing && <span class="text-sm" style="color: var(--text-secondary);">{timing}</span>}
+
+  <span
+    class="ml-auto shrink-0 rounded-full px-3 py-1 text-[0.6875rem] font-bold uppercase tracking-[0.1em]"
+    style={statusStyle}
+  >
+    {statusLabel}
+  </span>
+
+  {linkable && <span aria-hidden="true" style="color: var(--text-accent);">→</span>}
+</Tag>

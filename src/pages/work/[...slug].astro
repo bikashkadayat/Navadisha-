@@ -1,0 +1,262 @@
+---
+/**
+ * CASE STUDY DETAIL
+ * Structure: Challenge · Approach · Solution · Result · Impact · Lessons.
+ *
+ * `metricsPending` renders a VISIBLE note where no quantified result has been
+ * confirmed. That note is the point: a reader who sees qualitative outcomes and
+ * no numbers should be told why, rather than left to conclude that nothing was
+ * measured or — worse — that something is being hidden.
+ *
+ * The Lessons section is the one place on this site where a case study contains
+ * something other than verified client fact, because it is explicitly our own
+ * view of our own work. It must include at least one thing we would do
+ * differently; a portfolio of unbroken successes is marketing, not evidence.
+ */
+import { getCollection, getEntry, render } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import Base from '../../layouts/Base.astro';
+import Section from '../../components/Section.astro';
+import PageHero from '../../components/PageHero.astro';
+import CompassRule from '../../components/CompassRule.astro';
+import ConversionBand from '../../components/ConversionBand.astro';
+
+export const getStaticPaths = (async () => {
+  const work = await getCollection('work', ({ data }) => !data.draft);
+  return work.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}) satisfies GetStaticPaths;
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+
+const services = await Promise.all(d.servicesApplied.map((s) => getEntry(s)));
+
+const dateLabel = d.date.toLocaleDateString('en-GB', {
+  month: 'long',
+  year: 'numeric',
+});
+
+/**
+ * Article schema. No `aggregateRating`, no `review` — neither exists, and
+ * asserting them in structured data is the same fabrication as putting them on
+ * the page, only harder to spot.
+ */
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: d.title,
+  datePublished: d.date.toISOString().slice(0, 10),
+  about: d.client,
+  author: {
+    '@type': 'Organization',
+    name: 'NAVADISHA Consulting & Innovations Pvt. Ltd.',
+  },
+};
+---
+
+<Base
+  title={d.seo.title}
+  description={d.seo.description}
+  pillar={d.pillars[0]}
+  schema={articleSchema}
+>
+  <PageHero
+    crumbs={[{ label: 'Home', href: '/' }, { label: 'Work', href: '/work/' }, { label: d.client }]}
+    eyebrow={`${d.client} · ${dateLabel}`}
+    title={d.title}
+    lede={d.challenge}
+  />
+
+  {
+    d.illustrative && (
+      <Section>
+        <div
+          class="rounded-xl border p-7"
+          style="background-color: var(--surface-raised); border-color: var(--border-subtle); border-left-width: 3px; border-left-color: var(--color-warning);"
+        >
+          <p class="text-[0.6875rem] font-bold uppercase tracking-[0.13em]" style="color: var(--color-warning);">
+            Illustrative — method applied
+          </p>
+          <p class="mt-3 measure text-sm" style="color: var(--text-secondary);">
+            This piece demonstrates our method on a scenario rather than describing a delivered
+            engagement. It is not a client project.
+          </p>
+        </div>
+      </Section>
+    )
+  }
+
+  {/* ── Approach & Solution ── */}
+  <Section tone="sunken" labelledby="approach-h">
+    <div class="grid gap-12 lg:grid-cols-12">
+      <div class="lg:col-span-7">
+        <CompassRule pillar />
+        <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--pillar);">
+          Approach
+        </p>
+        <h2 id="approach-h" class="mt-4" style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;">
+          What we did.
+        </h2>
+        <p class="mt-6 measure" style="font-size: var(--text-body-lg); color: var(--text-secondary);">
+          {d.approach}
+        </p>
+
+        <div class="mt-8 measure space-y-5" style="color: var(--text-secondary);">
+          <Content />
+        </div>
+      </div>
+
+      <div class="lg:col-span-5 lg:pl-6">
+        <dl
+          class="rounded-xl border p-7"
+          style="background-color: var(--surface-raised); border-color: var(--border-subtle);"
+        >
+          <dt class="text-[0.6875rem] font-bold uppercase tracking-[0.13em]" style="color: var(--text-tertiary);">
+            Engagement
+          </dt>
+          <dd class="mt-5 space-y-4 text-sm">
+            <div class="flex flex-wrap gap-x-4">
+              <span style="color: var(--text-tertiary); min-width: 5.5rem;">Client</span>
+              <span style="font-weight: 620;">{d.client}</span>
+            </div>
+            <div class="flex flex-wrap gap-x-4 border-t pt-4" style="border-color: var(--border-subtle);">
+              <span style="color: var(--text-tertiary); min-width: 5.5rem;">Sector</span>
+              <span style="font-weight: 620; text-transform: capitalize;">{d.sector}</span>
+            </div>
+            <div class="flex flex-wrap gap-x-4 border-t pt-4" style="border-color: var(--border-subtle);">
+              <span style="color: var(--text-tertiary); min-width: 5.5rem;">Launched</span>
+              <span style="font-weight: 620;">{dateLabel}</span>
+            </div>
+            {
+              services.length > 0 && (
+                <div class="flex flex-wrap gap-x-4 border-t pt-4" style="border-color: var(--border-subtle);">
+                  <span style="color: var(--text-tertiary); min-width: 5.5rem;">Services</span>
+                  <span style="font-weight: 620;">
+                    {services.map((s, i) => (
+                      <>
+                        <a href={`/services/${s.id}/`} style="color: var(--text-accent);">
+                          {s.data.title}
+                        </a>
+                        {i < services.length - 1 && ', '}
+                      </>
+                    ))}
+                  </span>
+                </div>
+              )
+            }
+          </dd>
+        </dl>
+      </div>
+    </div>
+  </Section>
+
+  {/* ── Result ── */}
+  <Section labelledby="result-h">
+    <CompassRule pillar />
+    <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--pillar);">
+      Result
+    </p>
+    <h2 id="result-h" class="mt-4" style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;">
+      What was delivered.
+    </h2>
+
+    <dl class="mt-12 grid gap-6 md:grid-cols-3">
+      {
+        d.outcomes.map((o) => (
+          <div
+            class="rounded-xl border p-7"
+            style="background-color: var(--surface-raised); border-color: var(--border-subtle); border-left-width: 3px; border-left-color: var(--pillar-fill);"
+          >
+            <dt
+              class="tabular"
+              style="font-family: var(--font-display); font-size: var(--text-heading-md); font-weight: 760; letter-spacing: -0.018em;"
+            >
+              {o.value}
+            </dt>
+            <dd class="mt-2 text-sm" style="color: var(--text-secondary);">{o.metric}</dd>
+          </div>
+        ))
+      }
+    </dl>
+
+    {/* The honest note. A reader who sees no numbers is told why. */}
+    {
+      d.metricsPending && (
+        <div
+          class="mt-8 rounded-xl border p-7"
+          style="background-color: var(--surface-sunken); border-color: var(--border-subtle); border-left-width: 3px; border-left-color: var(--color-warning);"
+        >
+          <p class="text-[0.6875rem] font-bold uppercase tracking-[0.13em]" style="color: var(--text-tertiary);">
+            On measurement
+          </p>
+          <p class="mt-4 measure text-sm" style="color: var(--text-secondary);">
+            <strong style="color: var(--text-primary);">
+              No quantified result has been confirmed for this engagement.
+            </strong>{' '}
+            The outcomes above are accurate and verified, but none of them is a number. We are not
+            going to estimate one. When the client confirms figures — visitors, enquiries, or
+            content updates published unaided — they will be added here and dated.
+          </p>
+        </div>
+      )
+    }
+  </Section>
+
+  {/* ── Impact ── */}
+  {
+    d.impact && (
+      <Section tone="sunken" labelledby="impact-h">
+        <CompassRule pillar />
+        <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--pillar);">
+          Impact
+        </p>
+        <h2 id="impact-h" class="mt-4" style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;">
+          What changed for the organisation.
+        </h2>
+        <p class="mt-8 measure" style="font-size: var(--text-body-lg); color: var(--text-secondary);">
+          {d.impact}
+        </p>
+      </Section>
+    )
+  }
+
+  {/* ── Lessons ── */}
+  {
+    d.lessons.length > 0 && (
+      <Section labelledby="lessons-h">
+        <CompassRule pillar />
+        <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--pillar);">
+          Lessons
+        </p>
+        <h2 id="lessons-h" class="mt-4 measure" style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;">
+          What we took from it, including what we got wrong.
+        </h2>
+        <p class="mt-6 measure" style="font-size: var(--text-body-lg); color: var(--text-secondary);">
+          Our own reflection on the engagement, not the client's.
+        </p>
+
+        <div class="mt-12 space-y-4">
+          {
+            d.lessons.map((l) => (
+              <div
+                class="rounded-xl border p-7"
+                style="background-color: var(--surface-raised); border-color: var(--border-subtle);"
+              >
+                <h3 style="font-family: var(--font-display); font-size: var(--text-heading-sm); font-weight: 720; letter-spacing: -0.012em;">
+                  {l.title}
+                </h3>
+                <p class="mt-3 measure text-sm" style="color: var(--text-secondary);">{l.body}</p>
+              </div>
+            ))
+          }
+        </div>
+      </Section>
+    )
+  }
+
+  <ConversionBand
+    heading="Talk to us about something similar."
+    lede="Describe what you are trying to change. We will tell you whether it is work we should be doing."
+  />
+</Base>

@@ -1,0 +1,83 @@
+---
+/**
+ * Standard page opener. Homepage keeps its own bespoke hero; every other page
+ * uses this so headings, breadcrumbs and lede measure stay identical site-wide.
+ *
+ * Follows the homepage as source of truth: eyebrow in uppercase label style,
+ * display-lg heading, lede constrained to the prose measure, and the compass
+ * rule as the section marker.
+ */
+import Section from './Section.astro';
+import CompassRule from './CompassRule.astro';
+
+interface Crumb {
+  label: string;
+  href?: string;
+}
+interface Props {
+  eyebrow?: string;
+  title: string;
+  lede?: string;
+  crumbs?: Crumb[];
+  tone?: 'page' | 'sunken' | 'inverse';
+}
+const { eyebrow, title, lede, crumbs = [], tone = 'page' } = Astro.props;
+const inverse = tone === 'inverse';
+---
+
+<Section tone={tone} width="wide" labelledby="page-h">
+  {
+    crumbs.length > 0 && (
+      <nav aria-label="Breadcrumb" class="mb-10">
+        <ol class="flex flex-wrap items-center gap-2 text-sm" style="color: var(--text-tertiary);">
+          {crumbs.map((c, i) => (
+            <li class="flex items-center gap-2">
+              {c.href ? (
+                <a href={c.href} style="color: var(--text-tertiary);">
+                  {c.label}
+                </a>
+              ) : (
+                <span aria-current="page">{c.label}</span>
+              )}
+              {i < crumbs.length - 1 && <span aria-hidden="true">/</span>}
+            </li>
+          ))}
+        </ol>
+      </nav>
+    )
+  }
+
+  <CompassRule />
+
+  {
+    eyebrow && (
+      <p
+        class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]"
+        style={`color: ${inverse ? 'var(--color-neutral-400)' : 'var(--text-tertiary)'};`}
+      >
+        {eyebrow}
+      </p>
+    )
+  }
+
+  <h1
+    id="page-h"
+    class="mt-4 measure"
+    style="font-size: var(--text-display-lg); font-weight: 800; letter-spacing: -0.033em; line-height: 1.03;"
+  >
+    {title}
+  </h1>
+
+  {
+    lede && (
+      <p
+        class="mt-8 measure"
+        style={`font-size: var(--text-body-lg); color: ${inverse ? 'var(--color-neutral-400)' : 'var(--text-secondary)'};`}
+      >
+        {lede}
+      </p>
+    )
+  }
+
+  <slot />
+</Section>

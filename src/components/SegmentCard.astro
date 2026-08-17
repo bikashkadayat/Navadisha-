@@ -1,0 +1,62 @@
+---
+/**
+ * Institution segment card. Phase-2 component inventory (`SegmentSelector`).
+ *
+ * Reuses the existing pillar-card pattern — same surface, border, radius, lift
+ * and arrow behaviour as the homepage. No new visual language; only the content
+ * shape differs.
+ *
+ * Committee buyers need to see their OWN institution type reflected before they
+ * will read further. A generic "for organisations" page fails that test, which
+ * is why the hub routes on segment rather than on service.
+ */
+interface Props {
+  name: string;
+  href: string;
+  detail: string;
+  /** Rendered when the card sits on a page for that same segment. */
+  current?: boolean;
+}
+const { name, href, detail, current = false } = Astro.props;
+---
+
+<a
+  href={href}
+  class="segment-card group block h-full rounded-xl border p-8"
+  style={`background-color: var(--surface-raised); border-color: ${current ? 'var(--border-accent)' : 'var(--border-subtle)'};`}
+  aria-current={current ? 'page' : undefined}
+>
+  <h3
+    style="font-family: var(--font-display); font-size: var(--text-heading-sm); font-weight: 720; letter-spacing: -0.012em;"
+  >
+    {name}
+  </h3>
+  <p class="mt-3 text-sm" style="color: var(--text-secondary);">{detail}</p>
+  <p class="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold" style="color: var(--text-accent);">
+    {current ? 'You are here' : 'See how we work with them'}
+    {!current && <span class="segment-arrow" aria-hidden="true">→</span>}
+  </p>
+</a>
+
+<style>
+  .segment-card {
+    transition:
+      transform 150ms ease-out,
+      box-shadow 150ms ease-out;
+  }
+  .segment-arrow {
+    display: inline-block;
+    transition: transform 150ms ease-out;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .segment-card:hover,
+    .segment-card:focus-visible {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px -14px rgba(15, 23, 42, 0.28);
+    }
+    .segment-card:hover .segment-arrow,
+    .segment-card:focus-visible .segment-arrow {
+      transform: translateX(3px);
+    }
+  }
+</style>

@@ -1,0 +1,65 @@
+---
+/**
+ * Programme status panel. Phase-2 component inventory.
+ *
+ * Renders ONLY verified facts. The status is displayed prominently rather than
+ * as a footnote, because for a programme that has not run yet the status IS the
+ * most important information on the page.
+ *
+ * ⛔ This component deliberately has no props for syllabus, fee, certification
+ * or learning outcomes. Those cannot be passed in because they do not exist for
+ * a planned programme, and a published syllabus is a delivery commitment made
+ * before the workshop is designed.
+ */
+import type { ProgramStatus } from '../data/programs.ts';
+import { statusLabel } from '../data/programs.ts';
+
+interface Props {
+  status: ProgramStatus;
+  /** Verified facts only. Anything unverified is simply omitted, not blanked. */
+  facts: { label: string; value: string }[];
+  /** Plain-language note on what the status means for the reader. */
+  note?: string;
+}
+const { status, facts, note } = Astro.props;
+
+const statusStyle = {
+  running: 'background-color: var(--pillar-tech-surface); color: var(--pillar-tech);',
+  planned: 'background-color: var(--pillar-edu-surface); color: var(--pillar-edu);',
+  'in-development': 'background-color: var(--surface-sunken); color: var(--text-tertiary);',
+}[status];
+---
+
+<div
+  class="rounded-xl border p-8"
+  style="background-color: var(--surface-raised); border-color: var(--border-subtle); border-left-width: 3px; border-left-color: var(--pillar-edu-fill);"
+>
+  <div class="flex flex-wrap items-center gap-3">
+    <p class="text-[0.6875rem] font-bold uppercase tracking-[0.13em]" style="color: var(--text-tertiary);">
+      Status
+    </p>
+    <span
+      class="rounded-full px-3 py-1 text-[0.6875rem] font-bold uppercase tracking-[0.09em]"
+      style={statusStyle}
+    >
+      {statusLabel[status]}
+    </span>
+  </div>
+
+  {note && <p class="mt-5 text-sm" style="color: var(--text-secondary);">{note}</p>}
+
+  <dl class="mt-7 space-y-4">
+    {
+      facts.map((f) => (
+        <div class="flex flex-wrap gap-x-4 gap-y-1 border-t pt-4 first:border-t-0 first:pt-0" style="border-color: var(--border-subtle);">
+          <dt class="text-sm" style="color: var(--text-tertiary); min-width: 6rem;">
+            {f.label}
+          </dt>
+          <dd class="text-sm" style="color: var(--text-primary); font-weight: 600;">
+            {f.value}
+          </dd>
+        </div>
+      ))
+    }
+  </dl>
+</div>

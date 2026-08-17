@@ -1,0 +1,43 @@
+---
+/**
+ * SIGNATURE DEVICE 1 — the layered horizon.
+ * Phase-2 design §02.
+ *
+ * Khaptad is a high grassland PLATEAU, not a jagged peak — rolling, open,
+ * layered, horizontal. Its defining form is the patan: soft stepped meadow
+ * terraces receding into haze. So the brand geometry is layered horizontal
+ * bands, deliberately NOT the triangular Everest silhouette every other Nepali
+ * company reaches for. That is what makes it ownable.
+ *
+ * RULES (from §02 — these are what keep it a signature rather than wallpaper):
+ *   · Maximum TWO per page, and only at a true ground change.
+ *   · Never between two same-tone sections.
+ *   · Steps are asymmetric — never equal thirds.
+ *   · 32–48px desktop, 20–28px mobile.
+ */
+interface Props {
+  /** Colour of the band being entered — i.e. the section BELOW this element. */
+  to: string;
+  steps?: 2 | 3;
+  class?: string;
+}
+const { to, steps = 3, class: className = '' } = Astro.props;
+
+// Asymmetric by design. Equal thirds read as a chart axis, not a landscape.
+const paths =
+  steps === 3
+    ? 'M0,26 L38,26 L38,14 L71,14 L71,0 L100,0 L100,40 L0,40 Z'
+    : 'M0,22 L44,22 L44,0 L100,0 L100,40 L0,40 Z';
+---
+
+<div class={`relative w-full ${className}`} aria-hidden="true" style="line-height:0;">
+  <svg
+    viewBox="0 0 100 40"
+    preserveAspectRatio="none"
+    class="block h-5 w-full sm:h-8 lg:h-11"
+    focusable="false"
+    role="presentation"
+  >
+    <path d={paths} fill={to} />
+  </svg>
+</div>

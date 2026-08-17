@@ -1,0 +1,643 @@
+---
+/**
+ * NAVADISHA — HEADER
+ * Navigation audit, client-approved Aug 2026. Five items + primary CTA.
+ *
+ * PROGRESSIVE ENHANCEMENT — non-negotiable. The mega panel and mobile overlay
+ * are <details>/<summary>. They open and close with JavaScript disabled. Script
+ * adds only hover-intent, Escape handling, focus return and scroll lock.
+ * Navigation must never depend on a script that may not have loaded.
+ *
+ * GLASS — 12px blur capped, with a solid fallback. backdrop-filter forces
+ * continuous compositing on a sticky element and is a measurable scroll-jank
+ * source on the mid-range Android the student audience uses. The mobile overlay
+ * is deliberately OPAQUE: nothing behind it is worth seeing, and a full-screen
+ * blurred scroller is the most expensive compositing case there is.
+ *
+ * CONTRAST — nav colour is token-driven and flips with header state, so it
+ * clears 4.5:1 both transparent-over-dark-hero and glass-over-light-content.
+ * Never a fixed literal.
+ */
+import { getCollection } from 'astro:content';
+import { primaryNav, primaryCta, megaPromo } from '../data/nav.ts';
+import { programLines, statusLabel, isLinkable } from '../data/programs.ts';
+import { company, whatsappLink, hasContactData } from '../data/company.ts';
+
+interface Props {
+  /** 'dark' where the page opens on an inverse hero (homepage only). */
+  heroTone?: 'dark' | 'light';
+}
+const { heroTone = 'light' } = Astro.props;
+
+const services = (await getCollection('services', ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+const education = services.filter((s) => s.data.pillar === 'education');
+const technology = services.filter((s) => s.data.pillar === 'technology');
+
+const path = Astro.url.pathname;
+const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+
+const wa = whatsappLink('Hello Navadisha — ');
+---
+
+<header class="site-header" data-hero={heroTone} data-header>
+  <div class="header-inner">
+    <a href="/" class="brand" aria-label={`${company.shortName} — home`}>
+      <img src="/brand/mark-108.png" alt="" width="36" height="36" aria-hidden="true" fetchpriority="high" />
+      <span class="wordmark">NAVADISHA</span>
+    </a>
+
+    <nav class="desktop-nav" aria-label="Primary">
+      {
+        primaryNav.map((item) =>
+          item.label === 'Services' ? (
+            <details class="mega" data-megapanel>
+              <summary class="nav-link" aria-haspopup="true" data-active={isActive(item.href)}>
+                <span>{item.label}</span>
+                <svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true" fill="none" class="chev">
+                  <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                </svg>
+              </summary>
+
+              <div class="mega-panel">
+                <div class="mega-cols">
+                  <div class="mega-lists">
+                    <div data-pillar="education">
+                      <p class="mega-heading">Education</p>
+                      <ul>
+                        {education.map((s) => (
+                          <li>
+                            <a href={`/services/${s.id}/`}>{s.data.navLabel ?? s.data.title}</a>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div data-pillar="technology">
+                      <p class="mega-heading">Technology</p>
+                      <ul>
+                        {technology.map((s) => (
+                          <li>
+                            <a href={`/services/${s.id}/`}>{s.data.navLabel ?? s.data.title}</a>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+
+                  {/* Programmes as a bordered block rather than a third equal
+                      column — shows, rather than states, that these are a
+                      different KIND of thing: scheduled products, not scoped
+                      engagements. Status is visible before the click. */}
+                  <div class="mega-programs">
+                    <p class="mega-heading mega-heading--muted">Programmes</p>
+                    <ul class="prog-list">
+                      {programLines.map((p) => (
+                        <li>
+                          {isLinkable(p) ? (
+                            <a href={p.href}>{p.title}</a>
+                          ) : (
+                            <span class="prog-static">{p.title}</span>
+                          )}
+                          <span class={`prog-status prog-${p.status}`}>{statusLabel[p.status]}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <p class="mega-all">
+                    <a href="/services/">Explore all services →</a>
+                  </p>
+                </div>
+
+                <aside class="mega-promo">
+                  <p class="promo-heading">{megaPromo.heading}</p>
+                  <p class="promo-body">{megaPromo.body}</p>
+                  <a href={megaPromo.ctaHref} class="promo-cta">{megaPromo.ctaLabel} →</a>
+                  <a href={megaPromo.secondaryHref} class="promo-secondary">
+                    {megaPromo.secondaryLabel} →
+                  </a>
+                </aside>
+              </div>
+            </details>
+          ) : (
+            <a
+              href={item.href}
+              class="nav-link"
+              data-active={isActive(item.href)}
+              aria-current={isActive(item.href) ? 'page' : undefined}
+            >
+              <span>{item.label}</span>
+            </a>
+          ),
+        )
+      }
+
+      <a href={primaryCta.href} class="cta">
+        {primaryCta.label}
+        <span aria-hidden="true" class="cta-arrow">→</span>
+      </a>
+    </nav>
+
+    <details class="mobile" data-mobilenav>
+      <summary class="mobile-trigger" aria-label="Open menu">
+        <span class="mobile-trigger-open">Menu</span>
+        <span class="mobile-trigger-close">Close</span>
+      </summary>
+
+      <div class="mobile-panel">
+        <ul class="mobile-list">
+          {
+            primaryNav.map((item) =>
+              item.label === 'Services' ? (
+                <li>
+                  <details class="mobile-acc">
+                    <summary>
+                      <span>{item.label}</span>
+                      <span aria-hidden="true">▾</span>
+                    </summary>
+                    <div class="mobile-acc-body">
+                      <p class="mega-heading mega-heading--muted">Education</p>
+                      <ul>
+                        {education.map((s) => (
+                          <li>
+                            <a href={`/services/${s.id}/`}>{s.data.navLabel ?? s.data.title}</a>
+                          </li>
+                        ))}
+                      </ul>
+                      <p class="mega-heading mega-heading--muted">Technology</p>
+                      <ul>
+                        {technology.map((s) => (
+                          <li>
+                            <a href={`/services/${s.id}/`}>{s.data.navLabel ?? s.data.title}</a>
+                          </li>
+                        ))}
+                      </ul>
+                      <p class="mega-heading mega-heading--muted">Programmes</p>
+                      <ul>
+                        {programLines.map((p) => (
+                          <li>
+                            {isLinkable(p) ? (
+                              <a href={p.href}>{p.title}</a>
+                            ) : (
+                              <span class="prog-static">{p.title}</span>
+                            )}
+                            <span class={`prog-status prog-${p.status}`}>{statusLabel[p.status]}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      <p><a href="/services/" class="mobile-all">Explore all services →</a></p>
+                    </div>
+                  </details>
+                </li>
+              ) : (
+                <li>
+                  <a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>
+                    <span>{item.label}</span>
+                    <span aria-hidden="true">→</span>
+                  </a>
+                </li>
+              ),
+            )
+          }
+        </ul>
+
+        <div class="mobile-footer">
+          <a href={primaryCta.href} class="cta cta-block">
+            {primaryCta.label}
+            <span aria-hidden="true">→</span>
+          </a>
+          <div class="mobile-quick">
+            {wa && <a href={wa}>WhatsApp</a>}
+            {hasContactData() && <a href={`tel:${company.contact.phone}`}>Call</a>}
+          </div>
+        </div>
+      </div>
+    </details>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background-color: transparent;
+    border-bottom: 1px solid transparent;
+    transition: background-color 200ms ease-out, border-color 200ms ease-out;
+  }
+  .header-inner {
+    max-width: var(--container-wide);
+    margin-inline: auto;
+    height: 64px;
+    padding-inline: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  @media (min-width: 1024px) {
+    .header-inner { height: 72px; padding-inline: 2.5rem; }
+  }
+
+  /* Token-driven, flips with state. Both states clear 4.5:1. */
+  .site-header[data-hero='dark'] {
+    --nav-fg: var(--color-neutral-400);
+    --nav-fg-strong: var(--color-neutral-50);
+  }
+  .site-header[data-hero='light'] {
+    --nav-fg: var(--text-secondary);
+    --nav-fg-strong: var(--text-primary);
+  }
+  .site-header.is-stuck {
+    --nav-fg: var(--text-secondary);
+    --nav-fg-strong: var(--text-primary);
+    background-color: color-mix(in srgb, var(--surface-page) 82%, transparent);
+    border-bottom-color: var(--border-subtle);
+  }
+  @supports (backdrop-filter: blur(1px)) {
+    .site-header.is-stuck {
+      backdrop-filter: blur(12px) saturate(140%);
+      -webkit-backdrop-filter: blur(12px) saturate(140%);
+    }
+  }
+  @supports not (backdrop-filter: blur(1px)) {
+    .site-header.is-stuck { background-color: var(--surface-page); }
+  }
+
+  .brand { display: flex; align-items: center; gap: 0.625rem; flex-shrink: 0; text-decoration: none; }
+  .brand img { height: 2.25rem; width: 2.25rem; }
+  .wordmark {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--nav-fg-strong);
+    transition: color 200ms ease-out;
+  }
+
+  .desktop-nav { margin-left: auto; display: none; align-items: center; gap: 0.25rem; }
+  @media (min-width: 1024px) { .desktop-nav { display: flex; } }
+
+  .nav-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.5rem 0.75rem 0.6rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--nav-fg);
+    text-decoration: none;
+    list-style: none;
+    cursor: pointer;
+    transition: color 150ms ease-out;
+  }
+  .nav-link::-webkit-details-marker { display: none; }
+  .nav-link:hover { color: var(--nav-fg-strong); }
+  .nav-link[data-active='true'] { color: var(--nav-fg-strong); }
+
+  /* COMPASS TICK — a cardinal mark scaled down, echoing the section rules.
+     Paired with aria-current so it is never a colour-only signal. */
+  .nav-link[data-active='true']::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 3px;
+    height: 8px;
+    background-color: var(--action-primary-default);
+  }
+  .site-header[data-hero='dark']:not(.is-stuck) .nav-link[data-active='true']::after {
+    background-color: var(--text-on-inverse-muted);
+  }
+  .chev { opacity: 0.7; transition: transform 200ms ease-out; }
+  .mega[open] .chev { transform: rotate(180deg); }
+
+  .cta {
+    margin-left: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.625rem 1.125rem;
+    min-height: 44px;
+    border-radius: 8px;
+    background-color: var(--action-primary-default);
+    color: var(--action-primary-text);
+    font-size: 0.875rem;
+    font-weight: 650;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color 150ms ease-out;
+  }
+  .cta:hover { background-color: var(--action-primary-hover); }
+  .cta-arrow { display: inline-block; transition: transform 150ms ease-out; }
+  .cta:hover .cta-arrow { transform: translateX(2px); }
+
+  .mega { position: relative; }
+  .mega-panel {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    margin-top: 0.5rem;
+    width: min(64rem, calc(100vw - 4rem));
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    background-color: var(--surface-raised);
+    box-shadow: 0 16px 40px -20px rgba(15, 23, 42, 0.28);
+    overflow: hidden;
+  }
+  .mega-cols { padding: 2rem; }
+  .mega-lists { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  .mega-heading {
+    margin: 0 0 0.85rem;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--pillar, var(--text-tertiary));
+  }
+  .mega-heading--muted { color: var(--text-tertiary); }
+  .mega-lists ul, .prog-list { list-style: none; margin: 0; padding: 0; }
+  .mega-lists a {
+    display: block;
+    padding: 0.4rem 0.5rem;
+    margin-inline: -0.5rem;
+    border-radius: 5px;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: background-color 150ms ease-out, color 150ms ease-out;
+  }
+  .mega-lists a:hover { background-color: var(--surface-sunken); color: var(--text-primary); }
+
+  .mega-programs {
+    margin-top: 1.75rem;
+    padding: 1.25rem 1.375rem;
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    background-color: var(--surface-sunken);
+  }
+  .prog-list li { display: flex; align-items: center; gap: 0.75rem; padding: 0.3rem 0; }
+  .prog-list a { font-size: 0.875rem; color: var(--text-secondary); text-decoration: none; }
+  .prog-list a:hover { color: var(--text-primary); }
+  .prog-static { font-size: 0.875rem; color: var(--text-tertiary); }
+  .prog-status {
+    margin-left: auto;
+    flex-shrink: 0;
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+  }
+  .prog-planned { background-color: var(--pillar-edu-surface); color: var(--pillar-edu); }
+  .prog-running { background-color: var(--pillar-tech-surface); color: var(--pillar-tech); }
+  .prog-in-development { background-color: var(--surface-raised); color: var(--text-tertiary); }
+
+  .mega-all { margin: 1.5rem 0 0; }
+  .mega-all a { font-size: 0.875rem; font-weight: 650; color: var(--text-primary); text-decoration: none; }
+
+  .mega-promo {
+    padding: 2rem;
+    background-color: var(--surface-sunken);
+    border-left: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+  }
+  .promo-heading {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+    font-weight: 760;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+  }
+  .promo-body { margin: 0.75rem 0 0; font-size: 0.8125rem; color: var(--text-secondary); }
+  .promo-cta {
+    margin-top: 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.625rem 1rem;
+    border-radius: 8px;
+    background-color: var(--action-primary-default);
+    color: var(--action-primary-text);
+    font-size: 0.8125rem;
+    font-weight: 650;
+    text-decoration: none;
+  }
+  .promo-secondary {
+    margin-top: auto;
+    padding-top: 1.25rem;
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+  }
+  .promo-secondary:hover { color: var(--text-primary); }
+
+  .mobile { margin-left: auto; }
+  @media (min-width: 1024px) { .mobile { display: none; } }
+  .mobile-trigger {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9375rem;
+    font-weight: 620;
+    color: var(--nav-fg-strong);
+    list-style: none;
+    cursor: pointer;
+  }
+  .mobile-trigger::-webkit-details-marker { display: none; }
+  .mobile-trigger-close { display: none; }
+  .mobile[open] .mobile-trigger-open { display: none; }
+  .mobile[open] .mobile-trigger-close { display: inline; }
+
+  /* OPAQUE — deliberately not glass. See the header comment. */
+  .mobile-panel {
+    position: fixed;
+    inset: 64px 0 0;
+    z-index: 40;
+    background-color: var(--surface-page);
+    border-top: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+  }
+  .mobile-list { list-style: none; margin: 0; padding: 0.5rem 1.25rem 1rem; overflow-y: auto; flex: 1; }
+  .mobile-list > li > a,
+  .mobile-acc > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 56px;
+    padding: 0.5rem 0.25rem;
+    font-size: 1.0625rem;
+    font-weight: 620;
+    color: var(--text-primary);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border-subtle);
+    list-style: none;
+    cursor: pointer;
+  }
+  .mobile-acc > summary::-webkit-details-marker { display: none; }
+  .mobile-acc-body { padding: 1rem 0.25rem 1.25rem; }
+  .mobile-acc-body .mega-heading { margin-top: 1rem; }
+  .mobile-acc-body ul { list-style: none; margin: 0; padding: 0; }
+  .mobile-acc-body li { display: flex; align-items: center; gap: 0.75rem; }
+  .mobile-acc-body a {
+    display: block;
+    min-height: 44px;
+    line-height: 44px;
+    font-size: 0.9375rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+  }
+  .mobile-all { font-weight: 650; color: var(--text-primary) !important; }
+
+  /* Sticky footer — the highest-value 44px on mobile. */
+  .mobile-footer {
+    position: sticky;
+    bottom: 0;
+    padding: 1rem 1.25rem calc(1rem + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--border-subtle);
+    background-color: var(--surface-page);
+  }
+  .cta-block { margin-left: 0; width: 100%; justify-content: center; }
+  .mobile-quick { display: flex; gap: 0.75rem; margin-top: 0.75rem; }
+  .mobile-quick a {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    border: 1px solid var(--action-secondary-border);
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 620;
+    color: var(--text-primary);
+    text-decoration: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-header, .wordmark, .nav-link, .chev, .cta, .cta-arrow, .mega-lists a { transition: none; }
+  }
+</style>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-header]');
+  const mega = document.querySelector<HTMLDetailsElement>('[data-megapanel]');
+  const mobile = document.querySelector<HTMLDetailsElement>('[data-mobilenav]');
+  const panels = [mega, mobile].filter(Boolean) as HTMLDetailsElement[];
+
+  // rAF-throttled. A raw scroll listener on a sticky backdrop-filtered element
+  // is precisely the jank case this design is avoiding.
+  if (header) {
+    let ticking = false;
+    const update = () => {
+      header.classList.toggle('is-stuck', window.scrollY > 80);
+      ticking = false;
+    };
+    update();
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(update);
+      },
+      { passive: true },
+    );
+  }
+
+  // Hover intent: 120ms to open, 200ms to close — forgives cursor drift between
+  // the trigger and the panel.
+  if (mega && window.matchMedia('(min-width: 1024px)').matches) {
+    let openT: number | undefined;
+    let closeT: number | undefined;
+    mega.addEventListener('mouseenter', () => {
+      window.clearTimeout(closeT);
+      openT = window.setTimeout(() => (mega.open = true), 120);
+    });
+    mega.addEventListener('mouseleave', () => {
+      window.clearTimeout(openT);
+      closeT = window.setTimeout(() => (mega.open = false), 200);
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    panels.forEach((p) => {
+      if (!p.open) return;
+      p.open = false;
+      p.querySelector('summary')?.focus();
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    panels.forEach((p) => {
+      if (p.open && !p.contains(e.target as Node)) p.open = false;
+    });
+  });
+
+  panels.forEach((p) =>
+    p.addEventListener('toggle', () => {
+      if (!p.open) return;
+      panels.forEach((o) => o !== p && (o.open = false));
+    }),
+  );
+
+  // FOCUS TRAP — WCAG 2.4.3. Without this a keyboard user tabs past the last
+  // menu item into the page behind an overlay that visually covers it, which is
+  // disorienting and leaves them stranded with no visible focus.
+  const FOCUSABLE =
+    'a[href], button:not([disabled]), summary, input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
+  function trapFocus(e: KeyboardEvent) {
+    if (e.key !== 'Tab' || !mobile?.open) return;
+
+    const panel = mobile.querySelector('.mobile-panel');
+    if (!panel) return;
+
+    // Recomputed on every Tab: the Services accordion opens and closes, so the
+    // focusable set is not stable for the lifetime of the overlay.
+    const items = [
+      mobile.querySelector('summary'),
+      ...Array.from(panel.querySelectorAll(FOCUSABLE)),
+    ].filter((el): el is HTMLElement => {
+      if (!el) return false;
+      const style = window.getComputedStyle(el as HTMLElement);
+      return style.display !== 'none' && style.visibility !== 'hidden';
+    });
+
+    if (!items.length) return;
+    const first = items[0];
+    const last = items[items.length - 1];
+    const active = document.activeElement;
+
+    if (e.shiftKey && active === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && active === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  }
+
+  document.addEventListener('keydown', trapFocus);
+
+  mobile?.addEventListener('toggle', () => {
+    document.body.style.overflow = mobile.open ? 'hidden' : '';
+    // Move focus into the overlay on open so the trap has an anchor and a
+    // screen-reader user lands inside the menu rather than behind it.
+    if (mobile.open) {
+      const firstLink = mobile.querySelector<HTMLElement>('.mobile-panel a, .mobile-panel summary');
+      firstLink?.focus();
+    }
+  });
+</script>

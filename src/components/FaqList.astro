@@ -1,0 +1,43 @@
+---
+/**
+ * FAQ list. Phase-2 component inventory (`FaqList`).
+ *
+ * The FAQPage JSON-LD is generated from the SAME array the page renders, so
+ * schema can never drift from visible content (§11.3). Passing the schema up to
+ * the layout rather than emitting it here keeps all structured data in <head>.
+ *
+ * Every institution page's FAQ set must include the pricing question. Buyers
+ * ask it; dodging it costs more than answering honestly (§10.2).
+ */
+interface Faq {
+  q: string;
+  a: string;
+}
+interface Props {
+  faqs: Faq[];
+  heading?: string;
+  headingId?: string;
+}
+const { faqs, heading = 'Common questions', headingId = 'faq-h' } = Astro.props;
+---
+
+<h2 id={headingId} style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;">
+  {heading}
+</h2>
+
+<dl class="mt-10 measure space-y-8">
+  {
+    faqs.map((f) => (
+      <div class="border-t pt-6 first:border-t-0 first:pt-0" style="border-color: var(--border-subtle);">
+        <dt
+          style="font-family: var(--font-display); font-size: var(--text-heading-sm); font-weight: 700; letter-spacing: -0.012em;"
+        >
+          {f.q}
+        </dt>
+        <dd class="mt-3 text-sm" style="color: var(--text-secondary);">
+          {f.a}
+        </dd>
+      </div>
+    ))
+  }
+</dl>

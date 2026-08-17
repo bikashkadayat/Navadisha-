@@ -1,0 +1,148 @@
+---
+/**
+ * 404
+ *
+ * Helpful, human, professional. NOT humorous and NOT technical.
+ *
+ * A joke here lands badly on the two people most likely to see this page: a
+ * principal who followed a link from a document, and someone who mistyped an
+ * address. Neither wants wit; both want the route they were looking for.
+ *
+ * Excluded from the sitemap in astro.config.mjs. Carries `noindex` — a 404
+ * should never appear in search results.
+ */
+import Base from '../layouts/Base.astro';
+import Section from '../components/Section.astro';
+import CompassRule from '../components/CompassRule.astro';
+import Button from '../components/Button.astro';
+import { company, whatsappLink, hasContactData } from '../data/company.ts';
+
+const wa = whatsappLink('Hello Navadisha — ');
+
+const routes = [
+  {
+    name: 'Home',
+    href: '/',
+    detail: 'What we do, and who we do it for.',
+  },
+  {
+    name: 'For institutions',
+    href: '/institutions/',
+    detail: 'Schools, colleges and development organisations.',
+  },
+  {
+    name: 'For students',
+    href: '/students/',
+    detail: 'Workshops and straight answers about technology careers.',
+  },
+  {
+    name: 'Contact',
+    href: '/contact/',
+    detail: 'Message, WhatsApp or call. A reply within one working day.',
+  },
+];
+---
+
+<Base
+  title="Page not found | Navadisha"
+  description="That page does not exist. Here are the main sections of the Navadisha website."
+  noindex
+>
+  <Section width="wide" labelledby="nf-h">
+    <CompassRule />
+    <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--text-tertiary);">
+      404
+    </p>
+
+    <h1
+      id="nf-h"
+      class="mt-4 measure"
+      style="font-size: var(--text-display-lg); font-weight: 800; letter-spacing: -0.033em; line-height: 1.03;"
+    >
+      That page does not exist.
+    </h1>
+
+    <p class="mt-8 measure" style="font-size: var(--text-body-lg); color: var(--text-secondary);">
+      The address may have changed, or there may be a typo in the link. Everything on the site is
+      reachable from the four sections below, and the full list is on the
+      <a href="/sitemap/" style="color: var(--text-accent); font-weight: 600;">sitemap</a>.
+    </p>
+  </Section>
+
+  <Section tone="sunken" labelledby="routes-h">
+    <h2 id="routes-h" class="sr-only">Main sections</h2>
+    <ul class="grid gap-6 sm:grid-cols-2">
+      {
+        routes.map((r) => (
+          <li>
+            <a
+              href={r.href}
+              class="nf-card block h-full rounded-xl border p-8"
+              style="background-color: var(--surface-raised); border-color: var(--border-subtle);"
+            >
+              <span
+                class="block"
+                style="font-family: var(--font-display); font-size: var(--text-heading-md); font-weight: 720; letter-spacing: -0.018em;"
+              >
+                {r.name}
+              </span>
+              <span class="mt-3 block text-sm" style="color: var(--text-secondary);">
+                {r.detail}
+              </span>
+              <span class="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold" style="color: var(--text-accent);">
+                Go there
+                <span class="nf-arrow" aria-hidden="true">→</span>
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </Section>
+
+  <Section labelledby="help-h">
+    <CompassRule />
+    <h2 id="help-h" class="mt-6" style="font-size: var(--text-heading-lg); font-weight: 760; letter-spacing: -0.024em;">
+      Looking for something specific?
+    </h2>
+    <p class="mt-5 measure" style="color: var(--text-secondary);">
+      If you followed a link from a document or an email and it brought you here, tell us — we
+      would rather fix a broken link than have the next person hit the same page.
+    </p>
+
+    <div class="mt-8 flex flex-wrap gap-4">
+      <Button href="/contact/" note={company.responseCommitment} arrow>Tell us what you were looking for</Button>
+      {wa && <Button href={wa} variant="secondary">WhatsApp us</Button>}
+      {
+        hasContactData() && (
+          <Button href={`tel:${company.contact.phone}`} variant="secondary">
+            Call {company.contact.phoneDisplay}
+          </Button>
+        )
+      }
+    </div>
+  </Section>
+</Base>
+
+<style>
+  .nf-card {
+    transition:
+      transform 150ms ease-out,
+      box-shadow 150ms ease-out;
+  }
+  .nf-arrow {
+    display: inline-block;
+    transition: transform 150ms ease-out;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .nf-card:hover,
+    .nf-card:focus-visible {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px -14px rgba(15, 23, 42, 0.28);
+    }
+    .nf-card:hover .nf-arrow,
+    .nf-card:focus-visible .nf-arrow {
+      transform: translateX(3px);
+    }
+  }
+</style>

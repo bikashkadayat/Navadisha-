@@ -1,0 +1,437 @@
+---
+/**
+ * NAVADISHA — HOMEPAGE
+ * Copy: content-decks/homepage.md (approved, production)
+ * Design: Phase-2 experience design §11
+ *
+ * Ten sections. Designed around WHAT EXISTS — no testimonial carousel, no
+ * client logo wall, no animated statistics. Every one of those would have to be
+ * fabricated. What fills the space instead is stronger for a new firm: a
+ * published method, one real project given full editorial weight, and two named
+ * founders with verifiable credentials.
+ *
+ * The honesty gates are logic, not prose:
+ *   · S6 uses CaseStudyFeature while there are fewer than 3 featured cases,
+ *     and switches to a card grid automatically at 3.
+ *   · S7 omits itself entirely if no programme is publishable.
+ *   · Testimonial and logo sections do not exist as components at all.
+ */
+import Base from '../layouts/Base.astro';
+import Section from '../components/Section.astro';
+import Button from '../components/Button.astro';
+import CompassRule from '../components/CompassRule.astro';
+import LayeredHorizon from '../components/LayeredHorizon.astro';
+import PathLine from '../components/PathLine.astro';
+import BridgeDiagram from '../components/BridgeDiagram.astro';
+import CaseStudyFeature from '../components/CaseStudyFeature.astro';
+import TeamCard from '../components/TeamCard.astro';
+import ProgramCard from '../components/ProgramCard.astro';
+import ConversionBand from '../components/ConversionBand.astro';
+import { getCollection } from 'astro:content';
+
+const [work, team, programs] = await Promise.all([
+  getCollection('work', ({ data }) => !data.draft),
+  getCollection('team'),
+  getCollection('programs', ({ data }) => !data.draft),
+]);
+
+// Only delivered engagements count as proof. `illustrative` pieces are honest
+// and useful but they are not evidence, so they do not satisfy this threshold.
+const realCases = work.filter((w) => !w.data.illustrative && w.data.featured);
+const useGrid = realCases.length >= 3;
+const feature = realCases[0];
+
+const founders = team.sort((a, b) => a.data.order - b.data.order);
+
+const method = [
+  {
+    label: 'Diagnose',
+    detail:
+      'We establish what is actually wrong before proposing anything. Data, interviews, observation. No recommendations at this stage.',
+  },
+  {
+    label: 'Direct',
+    detail:
+      'A prioritised path, sequenced and costed, that you can take to a board and defend line by line.',
+  },
+  {
+    label: 'Deliver',
+    detail: 'We implement the priorities we agreed, in the order we agreed them.',
+  },
+  {
+    label: 'Enable',
+    detail:
+      'Documentation, training and handover. Your team runs it without us. That is the point.',
+  },
+];
+
+const pillars = [
+  {
+    key: 'education' as const,
+    name: 'Education',
+    claim:
+      'We advise institutions on the decisions that shape their next five years — positioning, digital capability, industry alignment, and the programmes that connect students to work.',
+    items: [
+      'Institutional Advisory',
+      'School Consulting',
+      'College & University',
+      'Career Guidance',
+      'Industry Linkage',
+    ],
+    href: '/institutions/',
+    cta: 'For institutions',
+  },
+  {
+    key: 'technology' as const,
+    name: 'Technology',
+    claim:
+      'We design and build the websites, software and digital infrastructure organisations depend on — then hand them to teams able to run them.',
+    items: [
+      'Web Development',
+      'Software Development',
+      'Branding & Design',
+      'Digital Marketing',
+      'Digital Transformation',
+    ],
+    href: '/services/',
+    cta: 'Explore services',
+  },
+];
+
+/**
+ * Programmes. The status taxonomy is load-bearing (Phase-1 plan §05):
+ * 'in-development' entries carry a name and a status and NOTHING else — no
+ * link, because there is nothing behind them and a link implies there is.
+ */
+const aiWorkshop = programs.find((p) => p.id === 'ai-for-students');
+const inDevelopment = ['Networking Training', 'Digital Skills Training', 'Corporate Training'];
+---
+
+<Base
+  title="Navadisha — Education & technology consulting, Kathmandu"
+  description="Navadisha advises Nepali institutions on direction and digital capability, builds the systems they run on, and prepares people for industry."
+  heroTone="dark"
+>
+  {/* ══════════ S2 · HERO ══════════ */}
+  <Section tone="inverse" width="wide" labelledby="hero-h" class="!pb-10 sm:!pb-14">
+    <div class="grid items-center gap-14 lg:grid-cols-12">
+      <div class="lg:col-span-7">
+        <h1
+          id="hero-h"
+          style="font-size: var(--text-display-xl); font-weight: 800; letter-spacing: -0.037em; line-height: 0.98;"
+        >
+          Direction for institutions. Capability for people. Systems for both.
+        </h1>
+
+        <p
+          class="mt-8 measure"
+          style="font-size: var(--text-body-lg); color: var(--text-on-inverse-muted);"
+        >
+          Navadisha is a Kathmandu consulting practice working across education and technology —
+          advising institutions, building the systems they run on, and preparing people for the
+          industry they are entering.
+        </p>
+
+        <div class="mt-10 flex flex-wrap gap-4">
+          <Button href="/institutions/" arrow>For institutions</Button>
+          <Button href="/students/" variant="secondary" arrow>For students</Button>
+        </div>
+
+        {/* Verified facts only. No client counts, no "trusted by", no metrics
+             — the exact failure the reference audit found on nxn.com.pk. */}
+        <ul
+          class="mt-14 flex flex-wrap gap-x-10 gap-y-3 text-sm"
+          style="color: var(--text-on-inverse-faint);"
+        >
+          <li>Founder-led · Baneshwar, Kathmandu</li>
+          <li>Education and technology practices</li>
+          <li>Every engagement ends in handover</li>
+        </ul>
+      </div>
+
+      {/* Compass + bridge motif, drawn from the logo. Loads after the text on
+           mobile: on 4G the routing decision must arrive before decoration. */}
+      <div class="order-last lg:col-span-5" aria-hidden="true">
+        <svg viewBox="0 0 400 400" class="w-full max-w-sm lg:max-w-none" role="presentation" focusable="false">
+          <circle cx="200" cy="200" r="150" fill="none" stroke="var(--color-base-700)" stroke-width="1.5" />
+          <circle cx="200" cy="200" r="112" fill="none" stroke="var(--color-base-800)" stroke-width="1" />
+          {/* cardinal ticks */}
+          <path d="M200 34 v22 M200 344 v22 M34 200 h22 M344 200 h22" stroke="var(--color-base-600)" stroke-width="2" stroke-linecap="round" />
+          {/* layered horizon inside the ring — Khaptad patan geometry */}
+          <path d="M78 250 h96 v-22 h84 v-20 h64" fill="none" stroke="var(--color-base-600)" stroke-width="1.5" />
+          {/* the bridge */}
+          <path d="M96 286 Q200 214 304 286" fill="none" stroke="var(--pillar-tech-fill)" stroke-width="3" stroke-linecap="round" />
+          <path d="M120 286 v-18 M160 286 v-30 M200 286 v-36 M240 286 v-30 M280 286 v-18" stroke="var(--color-base-600)" stroke-width="1.5" stroke-linecap="round" />
+          {/* direction arrow */}
+          <path d="M244 168 L300 112 M300 112 h-30 M300 112 v30" fill="none" stroke="var(--pillar-edu-fill)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+          <circle cx="200" cy="200" r="5" fill="var(--color-neutral-50)" />
+        </svg>
+      </div>
+    </div>
+  </Section>
+
+  <LayeredHorizon to="var(--surface-page)" />
+
+  {/* ══════════ S3 · THE BRIDGE ══════════ */}
+  <Section labelledby="bridge-h">
+    <CompassRule />
+    <p
+      class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]"
+      style="color: var(--text-tertiary);"
+    >
+      Our position
+    </p>
+
+    <h2
+      id="bridge-h"
+      class="mt-4 measure"
+      style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;"
+    >
+      Education, technology and industry operate separately. The cost of that separation is
+      carried by everyone.
+    </h2>
+
+    <p class="mt-6 measure" style="font-size: var(--text-body-lg); color: var(--text-secondary);">
+      Institutions prepare people for work. Employers need capability they can use. Technology is
+      now the medium through which both operate. In Nepal these three rarely meet by design — and
+      where they do not, students lose direction, institutions lose relevance, and industry loses
+      the people it needs.
+    </p>
+
+    <div class="mt-16">
+      <BridgeDiagram />
+    </div>
+
+    <p class="mt-14 measure" style="color: var(--text-secondary);">
+      Navadisha works across all five. That is the practice.
+      <a href="/about/method/" class="ml-1 font-semibold" style="color: var(--text-accent);">
+        How we work →
+      </a>
+    </p>
+  </Section>
+
+  {/* ══════════ S4 · TWO PILLARS ══════════ */}
+  <Section tone="sunken" labelledby="pillars-h">
+    <h2 id="pillars-h" class="sr-only">Our practices</h2>
+
+    {/* Exactly 50/50. The one place symmetry is mandatory: equal weight IS the
+         message, because Education and Technology are co-equal practices. */}
+    <div class="grid gap-6 lg:grid-cols-2">
+      {
+        pillars.map((p) => (
+          <a
+            href={p.href}
+            data-pillar={p.key}
+            class="pillar-card group block rounded-xl border p-9"
+            style="background-color: var(--surface-raised); border-color: var(--border-subtle); border-left-width: 3px; border-left-color: var(--pillar-fill);"
+          >
+            <p
+              class="text-[0.6875rem] font-bold uppercase tracking-[0.14em]"
+              style="color: var(--pillar);"
+            >
+              {p.name}
+            </p>
+
+            <p
+              class="mt-5"
+              style="font-family: var(--font-display); font-size: var(--text-heading-md); font-weight: 720; line-height: 1.32; letter-spacing: -0.018em;"
+            >
+              {p.claim}
+            </p>
+
+            <ul class="mt-7 space-y-2 text-sm" style="color: var(--text-secondary);">
+              {p.items.map((i) => (
+                <li>{i}</li>
+              ))}
+            </ul>
+
+            <p class="mt-8 inline-flex items-center gap-1.5 text-sm font-semibold" style="color: var(--text-primary);">
+              {p.cta}
+              <span class="pillar-arrow" aria-hidden="true">→</span>
+            </p>
+          </a>
+        ))
+      }
+    </div>
+  </Section>
+
+  {/* ══════════ S5 · HOW WE WORK ══════════ */}
+  <Section labelledby="method-h">
+    <CompassRule />
+    <p
+      class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]"
+      style="color: var(--text-tertiary);"
+    >
+      Method
+    </p>
+
+    <h2
+      id="method-h"
+      class="mt-4"
+      style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;"
+    >
+      Four stages. The fourth is the one that matters.
+    </h2>
+
+    <p class="mt-6 measure" style="font-size: var(--text-body-lg); color: var(--text-secondary);">
+      Most engagements end when a deliverable is handed over. Ours end when your team no longer
+      needs us.
+    </p>
+
+    <div class="mt-16">
+      <PathLine nodes={method} numbered />
+    </div>
+
+    <p class="mt-14">
+      <a href="/about/method/" class="text-sm font-semibold" style="color: var(--text-accent);">
+        The full method →
+      </a>
+    </p>
+  </Section>
+
+  {/* ══════════ S6 · SELECTED WORK ══════════ */}
+  {
+    feature && (
+      <Section tone="sunken" labelledby="work-h">
+        <CompassRule />
+        <p
+          class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]"
+          style="color: var(--text-tertiary);"
+        >
+          Selected work
+        </p>
+        <h2 id="work-h" class="sr-only">
+          Selected work
+        </h2>
+
+        <div class="mt-10">
+          {useGrid ? (
+            <div class="grid gap-6 md:grid-cols-3">
+              {realCases.slice(0, 3).map((c) => (
+                <a
+                  href={`/work/${c.id}/`}
+                  class="block rounded-xl border p-6"
+                  style="background-color: var(--surface-raised); border-color: var(--border-subtle);"
+                >
+                  <p class="text-[0.6875rem] font-bold uppercase tracking-[0.13em]" style="color: var(--text-tertiary);">
+                    {c.data.client}
+                  </p>
+                  <p class="mt-3" style="font-family: var(--font-display); font-size: var(--text-heading-sm); font-weight: 720;">
+                    {c.data.title}
+                  </p>
+                  <p class="mt-2 text-sm" style="color: var(--text-secondary);">{c.data.challenge}</p>
+                </a>
+              ))}
+            </div>
+          ) : (
+            <CaseStudyFeature caseStudy={feature} />
+          )}
+        </div>
+      </Section>
+    )
+  }
+
+  {/* ══════════ S7 · PROGRAMMES ══════════ */}
+  <Section labelledby="programs-h">
+    <CompassRule />
+    <p
+      class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]"
+      style="color: var(--text-tertiary);"
+    >
+      Programmes
+    </p>
+
+    <h2
+      id="programs-h"
+      class="mt-4"
+      style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;"
+    >
+      Training built around what institutions and students actually need.
+    </h2>
+
+    <p class="mt-6 measure" style="font-size: var(--text-body-lg); color: var(--text-secondary);">
+      Our training practice is being developed deliberately. We publish a programme when it is
+      ready to deliver, not before.
+    </p>
+
+    <div class="mt-12 space-y-3">
+      <ProgramCard
+        title="AI for Students"
+        status="planned"
+        href={aiWorkshop ? `/programs/${aiWorkshop.id}/` : undefined}
+        detail="One day · school and college students · on-site or hybrid"
+        timing="Tentatively October 2026"
+      />
+      {inDevelopment.map((t) => <ProgramCard title={t} status="in-development" />)}
+    </div>
+  </Section>
+
+  {/* ══════════ S8 · THE PEOPLE ══════════ */}
+  <Section tone="sunken" labelledby="people-h">
+    <CompassRule />
+    <p
+      class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]"
+      style="color: var(--text-tertiary);"
+    >
+      The practice
+    </p>
+
+    <h2
+      id="people-h"
+      class="mt-4 measure"
+      style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;"
+    >
+      Navadisha is founder-led. You work with the people doing the work.
+    </h2>
+
+    <p class="mt-6 measure" style="font-size: var(--text-body-lg); color: var(--text-secondary);">
+      There is no account manager between you and the engagement. At this stage that is a
+      deliberate choice, and it is worth stating plainly.
+    </p>
+
+    <div class="mt-12 grid gap-6 md:grid-cols-2">
+      {
+        founders.map((m) => (
+          <TeamCard member={m}>
+            {m.id === 'bikash-kadayat'
+              ? 'Full-stack developer, digital literacy trainer and community network leader, working across the education and technology practices.'
+              : 'Marketing, community engagement and partnerships, with responsibility for events and stakeholder relationships.'}
+          </TeamCard>
+        ))
+      }
+    </div>
+
+    <p class="mt-10">
+      <a href="/about/team/" class="text-sm font-semibold" style="color: var(--text-accent);">
+        Meet the team →
+      </a>
+    </p>
+  </Section>
+
+  {/* ══════════ S9 · CONVERSION ══════════ */}
+  <ConversionBand />
+</Base>
+
+<style>
+  .pillar-card {
+    transition:
+      transform 150ms ease-out,
+      box-shadow 150ms ease-out,
+      border-left-width 150ms ease-out;
+  }
+  .pillar-arrow {
+    display: inline-block;
+    transition: transform 150ms ease-out;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .pillar-card:hover,
+    .pillar-card:focus-visible {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px -14px rgba(15, 23, 42, 0.28);
+    }
+    .pillar-card:hover .pillar-arrow,
+    .pillar-card:focus-visible .pillar-arrow {
+      transform: translateX(3px);
+    }
+  }
+</style>

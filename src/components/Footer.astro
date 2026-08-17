@@ -1,0 +1,130 @@
+---
+/**
+ * NAVADISHA — FOOTER
+ * Phase-0 doc §8 S11 and §12.4.
+ *
+ * The compliance block is the cheapest trust signal available and it is what
+ * personas 4, 6 and 8 (universities, NGOs, government) specifically look for.
+ * Most Nepali company sites omit it entirely — including it is a low-effort
+ * differentiator that unlocks procurement-driven buyers.
+ *
+ * It renders ONLY with real data. Until blocker #2 closes, an honest
+ * placeholder shows in dev and nothing ships to production. Publishing an
+ * invented registration number would be worse than publishing none.
+ */
+import { footerColumns, legalLinks } from '../data/nav.ts';
+import {
+  company,
+  hasComplianceData,
+  hasContactData,
+  registrationNotice,
+} from '../data/company.ts';
+
+const year = new Date().getFullYear();
+const showCompliance = hasComplianceData();
+const showContact = hasContactData();
+const notice = registrationNotice();
+---
+
+<footer class="mt-24 border-t" style="border-color: var(--border-subtle); background-color: var(--surface-sunken);">
+  <div class="mx-auto px-5 py-16 lg:px-10" style="max-width: var(--container-wide);">
+    <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+      <div>
+        <p class="font-semibold tracking-tight" style="font-family: var(--font-display); font-size: 1.125rem;">
+          Navadisha
+        </p>
+        <p class="mt-2 text-sm" style="color: var(--text-secondary);">
+          Consulting &amp; Innovations
+        </p>
+        <p class="mt-4 text-sm" style="color: var(--text-tertiary); max-width: 24ch;">
+          The bridge between Nepal&rsquo;s education system and its industry.
+        </p>
+      </div>
+
+      {
+        footerColumns.map((col) => (
+          <nav aria-label={col.heading}>
+            <p
+              class="mb-4 text-[0.625rem] font-bold uppercase tracking-[0.13em]"
+              style="color: var(--text-tertiary);"
+            >
+              {col.heading}
+            </p>
+            <ul class="space-y-2">
+              {col.links.map((link) => (
+                <li>
+                  <a href={link.href} class="text-sm" style="color: var(--text-secondary);">
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))
+      }
+    </div>
+
+    {/* ---- Contact: address and phone visible on every page (§8 S11) ---- */}
+    <div class="mt-12 border-t pt-8" style="border-color: var(--border-subtle);">
+      {
+        showContact ? (
+          <address class="not-italic text-sm" style="color: var(--text-secondary);">
+            <p>{company.contact.address.street}, {company.contact.address.city}</p>
+            <p class="mt-1">
+              <a href={`tel:${company.contact.phone}`} style="color: var(--text-primary);">
+                {company.contact.phoneDisplay}
+              </a>
+              {company.contact.email && (
+                <>
+                  {' · '}
+                  <a href={`mailto:${company.contact.email}`} style="color: var(--text-primary);">
+                    {company.contact.email}
+                  </a>
+                </>
+              )}
+            </p>
+            {company.contact.officeHours && <p class="mt-1">{company.contact.officeHours}</p>}
+          </address>
+        ) : null
+      }
+    </div>
+
+    {/* ---- Compliance: unlocks personas 4, 6, 8 (§4, §12.4) ---- */}
+    <div class="mt-8 border-t pt-8" style="border-color: var(--border-subtle);">
+      {
+        showCompliance ? (
+          <dl class="flex flex-wrap gap-x-8 gap-y-2 text-xs" style="color: var(--text-tertiary);">
+            <div class="flex gap-2">
+              <dt>Registered name:</dt>
+              <dd style="color: var(--text-secondary);">{company.legalName}</dd>
+            </div>
+            <div class="flex gap-2">
+              <dt>Company reg. no.:</dt>
+              <dd style="color: var(--text-secondary);">{company.registration.companyNumber}</dd>
+            </div>
+            <div class="flex gap-2">
+              <dt>PAN/VAT:</dt>
+              <dd style="color: var(--text-secondary);">{company.registration.panVat}</dd>
+            </div>
+          </dl>
+        ) : notice ? (
+          /* Incorporation pending. Saying so plainly is far better than an
+             unexplained gap: a procurement-driven buyer who finds no compliance
+             data assumes the worst, and this costs nothing to state. */
+          <p class="text-xs measure" style="color: var(--text-tertiary);">{notice}</p>
+        ) : null
+      }
+
+      <div class="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs" style="color: var(--text-tertiary);">
+        <p>&copy; {year} {company.legalName ?? company.displayName}</p>
+        {
+          legalLinks.map((link) => (
+            <a href={link.href} style="color: var(--text-tertiary);">
+              {link.label}
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</footer>

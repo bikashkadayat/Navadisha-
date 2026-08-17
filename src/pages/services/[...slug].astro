@@ -1,0 +1,232 @@
+---
+/**
+ * SERVICE DETAIL — the §10.2 nine-block template, rendered from data.
+ * Order is fixed and deliberate: problem → approach → deliverables → how we
+ * work → outcomes → related work → FAQs → cross-pillar → CTA. Never lead with
+ * the offering (§10.1).
+ *
+ * URL: /services/<slug>/ — permanent. Maps to a Django DetailView in Phase 2
+ * with no URL change (§5.5).
+ */
+import { getCollection, getEntry, render } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import Base from '../../layouts/Base.astro';
+import Section from '../../components/Section.astro';
+import Button from '../../components/Button.astro';
+
+export const getStaticPaths = (async () => {
+  const services = await getCollection('services', ({ data }) => !data.draft);
+  return services.map((service) => ({ params: { slug: service.id }, props: { service } }));
+}) satisfies GetStaticPaths;
+
+const { service } = Astro.props;
+const { Content } = await render(service);
+const d = service.data;
+
+const cross = d.crossPillar ? await getEntry(d.crossPillar.service) : null;
+const related = await Promise.all(d.related.map((r) => getEntry(r)));
+
+// Case studies that applied this service. Empty until real work lands — the
+// section omits itself rather than showing an empty grid.
+const work = await getCollection('work', ({ data }) =>
+  !data.draft && data.servicesApplied.some((s) => s.id === service.id),
+);
+
+// FAQPage structured data, generated from the same FAQs the page renders — so
+// schema can never drift from content (§11.3).
+const faqSchema =
+  d.faqs.length > 0
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: d.faqs.map((f) => ({
+          '@type': 'Question',
+          name: f.q,
+          acceptedAnswer: { '@type': 'Answer', text: f.a },
+        })),
+      }
+    : undefined;
+---
+
+<Base title={d.seo.title} description={d.seo.description} pillar={d.pillar} schema={faqSchema}>
+  <Section width="wide" labelledby="svc-h">
+    <nav aria-label="Breadcrumb" class="text-sm" style="color: var(--text-tertiary);">
+      <a href="/services/" style="color: var(--text-tertiary);">Services</a>
+      <span aria-hidden="true"> / </span>
+      <span>{d.title}</span>
+    </nav>
+
+    <p class="mt-8 text-[0.625rem] font-bold uppercase tracking-[0.14em]" style="color: var(--pillar);">
+      {d.pillar}
+    </p>
+    <h1 id="svc-h" class="mt-3" style="font-size: var(--text-display-lg);">{d.title}</h1>
+
+    {/* 1. The problem, in the reader's language. Always first. */}
+    <p class="mt-8 measure" style="font-size: var(--text-body-lg); color: var(--text-secondary);">
+      {d.problem}
+    </p>
+  </Section>
+
+  {/* 2. Our approach (Markdown body) */}
+  <Section width="prose">
+    <div class="measure" style="color: var(--text-secondary);">
+      <Content />
+    </div>
+  </Section>
+
+  {/* 3. What's included */}
+  <Section tone="sunken" labelledby="incl-h">
+    <h2 id="incl-h" style="font-size: var(--text-heading-lg);">What&rsquo;s included</h2>
+    <ul class="mt-8 grid gap-3 sm:grid-cols-2">
+      {
+        d.deliverables.map((item) => (
+          <li
+            class="rounded-lg border p-4 text-sm"
+            style="background-color: var(--surface-raised); border-color: var(--border-subtle); color: var(--text-secondary);"
+          >
+            {item}
+          </li>
+        ))
+      }
+    </ul>
+  </Section>
+
+  {/* 4. How we work — mapped to the four method stages */}
+  {
+    d.phases.length > 0 && (
+      <Section labelledby="how-h">
+        <h2 id="how-h" style="font-size: var(--text-heading-lg);">How we work</h2>
+        <ol class="mt-8 grid gap-6 md:grid-cols-4">
+          {d.phases.map((p, i) => (
+            <li>
+              <p class="tabular text-3xl font-bold" style="font-family: var(--font-display); color: var(--border-default);">
+                {String(i + 1).padStart(2, '0')}
+              </p>
+              <p class="mt-3 font-semibold" style="font-family: var(--font-display); font-size: var(--text-heading-md);">
+                {p.name}
+              </p>
+              <p class="mt-2 text-sm" style="color: var(--text-secondary);">{p.detail}</p>
+              {p.duration && (
+                <p class="mt-2 text-xs" style="color: var(--text-tertiary);">{p.duration}</p>
+              )}
+            </li>
+          ))}
+        </ol>
+      </Section>
+    )
+  }
+
+  {/* 5. Outcomes */}
+  {
+    d.outcomes.length > 0 && (
+      <Section tone="sunken" labelledby="out-h">
+        <h2 id="out-h" style="font-size: var(--text-heading-lg);">What you end up with</h2>
+        <ul class="mt-8 space-y-3 measure">
+          {d.outcomes.map((o) => (
+            <li class="text-sm" style="color: var(--text-secondary);">{o}</li>
+          ))}
+        </ul>
+      </Section>
+    )
+  }
+
+  {/* 6. Related work — omits itself when empty rather than showing a gap */}
+  {
+    work.length > 0 && (
+      <Section labelledby="work-h">
+        <h2 id="work-h" style="font-size: var(--text-heading-lg);">Related work</h2>
+        <div class="mt-8 grid gap-6 md:grid-cols-2">
+          {work.slice(0, 2).map((w) => (
+            <a
+              href={`/work/${w.id}/`}
+              class="block rounded-xl border p-6"
+              style="background-color: var(--surface-raised); border-color: var(--border-subtle);"
+            >
+              {w.data.illustrative && (
+                <p class="text-[0.625rem] font-bold uppercase tracking-[0.14em]" style="color: var(--color-warning);">
+                  Illustrative — method applied
+                </p>
+              )}
+              <p class="mt-2 font-semibold" style="font-family: var(--font-display); font-size: var(--text-heading-md);">
+                {w.data.title}
+              </p>
+              <p class="mt-2 text-sm" style="color: var(--text-secondary);">{w.data.challenge}</p>
+            </a>
+          ))}
+        </div>
+      </Section>
+    )
+  }
+
+  {/* 7. FAQs — includes the pricing question. Buyers ask it; dodging it costs
+       more than answering it honestly (§10.2). */}
+  {
+    d.faqs.length > 0 && (
+      <Section tone="sunken" labelledby="faq-h">
+        <h2 id="faq-h" style="font-size: var(--text-heading-lg);">Common questions</h2>
+        <dl class="mt-8 space-y-6 measure">
+          {d.faqs.map((f) => (
+            <div>
+              <dt class="font-semibold" style="font-family: var(--font-display);">{f.q}</dt>
+              <dd class="mt-2 text-sm" style="color: var(--text-secondary);">{f.a}</dd>
+            </div>
+          ))}
+        </dl>
+      </Section>
+    )
+  }
+
+  {/* 8. Cross-pillar link. This is where the integration story becomes revenue
+       (§6.3) — and why `rationale` is required by schema rather than optional. */}
+  {
+    cross && d.crossPillar && (
+      <Section labelledby="cross-h">
+        <div
+          data-pillar={cross.data.pillar}
+          class="rounded-xl border p-8"
+          style="background-color: var(--surface-raised); border-color: var(--border-subtle); border-left: 3px solid var(--pillar);"
+        >
+          <h2 id="cross-h" class="text-[0.625rem] font-bold uppercase tracking-[0.14em]" style="color: var(--pillar);">
+            Often paired with
+          </h2>
+          <p class="mt-3 font-semibold" style="font-family: var(--font-display); font-size: var(--text-heading-md);">
+            {cross.data.title}
+          </p>
+          <p class="mt-2 measure text-sm" style="color: var(--text-secondary);">{d.crossPillar.rationale}</p>
+          <p class="mt-4">
+            <a href={`/services/${cross.id}/`} class="text-sm font-semibold" style="color: var(--text-accent);">
+              {cross.data.title} →
+            </a>
+          </p>
+        </div>
+
+        {related.length > 0 && (
+          <ul class="mt-8 flex flex-wrap gap-3">
+            {related.map((r) => (
+              <li>
+                <a
+                  href={`/services/${r.id}/`}
+                  class="inline-block rounded-full border px-4 py-2 text-sm"
+                  style="border-color: var(--border-default); color: var(--text-secondary);"
+                >
+                  {r.data.title}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Section>
+    )
+  }
+
+  {/* 9. Service-specific CTA */}
+  <Section tone="inverse" labelledby="cta-h">
+    <h2 id="cta-h" style="font-size: var(--text-heading-lg);">Talk to us about {d.title.toLowerCase()}</h2>
+    <p class="mt-4 measure" style="color: var(--text-on-inverse-muted);">
+      Tell us what is not working. If we are not the right people for it, we will say so.
+    </p>
+    <div class="mt-8">
+      <Button href="/contact/" note="No cost, no obligation">Book a 30-minute call</Button>
+    </div>
+  </Section>
+</Base>

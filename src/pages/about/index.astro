@@ -1,0 +1,342 @@
+---
+/**
+ * ABOUT — Our Story
+ * Copy: content-decks/about-batch1.md (approved, production)
+ * Design: homepage is the source of truth. No new patterns introduced.
+ *
+ * Seven sections as specified: Hero · Our Story · The Bridge · Two Practice
+ * Areas · What We Believe · Why We Exist · CTA.
+ *
+ * Editorial stance: the page names the firm's newness before a reader can
+ * conclude it. A new practice with a clear thesis outperforms an established
+ * one with none — but only if it states its position first rather than
+ * implying scale it does not have.
+ */
+import Base from '../../layouts/Base.astro';
+import Section from '../../components/Section.astro';
+import PageHero from '../../components/PageHero.astro';
+import CompassRule from '../../components/CompassRule.astro';
+import BridgeDiagram from '../../components/BridgeDiagram.astro';
+import ConversionBand from '../../components/ConversionBand.astro';
+
+const practices = [
+  {
+    key: 'education' as const,
+    name: 'Education',
+    claim:
+      'We advise institutions on the decisions that shape their next five years — positioning, digital capability, industry alignment, and the programmes that connect students to work.',
+    items: [
+      'Institutional Advisory',
+      'School Consulting',
+      'College & University',
+      'Career Guidance',
+      'Industry Linkage',
+    ],
+    href: '/institutions/',
+    cta: 'For institutions',
+  },
+  {
+    key: 'technology' as const,
+    name: 'Technology',
+    claim:
+      'We design and build the websites, software and digital infrastructure organisations depend on — then hand them to teams able to run them.',
+    items: [
+      'Web Development',
+      'Software Development',
+      'Branding & Design',
+      'Digital Marketing',
+      'Digital Transformation',
+    ],
+    href: '/services/',
+    cta: 'Explore services',
+  },
+];
+
+const beliefs = [
+  {
+    title: 'Direction before delivery',
+    body: 'A client is owed a considered path, not a list of deliverables. We do not propose work until we can explain why that work and not other work. Every engagement opens with the problem, in the client’s language, before anything is offered.',
+  },
+  {
+    title: 'Evidence before opinion',
+    body: 'Recommendations are grounded in what we can observe and verify. Where we do not have evidence, we say so rather than filling the gap with confidence. That applies to our own claims as much as to our advice.',
+  },
+  {
+    title: 'Capability before dependency',
+    body: 'The measure of a successful engagement is that the client no longer needs us for it. We document, train and hand over as a defined stage of the work, not as a courtesy at the end.',
+  },
+  {
+    title: 'Rooted, and held to international standards',
+    body: 'We work in Nepal, for Nepali institutions, in the conditions they actually operate in. That is not a reason to lower the standard of the work — it is the reason to be precise about it.',
+  },
+];
+---
+
+<Base
+  title="About | Navadisha Consulting & Innovations"
+  description="Navadisha is a Kathmandu consulting practice working across education and technology. Our story, our practices, and the thinking behind the work."
+>
+  <PageHero
+    crumbs={[{ label: 'Home', href: '/' }, { label: 'About' }]}
+    eyebrow="About"
+    title="Navadisha means new direction. The name describes the work."
+    lede="Nepal is not short of capable institutions or capable people. It is short of the connections between them, and of the systems that would make those connections work. Navadisha exists to close that distance."
+  />
+
+  {/* ── Our Story ── */}
+  <Section tone="sunken" labelledby="story-h">
+    <CompassRule />
+    <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--text-tertiary);">
+      Our story
+    </p>
+    <h2
+      id="story-h"
+      class="mt-4 measure"
+      style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;"
+    >
+      The observation that started the practice.
+    </h2>
+
+    <div class="mt-8 measure space-y-5" style="color: var(--text-secondary);">
+      <p>
+        Navadisha began from a pattern visible from inside Nepal’s education and technology
+        sectors at the same time. Institutions were being asked to prepare students for an
+        economy they had limited contact with. Employers were describing graduates as
+        unprepared without being able to say precisely for what. And both were increasingly
+        dependent on digital systems that neither had the internal capacity to specify, procure
+        or maintain.
+      </p>
+      <p>
+        Each of those problems is usually treated separately. Education consultancies advise on
+        the academic side and stop there. Technology firms build systems without understanding
+        the institution the system is for. Design studios improve how an organisation looks
+        without touching how it works. Each is competent within its boundary, and the gaps
+        between them are where the real difficulty sits.
+      </p>
+      <p>
+        Our founders came to this from the technology side — building software, running digital
+        literacy training, and working on community network and connectivity initiatives. That
+        combination made the pattern hard to ignore: the same institution that needed a website
+        also needed a way to talk to parents, a plan for its digital systems, and something
+        useful to offer its students beyond the syllabus. These were not four separate
+        procurement decisions. They were one problem.
+      </p>
+      <p>
+        Navadisha was formed to work across that whole space rather than one slice of it. We are
+        a young practice, founder-led, and we would rather state that plainly than imply a scale
+        we do not have. What we bring is a defined method, direct accountability, and work that
+        is handed over rather than held.
+      </p>
+    </div>
+  </Section>
+
+  {/* ── The Bridge ── */}
+  <Section labelledby="bridge-h">
+    <CompassRule />
+    <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--text-tertiary);">
+      Our position
+    </p>
+    <h2
+      id="bridge-h"
+      class="mt-4 measure"
+      style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;"
+    >
+      We work across five things that are usually handled by five different people.
+    </h2>
+    <p class="mt-6 measure" style="font-size: var(--text-body-lg); color: var(--text-secondary);">
+      Education, technology, innovation, industry and opportunity are treated in Nepal as
+      separate concerns with separate suppliers. Treating them as one connected problem is not a
+      broader service list — it is a different way of scoping the work.
+    </p>
+
+    <div class="mt-16">
+      <BridgeDiagram />
+    </div>
+  </Section>
+
+  {/* ── Two Practice Areas ── */}
+  <Section tone="sunken" labelledby="practices-h">
+    <CompassRule />
+    <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--text-tertiary);">
+      Practices
+    </p>
+    <h2
+      id="practices-h"
+      class="mt-4 measure"
+      style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;"
+    >
+      Two practices, deliberately co-equal.
+    </h2>
+    <p class="mt-6 measure" style="font-size: var(--text-body-lg); color: var(--text-secondary);">
+      Most engagements begin in one and draw on the other. That is usually the point rather
+      than an upsell.
+    </p>
+
+    <div class="mt-12 grid gap-6 lg:grid-cols-2">
+      {
+        practices.map((p) => (
+          <a
+            href={p.href}
+            data-pillar={p.key}
+            class="pillar-card group block rounded-xl border p-9"
+            style="background-color: var(--surface-raised); border-color: var(--border-subtle); border-left-width: 3px; border-left-color: var(--pillar-fill);"
+          >
+            <p class="text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--pillar);">
+              {p.name}
+            </p>
+            <p
+              class="mt-5"
+              style="font-family: var(--font-display); font-size: var(--text-heading-md); font-weight: 720; line-height: 1.32; letter-spacing: -0.018em;"
+            >
+              {p.claim}
+            </p>
+            <ul class="mt-7 space-y-2 text-sm" style="color: var(--text-secondary);">
+              {p.items.map((i) => (
+                <li>{i}</li>
+              ))}
+            </ul>
+            <p class="mt-8 inline-flex items-center gap-1.5 text-sm font-semibold" style="color: var(--text-primary);">
+              {p.cta}
+              <span class="pillar-arrow" aria-hidden="true">→</span>
+            </p>
+          </a>
+        ))
+      }
+    </div>
+  </Section>
+
+  {/* ── What We Believe ── */}
+  <Section labelledby="beliefs-h">
+    <CompassRule />
+    <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--text-tertiary);">
+      What we believe
+    </p>
+    <h2
+      id="beliefs-h"
+      class="mt-4 measure"
+      style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;"
+    >
+      Four positions that shape how we scope and run work.
+    </h2>
+
+    <div class="mt-12 grid gap-6 md:grid-cols-2">
+      {
+        beliefs.map((b, i) => (
+          <div
+            class="rounded-xl border p-8"
+            style="background-color: var(--surface-raised); border-color: var(--border-subtle);"
+          >
+            <p
+              class="tabular"
+              style="font-family: var(--font-display); font-size: 1.75rem; font-weight: 800; line-height: 1; color: var(--text-decorative); letter-spacing: -0.04em;"
+              aria-hidden="true"
+            >
+              {String(i + 1).padStart(2, '0')}
+            </p>
+            <h3
+              class="mt-4"
+              style="font-family: var(--font-display); font-size: var(--text-heading-sm); font-weight: 720; letter-spacing: -0.012em;"
+            >
+              {b.title}
+            </h3>
+            <p class="mt-3 text-sm" style="color: var(--text-secondary);">
+              {b.body}
+            </p>
+          </div>
+        ))
+      }
+    </div>
+  </Section>
+
+  {/* ── Why We Exist ── */}
+  <Section tone="sunken" labelledby="why-h">
+    <div class="grid gap-12 lg:grid-cols-12">
+      <div class="lg:col-span-7">
+        <CompassRule />
+        <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--text-tertiary);">
+          Why we exist
+        </p>
+        <h2
+          id="why-h"
+          class="mt-4"
+          style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;"
+        >
+          The cost of the gap is paid by people who did not create it.
+        </h2>
+        <div class="mt-8 space-y-5 measure" style="color: var(--text-secondary);">
+          <p>
+            When an institution cannot articulate what makes it different, families choose on
+            fee and proximity instead. When a curriculum drifts from what employers need,
+            graduates carry the shortfall as unemployment or underemployment. When systems are
+            procured without a plan, budgets are spent on tools nobody adopts.
+          </p>
+          <p>
+            None of these outcomes is the result of a lack of effort. They are the result of
+            decisions made without a clear view of the whole — and of capability that stays with
+            the supplier rather than transferring to the institution.
+          </p>
+          <p>
+            Navadisha exists to make that work available to institutions and organisations in
+            Nepal at a scale and cost they can actually engage with, and to leave them able to
+            continue without us.
+          </p>
+        </div>
+      </div>
+
+      <div class="lg:col-span-5 lg:pl-6">
+        <div
+          class="rounded-xl border p-8"
+          style="background-color: var(--surface-raised); border-color: var(--border-subtle); border-left-width: 3px; border-left-color: var(--action-primary-default);"
+        >
+          <p class="text-[0.6875rem] font-bold uppercase tracking-[0.13em]" style="color: var(--text-tertiary);">
+            The commitment
+          </p>
+          <p
+            class="mt-5"
+            style="font-family: var(--font-display); font-size: var(--text-heading-md); font-weight: 720; line-height: 1.35; letter-spacing: -0.018em;"
+          >
+            We will not leave you with a document.
+          </p>
+          <p class="mt-4 text-sm" style="color: var(--text-secondary);">
+            Every engagement ends with a direction you can act on, a system you can run, and a
+            team that knows how. That final stage is written into the method rather than offered
+            as an extra.
+          </p>
+          <p class="mt-6">
+            <a href="/about/method/" class="text-sm font-semibold" style="color: var(--text-accent);">
+              How we work →
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </Section>
+
+  <ConversionBand
+    heading="Start with a conversation."
+    lede="Tell us what is not working. If we are not the right people for it, we will say so."
+  />
+</Base>
+
+<style>
+  .pillar-card {
+    transition:
+      transform 150ms ease-out,
+      box-shadow 150ms ease-out;
+  }
+  .pillar-arrow {
+    display: inline-block;
+    transition: transform 150ms ease-out;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .pillar-card:hover,
+    .pillar-card:focus-visible {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px -14px rgba(15, 23, 42, 0.28);
+    }
+    .pillar-card:hover .pillar-arrow,
+    .pillar-card:focus-visible .pillar-arrow {
+      transform: translateX(3px);
+    }
+  }
+</style>

@@ -1,0 +1,162 @@
+---
+/**
+ * WORK INDEX — proof, not portfolio.
+ *
+ * One delivered engagement exists. It therefore gets the full editorial band
+ * rather than sitting alone in a three-slot grid that advertises the gap. The
+ * layout switches to a card grid automatically at three, so no launch-day
+ * decision is required.
+ *
+ * The "Future Work Framework" section is NOT filler. With one case study, the
+ * honest and useful thing to publish is the standard every future case study
+ * will be held to — which tells a sceptical reader more about how we work than
+ * three thin project cards would.
+ *
+ * ⛔ NO invented project cards. NO "coming soon" placeholders.
+ */
+import Base from '../../layouts/Base.astro';
+import Section from '../../components/Section.astro';
+import PageHero from '../../components/PageHero.astro';
+import CompassRule from '../../components/CompassRule.astro';
+import CaseStudyFeature from '../../components/CaseStudyFeature.astro';
+import ConversionBand from '../../components/ConversionBand.astro';
+import { getCollection } from 'astro:content';
+
+const all = await getCollection('work', ({ data }) => !data.draft);
+const real = all.filter((w) => !w.data.illustrative).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const useGrid = real.length >= 3;
+
+/** The standard every case study on this site is held to. */
+const standard = [
+  {
+    title: 'The client is named, or the reason they are not is stated',
+    body: 'No anonymous "a leading institution". If a client cannot be named we say why, and the engagement is still described accurately.',
+  },
+  {
+    title: 'At least one result the client would recognise',
+    body: 'Not an adjective. A number where one exists, and an explicit note where one does not — as on the case study above.',
+  },
+  {
+    title: 'What we would do differently',
+    body: 'Every case study carries an honest lesson, including where we got something wrong. A portfolio of unbroken successes is not a portfolio, it is marketing.',
+  },
+  {
+    title: 'Traceable to the method',
+    body: 'The work maps back to Diagnose, Direct, Deliver and Enable, so a reader can see how the engagement was actually run rather than only what came out of it.',
+  },
+];
+---
+
+<Base
+  title="Selected Work | Navadisha"
+  description="Delivered engagements from Navadisha, with the standard every case study is held to — named clients, real results, and what we would do differently."
+>
+  <PageHero
+    crumbs={[{ label: 'Home', href: '/' }, { label: 'Work' }]}
+    eyebrow="Selected work"
+    title={real.length === 1 ? 'One delivered engagement. Described accurately.' : 'Delivered engagements.'}
+    lede="We are a young practice, so this page is short. Rather than pad it, we have set out below the standard everything published here has to meet."
+  />
+
+  {/* ── The work ── */}
+  {
+    real.length > 0 && (
+      <Section tone="sunken" labelledby="featured-h">
+        <CompassRule />
+        <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--text-tertiary);">
+          {useGrid ? 'Featured' : 'Delivered'}
+        </p>
+        <h2 id="featured-h" class="sr-only">
+          Delivered work
+        </h2>
+
+        <div class="mt-10">
+          {useGrid ? (
+            <div class="grid gap-6 md:grid-cols-3">
+              {real.slice(0, 6).map((c) => (
+                <a
+                  href={`/work/${c.id}/`}
+                  class="block rounded-xl border p-7"
+                  style="background-color: var(--surface-raised); border-color: var(--border-subtle);"
+                >
+                  <p class="text-[0.6875rem] font-bold uppercase tracking-[0.13em]" style="color: var(--text-tertiary);">
+                    {c.data.client}
+                  </p>
+                  <p class="mt-3" style="font-family: var(--font-display); font-size: var(--text-heading-sm); font-weight: 720;">
+                    {c.data.title}
+                  </p>
+                  <p class="mt-2 text-sm" style="color: var(--text-secondary);">{c.data.challenge}</p>
+                </a>
+              ))}
+            </div>
+          ) : (
+            <CaseStudyFeature caseStudy={real[0]} />
+          )}
+        </div>
+      </Section>
+    )
+  }
+
+  {/* ── The standard — what replaces volume ── */}
+  <Section labelledby="standard-h">
+    <CompassRule />
+    <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--text-tertiary);">
+      The standard
+    </p>
+    <h2 id="standard-h" class="mt-4 measure" style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;">
+      What every case study published here has to meet.
+    </h2>
+    <p class="mt-6 measure" style="font-size: var(--text-body-lg); color: var(--text-secondary);">
+      We would rather tell you the rules we hold ourselves to than fill this page with work that
+      does not exist yet. You can hold us to these as more engagements land.
+    </p>
+
+    <div class="mt-12 grid gap-6 md:grid-cols-2">
+      {
+        standard.map((s, i) => (
+          <div
+            class="rounded-xl border p-8"
+            style="background-color: var(--surface-raised); border-color: var(--border-subtle);"
+          >
+            <p
+              class="tabular"
+              style="font-family: var(--font-display); font-size: 1.75rem; font-weight: 800; line-height: 1; color: var(--text-decorative); letter-spacing: -0.04em;"
+              aria-hidden="true"
+            >
+              {String(i + 1).padStart(2, '0')}
+            </p>
+            <h3
+              class="mt-4"
+              style="font-family: var(--font-display); font-size: var(--text-heading-sm); font-weight: 720; letter-spacing: -0.012em;"
+            >
+              {s.title}
+            </h3>
+            <p class="mt-3 text-sm" style="color: var(--text-secondary);">{s.body}</p>
+          </div>
+        ))
+      }
+    </div>
+
+    <div
+      class="mt-8 rounded-xl border p-8"
+      style="background-color: var(--surface-sunken); border-color: var(--border-subtle); border-left-width: 3px; border-left-color: var(--action-primary-default);"
+    >
+      <p class="measure text-sm" style="color: var(--text-secondary);">
+        <strong style="color: var(--text-primary);">On what is absent.</strong> There are no client
+        logos on this site, no testimonials, and no counts of projects or clients. That is not a
+        design choice — none of them exist yet, and publishing any of them would be an invention.
+        They will appear when they are real, with permission on file.
+      </p>
+      <p class="mt-4">
+        <a href="/about/method/" class="text-sm font-semibold" style="color: var(--text-accent);">
+          How we run an engagement →
+        </a>
+      </p>
+    </div>
+  </Section>
+
+  <ConversionBand
+    heading="Want to talk about a similar project?"
+    lede="Describe what you are trying to change. If it is not something we should be doing, we will tell you that instead."
+  />
+</Base>

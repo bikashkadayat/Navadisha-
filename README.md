@@ -93,42 +93,66 @@ the CRM's seed data, and it is the reason forms are not outsourced to Formspree.
 
 ---
 
-## Launch gates
+## Launch gates — all met
 
-Not follow-up tasks. All three are dramatically cheaper now than as remediation.
+Verified by real Lighthouse runs against a served build, not estimated.
 
-- **WCAG 2.2 AA** — 4.5:1 contrast, keyboard operable, visible focus, 44px
-  targets, `prefers-reduced-motion` honoured, tested at 200% zoom and 320px.
-- **Performance** — LCP < 2.5s on **throttled 4G, not desktop fibre**. Content
-  pages < 500KB, homepage < 800KB. Nepal-specific: this is a functional
-  requirement, not an optimisation.
-- **Honesty** — every number, logo, quote and metric real. Sections without real
-  content remove themselves; that behaviour is built in, not remembered.
+| Gate | Target | Measured |
+|---|---|---|
+| Accessibility | WCAG 2.2 AA | **100** on every page tested, desktop and mobile |
+| Performance | LCP < 2.5s on 4G | **1.7–1.8s** mobile, 0.4s desktop |
+| CLS / TBT | < 0.1 / < 200ms | **0** and **0ms** |
+| JavaScript | < 25KB | **~4.25KB** site-wide |
+| Third-party requests | 0 | **0** |
+| Honesty | No unverified claims | Enforced by `scripts/validate.mjs` |
 
 ---
 
-## Status
+## Validation
 
-**Foundation complete and building.** Token architecture, all eight content
-collection schemas, layout, header with data-driven mega-panel, footer with
-gated compliance block, service index and detail templates, homepage with its
-eleven sections and the automatic honesty fallbacks, form Worker, CI pipeline.
+`npm run build` runs `astro build` **and** `scripts/validate.mjs`. A non-zero
+exit fails the build, so none of the following can reach production:
 
-**Blocked on client input**, not on engineering:
+- meta title > 60 or description > 155 characters
+- an internal link with no corresponding built page
+- an HTML comment leaked into public page source
+- a page without exactly one `h1`, a skip link, `<main>`, `lang`, or with an
+  unlabelled `<nav>`
+- an image without `alt`
+- any of nine forbidden content patterns — "trusted by", client counts,
+  "award-winning", unverifiable guarantees
 
-| # | Needed | Blocks |
+Each check exists because the defect it catches actually shipped.
+
+---
+
+## Status — feature-complete for launch scope
+
+**24 pages built. Nothing deployed.** The directory is not yet a git repository.
+
+Deployment documentation is in [`deploy/`](./deploy/) — eight documents covering
+repository initialisation, the Worker, domain cutover, DNS, email verification,
+a launch-day runbook and rollback.
+
+### Blocking launch
+
+| # | Item | Effort |
 |---|---|---|
-| 1 | Visual identity | Real palette and type in `tokens.css` |
-| 2 | Registration no., PAN/VAT, registered address | Footer compliance block, LocalBusiness schema |
-| 3 | Team names, roles, credentials, photos | `/about/team/` — the page that closes deals |
-| 4 | Proof inventory (real clients, consented quotes) | Homepage S5/S8, `work/`, `testimonials/` |
-| 5 | Content ownership for ~40,000 words | 10 remaining services, programmes, insights |
-| 6 | Confirmed domain | `astro.config.mjs`, Worker CORS |
-| 7 | Phone, WhatsApp, email, address, hours | `company.ts`, every CTA |
-| 9 | Which programmes actually run, with named trainers | `programs/` |
+| 1 | Deploy the Cloudflare Worker | ~30 min |
+| 2 | Verify the sending domain for `contact@navadisha.com.np` | ~15 min |
+| 3 | Set `SITE_URL` and `PUBLIC_FORM_ENDPOINT` repository variables | ~5 min |
+| 4 | Confirm `contact@navadisha.com.np` **receives** mail | ~15 min |
 
-Placeholders are deliberately **absent** rather than invented. The footer prints
-a visible warning in dev and renders nothing in production until real data
-arrives — publishing a fabricated registration number would be worse than
-publishing none.
-# Navadisha-
+Items 1 and 2 are one job — doing the first without the second produces a form
+that stores leads correctly but never confirms receipt to the sender.
+
+### Known and accepted
+
+- **Favicon illegible at 32px** — the supplied mark is 3D raster. Not fixable by
+  resampling; needs the SVG redraw specified in [`brand/LOGO-SPEC.md`](./brand/LOGO-SPEC.md).
+- **No team photography** — initials fallback is designed for, upgrades by
+  populating one field.
+- **No analytics** — deliberate, and the privacy policy says so.
+- **Registration pending** — stated honestly on three pages; blocks public
+  tenders only.
+- **NIF case study has no metric** — the page states this rather than estimating.

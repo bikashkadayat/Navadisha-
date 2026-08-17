@@ -1,0 +1,365 @@
+---
+/**
+ * METHOD — the most important page on the site.
+ * Copy: content-decks/about-batch1.md (approved, production)
+ *
+ * With one case study, published method is the strongest credible proof
+ * available — and unlike a track record, it is proof a new practice can
+ * legitimately create rather than wait for.
+ *
+ * Each stage carries six dimensions, including the two that most firms omit:
+ * what the CLIENT provides, and what NAVADISHA provides. Stating mutual
+ * obligation is a trust mechanism — an engagement described as effortless for
+ * the client is being mis-sold, and experienced buyers know it.
+ */
+import Base from '../../../layouts/Base.astro';
+import Section from '../../../components/Section.astro';
+import PageHero from '../../../components/PageHero.astro';
+import CompassRule from '../../../components/CompassRule.astro';
+import PathLine from '../../../components/PathLine.astro';
+import ConversionBand from '../../../components/ConversionBand.astro';
+
+const overview = [
+  { label: 'Diagnose', detail: 'Establish what is actually wrong, before proposing anything.' },
+  { label: 'Direct', detail: 'Produce a prioritised path you can defend to a board.' },
+  { label: 'Deliver', detail: 'Implement the priorities, in the order agreed.' },
+  { label: 'Enable', detail: 'Transfer the capability. Your team runs it without us.' },
+];
+
+const stages = [
+  {
+    n: '01',
+    name: 'Diagnose',
+    duration: 'Typically 1–3 weeks',
+    premise:
+      'Most engagements begin with a stated problem that turns out to be a symptom. Enrolment is falling, or the website is outdated, or a system is not being used. Each of those is an observation, not a diagnosis. We do not propose work in this stage — proposing while diagnosing biases the diagnosis toward whatever we are equipped to sell.',
+    inputs: [
+      'Existing data — enrolment, admissions, traffic, financial context as relevant',
+      'Access to the people who operate the current process',
+      'Current systems, documentation and materials',
+      'History: what has been tried, and what happened',
+    ],
+    activities: [
+      'Structured interviews with staff, leadership and, where relevant, users',
+      'Review of data across a meaningful period rather than a snapshot',
+      'Direct observation of the process as it is actually performed',
+      'Context mapping — comparable institutions, alternatives available to your audience',
+    ],
+    outputs: [
+      'A written findings document, evidence-referenced',
+      'A prioritised statement of problems, separated from symptoms',
+      'An explicit list of what we could not determine, and why',
+    ],
+    outcomes:
+      'Agreement on what is actually wrong. This sounds modest and is frequently the most valuable stage, because it is common for an organisation to hold three incompatible explanations simultaneously without that having surfaced.',
+    clientProvides: [
+      'Access to data and to people, scheduled in advance',
+      'One internal owner with authority to convene others',
+      'Candour about what has previously failed',
+    ],
+    weProvide: [
+      'The diagnostic framework and the fieldwork',
+      'Analysis and written findings',
+      'A briefing session with leadership',
+    ],
+  },
+  {
+    n: '02',
+    name: 'Direct',
+    duration: 'Typically 1–3 weeks',
+    premise:
+      'A diagnosis without a sequenced path is an expensive way to become better informed. This stage converts findings into a decision you can take to a board, a committee or a funder — and defend line by line.',
+    inputs: [
+      'The findings document from Diagnose',
+      'Budget parameters and timing constraints',
+      'Internal capacity — who could realistically own what',
+      'Any fixed commitments the plan must work around',
+    ],
+    activities: [
+      'Development of two or three genuinely distinct options, not variations of one',
+      'Sequencing by dependency and by impact, so the order is defensible',
+      'Indicative costing and realistic timelines, including what happens if a stage slips',
+      'Preparation of board-ready documentation',
+    ],
+    outputs: [
+      'A prioritised roadmap with phases, dependencies and indicative costs',
+      'A recommendation, with the reasoning stated and the trade-offs named',
+      'Documentation suitable for people who were not in the room',
+    ],
+    outcomes:
+      'A plan the organisation can commit to, and a decision-maker equipped to explain it to others. The documentation is written for the committee member who will never speak to us directly.',
+    clientProvides: [
+      'Decisions at the agreed points, so sequencing does not stall',
+      'Honest budget parameters — a plan built on an inflated figure is not a plan',
+      'Constraints we should design around rather than discover later',
+    ],
+    weProvide: [
+      'Options, recommendation and reasoning',
+      'Costing, sequencing and dependency mapping',
+      'The board-ready document, and a walkthrough of it',
+    ],
+  },
+  {
+    n: '03',
+    name: 'Deliver',
+    duration: 'Scoped per engagement',
+    premise:
+      'Delivery is the stage most familiar to clients, and the one where scope most often drifts. We implement the priorities agreed in Direct, in the order agreed. Where something needs to change, it is raised as a change rather than absorbed silently.',
+    inputs: [
+      'The agreed roadmap and scope',
+      'Content, assets and approvals from the client',
+      'Access to systems, accounts and infrastructure',
+      'A named reviewer on the client side',
+    ],
+    activities: [
+      'Design and build against the agreed scope',
+      'Regular review checkpoints rather than a single reveal at the end',
+      'Testing — functional, accessibility, performance, and on the devices your audience uses',
+      'Change control where scope shifts, with cost and timing impact stated',
+    ],
+    outputs: [
+      'The delivered work — systems, brand, programme or advisory output',
+      'Test results against the standards agreed at the outset',
+      'A record of decisions taken during delivery',
+    ],
+    outcomes:
+      'The prioritised problem is addressed, and the organisation can see how the delivered work maps back to the diagnosis. Nothing is delivered that cannot be traced to a finding.',
+    clientProvides: [
+      'Content and approvals on the agreed schedule — this is the most common cause of delay',
+      'A single reviewer empowered to consolidate internal feedback',
+      'Access to accounts and infrastructure without repeated escalation',
+    ],
+    weProvide: [
+      'Delivery against scope, on the agreed sequence',
+      'Testing to a stated standard, not a vague assurance of quality',
+      'Visibility of progress, including when something is behind',
+    ],
+  },
+  {
+    n: '04',
+    name: 'Enable',
+    duration: 'Typically 1–2 weeks, plus a defined taper',
+    premise:
+      'The stage that most engagements do not have. Work handed over without capability transfer begins decaying the day it is delivered — and the decay is usually invisible until the person who understood it leaves.',
+    inputs: [
+      'The delivered work',
+      'The people who will own it after handover — identified during Direct, not at the end',
+      'The organisation’s realistic internal capacity',
+    ],
+    activities: [
+      'Written documentation, in plain language, aimed at the actual owner',
+      'Working training sessions in which the client performs the tasks, not watches them',
+      'A maintenance plan matched to the capacity that exists',
+      'A defined support taper with an explicit end, rather than an open-ended retainer',
+    ],
+    outputs: [
+      'Documentation the organisation owns',
+      'Trained named staff, with tasks they have performed unaided',
+      'Maintenance schedule and escalation path',
+      'All source files, accounts and credentials transferred',
+    ],
+    outcomes:
+      'The organisation operates the work independently. The test is not that training was delivered — it is that a named person has performed the task without assistance before the engagement closes.',
+    clientProvides: [
+      'The people who will own it, released for training time',
+      'A decision about who is accountable after handover',
+    ],
+    weProvide: [
+      'Documentation, training and handover as a scoped stage of the work',
+      'Full transfer of files, accounts and credentials',
+      'A support taper with a stated end date',
+    ],
+  },
+];
+---
+
+<Base
+  title="Our Method | Navadisha Consulting & Innovations"
+  description="Diagnose, Direct, Deliver, Enable — the four stages Navadisha works through, what each requires from you, and why capability transfer is a stage."
+>
+  <PageHero
+    crumbs={[{ label: 'Home', href: '/' }, { label: 'About', href: '/about/' }, { label: 'Method' }]}
+    eyebrow="Method"
+    title="Four stages. The fourth is the one that changes the outcome."
+    lede="Most engagements end when a deliverable is handed over. Ours end when your team no longer needs us for it. This page sets out what each stage involves, what we provide, and what we need from you."
+  />
+
+  {/* ── Overview ── */}
+  <Section tone="sunken" labelledby="overview-h">
+    <h2 id="overview-h" class="sr-only">Method overview</h2>
+    <PathLine nodes={overview} numbered />
+  </Section>
+
+  {/* ── Stage detail ── */}
+  {
+    stages.map((s, idx) => (
+      <Section tone={idx % 2 === 0 ? 'page' : 'sunken'} labelledby={`stage-${s.n}`}>
+        <CompassRule />
+
+        <div class="mt-6 flex flex-wrap items-baseline gap-4">
+          <span
+            class="tabular"
+            style="font-family: var(--font-display); font-size: 2.5rem; font-weight: 800; line-height: 1; color: var(--text-decorative); letter-spacing: -0.04em;"
+            aria-hidden="true"
+          >
+            {s.n}
+          </span>
+          <h2
+            id={`stage-${s.n}`}
+            style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;"
+          >
+            {s.name}
+          </h2>
+          <span class="text-sm" style="color: var(--text-tertiary);">
+            {s.duration}
+          </span>
+        </div>
+
+        <p class="mt-8 measure" style="font-size: var(--text-body-lg); color: var(--text-secondary);">
+          {s.premise}
+        </p>
+
+        <div class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {[
+            { h: 'Inputs', items: s.inputs },
+            { h: 'Activities', items: s.activities },
+            { h: 'Outputs', items: s.outputs },
+          ].map((col) => (
+            <div
+              class="rounded-xl border p-7"
+              style="background-color: var(--surface-raised); border-color: var(--border-subtle);"
+            >
+              <h3 class="text-[0.6875rem] font-bold uppercase tracking-[0.13em]" style="color: var(--text-tertiary);">
+                {col.h}
+              </h3>
+              <ul class="mt-5 space-y-3">
+                {col.items.map((i) => (
+                  <li class="text-sm" style="color: var(--text-secondary);">
+                    {i}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        <div
+          class="mt-6 rounded-xl border p-7"
+          style="background-color: var(--surface-raised); border-color: var(--border-subtle); border-left-width: 3px; border-left-color: var(--action-primary-default);"
+        >
+          <h3 class="text-[0.6875rem] font-bold uppercase tracking-[0.13em]" style="color: var(--text-tertiary);">
+            Expected outcome
+          </h3>
+          <p class="mt-4 measure text-sm" style="color: var(--text-secondary);">
+            {s.outcomes}
+          </p>
+        </div>
+
+        {/* Mutual obligation. Naming what the client must supply is a trust
+            mechanism — an engagement described as effortless is being mis-sold. */}
+        <div class="mt-6 grid gap-6 md:grid-cols-2">
+          <div
+            class="rounded-xl border p-7"
+            style="background-color: var(--surface-sunken); border-color: var(--border-subtle);"
+          >
+            <h3 class="text-[0.6875rem] font-bold uppercase tracking-[0.13em]" style="color: var(--text-tertiary);">
+              What you provide
+            </h3>
+            <ul class="mt-5 space-y-3">
+              {s.clientProvides.map((i) => (
+                <li class="text-sm" style="color: var(--text-secondary);">
+                  {i}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div
+            class="rounded-xl border p-7"
+            style="background-color: var(--surface-sunken); border-color: var(--border-subtle);"
+          >
+            <h3 class="text-[0.6875rem] font-bold uppercase tracking-[0.13em]" style="color: var(--text-tertiary);">
+              What we provide
+            </h3>
+            <ul class="mt-5 space-y-3">
+              {s.weProvide.map((i) => (
+                <li class="text-sm" style="color: var(--text-secondary);">
+                  {i}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </Section>
+    ))
+  }
+
+  {/* ── Why Enable is different ── */}
+  <Section labelledby="enable-h">
+    <div class="grid gap-12 lg:grid-cols-12">
+      <div class="lg:col-span-7">
+        <CompassRule />
+        <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--text-tertiary);">
+          On the fourth stage
+        </p>
+        <h2
+          id="enable-h"
+          class="mt-4"
+          style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;"
+        >
+          Why Enable is a stage rather than a courtesy.
+        </h2>
+
+        <div class="mt-8 space-y-5 measure" style="color: var(--text-secondary);">
+          <p>
+            There is a structural reason capability transfer is rare, and it is worth stating
+            directly. A supplier whose recurring revenue depends on a client being unable to
+            maintain their own systems has no commercial incentive to make them capable. That
+            incentive does not require bad faith to operate — it simply means handover keeps
+            getting deprioritised, and the documentation is never quite finished.
+          </p>
+          <p>
+            We treat this as a scoping problem rather than an ethical one. Enable is written into
+            the engagement, scheduled, and resourced. The people who will own the work are
+            identified during Direct, not located in the final week. Training is a working
+            session in which they perform the task; watching a demonstration is not training.
+          </p>
+          <p>
+            The test we hold ourselves to is narrow and checkable: <strong>before an engagement
+            closes, a named person at the organisation must have performed the core ongoing task
+            without assistance.</strong> Not observed it. Performed it.
+          </p>
+          <p>
+            This has a commercial consequence we accept. It makes some engagements shorter than
+            they would otherwise be, and it forgoes maintenance revenue that many firms rely on.
+            We think it produces better work and a relationship that returns for the next problem
+            rather than one sustained by dependency.
+          </p>
+        </div>
+      </div>
+
+      <div class="lg:col-span-5 lg:pl-6">
+        <div
+          class="rounded-xl border p-8"
+          style="background-color: var(--surface-raised); border-color: var(--border-subtle); border-left-width: 3px; border-left-color: var(--pillar-tech-fill);"
+        >
+          <p class="text-[0.6875rem] font-bold uppercase tracking-[0.13em]" style="color: var(--text-tertiary);">
+            What sustainability means here
+          </p>
+          <ul class="mt-5 space-y-4 text-sm" style="color: var(--text-secondary);">
+            <li>Documentation written for the person who will use it, not for a file.</li>
+            <li>Systems chosen for what the organisation can realistically maintain, not for what is impressive to build.</li>
+            <li>Source files, accounts and credentials transferred in full at close.</li>
+            <li>A support taper with a stated end date, rather than an open retainer.</li>
+            <li>No proprietary lock-in. If you replace us, the work remains usable.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </Section>
+
+  <ConversionBand
+    heading="Start with a diagnostic."
+    lede="Most engagements begin with a conversation about what is not working. There is no cost to that, and no obligation to continue."
+  />
+</Base>

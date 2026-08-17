@@ -1,0 +1,152 @@
+---
+/**
+ * TERMS OF USE
+ *
+ * Terms for USING THIS WEBSITE. Not a services agreement — that is a contract
+ * signed per engagement, and conflating the two would let a visitor believe
+ * browsing the site creates commercial obligations. Section 6 says so directly.
+ *
+ * Deliberately short and readable. Terms nobody reads protect nobody; the
+ * point is that a visitor can actually understand what they are agreeing to.
+ */
+import Base from '../../layouts/Base.astro';
+import Section from '../../components/Section.astro';
+import PageHero from '../../components/PageHero.astro';
+import CompassRule from '../../components/CompassRule.astro';
+import { company, hasContactData } from '../../data/company.ts';
+
+const updated = '16 August 2026';
+
+const sections = [
+  {
+    id: 'using',
+    heading: '1 · Using this website',
+    body: [
+      'This site is published by ' + company.displayName + ', based in ' + company.contact.address.street + ', ' + company.contact.address.city + ', Nepal. By using it you accept the terms on this page.',
+      'You are welcome to read, print and share anything here. Please do not attempt to disrupt the site, extract data from it by automated means at a scale that affects its operation, or use it to send unsolicited messages through the contact form.',
+    ],
+  },
+  {
+    id: 'accuracy',
+    heading: '2 · Accuracy of information',
+    body: [
+      'We take care to keep this site accurate, and where something is uncertain we say so on the page rather than leaving you to guess. Programme dates marked tentative are tentative. Where a project has no measured result, the page says that explicitly.',
+      'Information here is general and descriptive. It is not advice for your specific situation — that is what a conversation and an engagement are for. Do not act on something you read here without checking whether it applies to you.',
+      'Descriptions of services, programmes and availability may change. Nothing on this site is an offer capable of acceptance, and prices are quoted individually after a conversation rather than published.',
+    ],
+  },
+  {
+    id: 'liability',
+    heading: '3 · Limitation of liability',
+    body: [
+      'This website is provided as it is. We do not guarantee it will be available without interruption or free of errors.',
+      'To the extent permitted by Nepali law, we are not liable for loss arising from your use of this website or from reliance on information published on it. That limitation applies to the website only.',
+      'It does not limit our responsibilities under a signed engagement — those are set out in the contract for that work, and this page does not reduce them.',
+    ],
+  },
+  {
+    id: 'ip',
+    heading: '4 · Intellectual property',
+    body: [
+      'The content of this site — text, design, structure, illustrations and the Navadisha name and mark — belongs to us, except where stated otherwise.',
+      'You may quote or reference our published material with attribution and a link. You may not reproduce substantial parts of it as your own, or use our name or mark in a way that suggests we endorse or are associated with you.',
+      'Client names appear only where we have permission. If you are a client and want a reference to your organisation removed, tell us and we will remove it.',
+      'Work produced under an engagement is a separate matter: source files, accounts and credentials transfer to the client on completion, as set out in the engagement contract.',
+    ],
+  },
+  {
+    id: 'contact',
+    heading: '5 · Contacting us',
+    body: [
+      'When you send a message we will reply within one working day. What we do with your information is set out in the privacy policy.',
+      'A message, and any conversation that follows, does not create a commercial relationship. Work begins only when both sides agree a written scope.',
+      'We may decline an enquiry. Where we do, we will say so plainly and, where we can, suggest someone better suited.',
+    ],
+  },
+  {
+    id: 'engagements',
+    heading: '6 · This page is not a services agreement',
+    body: [
+      'These terms govern your use of this website. They are not the terms of any engagement.',
+      'Consulting, development and training work is governed by a separate written agreement covering scope, deliverables, timelines, fees, ownership and handover. If you engage us, that document — not this page — sets out what we owe each other.',
+    ],
+  },
+  {
+    id: 'law',
+    heading: '7 · Governing law',
+    body: [
+      'These terms are governed by the laws of Nepal, and disputes relating to this website fall to the courts of Kathmandu.',
+    ],
+  },
+  {
+    id: 'changes',
+    heading: '8 · Changes',
+    body: [
+      'We may update this page. The date at the top shows when it last changed. Continuing to use the site after a change means accepting the current version.',
+    ],
+  },
+];
+---
+
+<Base
+  title="Terms of Use | Navadisha"
+  description="Terms for using the Navadisha website — accuracy, liability, intellectual property and how contact works. Short, readable, and not a services agreement."
+>
+  <PageHero
+    crumbs={[{ label: 'Home', href: '/' }, { label: 'Terms' }]}
+    eyebrow={`Last updated ${updated}`}
+    title="Terms of use"
+    lede="These cover using this website. They are deliberately short — terms nobody reads protect nobody."
+  />
+
+  {
+    sections.map((s, i) => (
+      <Section id={s.id} tone={i % 2 === 0 ? 'sunken' : 'page'} labelledby={`${s.id}-h`}>
+        <CompassRule />
+        <h2
+          id={`${s.id}-h`}
+          class="mt-6 measure"
+          style="font-size: var(--text-heading-lg); font-weight: 760; letter-spacing: -0.024em;"
+        >
+          {s.heading}
+        </h2>
+        <div class="mt-6 measure space-y-4" style="color: var(--text-secondary);">
+          {s.body.map((p) => (
+            <p>{p}</p>
+          ))}
+        </div>
+      </Section>
+    ))
+  }
+
+  <Section labelledby="q-h">
+    <CompassRule />
+    <h2 id="q-h" class="mt-6" style="font-size: var(--text-heading-lg); font-weight: 760; letter-spacing: -0.024em;">
+      Questions
+    </h2>
+    <div class="mt-6 measure space-y-4" style="color: var(--text-secondary);">
+      <p>
+        If anything here is unclear, ask —{' '}
+        {company.contact.email && (
+          <a href={`mailto:${company.contact.email}`} style="color: var(--text-accent); font-weight: 600;">
+            {company.contact.email}
+          </a>
+        )}
+        {hasContactData() && (
+          <>
+            {' '}or{' '}
+            <a href={`tel:${company.contact.phone}`} style="color: var(--text-accent); font-weight: 600;">
+              {company.contact.phoneDisplay}
+            </a>
+          </>
+        )}.
+      </p>
+      <p>
+        See also our{' '}
+        <a href="/privacy/" style="color: var(--text-accent); font-weight: 600;">privacy policy</a>
+        {' '}and{' '}
+        <a href="/about/company/" style="color: var(--text-accent); font-weight: 600;">company information</a>.
+      </p>
+    </div>
+  </Section>
+</Base>

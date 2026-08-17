@@ -1,0 +1,51 @@
+---
+/**
+ * Layout primitive. Owns section rhythm so pages never hand-roll vertical
+ * spacing — §9.2: "when uncertain between two spacing steps, take the larger."
+ * Generosity is the cheapest lever on perceived quality.
+ */
+interface Props {
+  width?: 'content' | 'wide' | 'prose';
+  tone?: 'page' | 'sunken' | 'inverse';
+  pillar?: 'education' | 'technology';
+  id?: string;
+  labelledby?: string;
+  class?: string;
+}
+
+const {
+  width = 'content',
+  tone = 'page',
+  pillar,
+  id,
+  labelledby,
+  class: className = '',
+} = Astro.props;
+
+const maxWidth = {
+  content: 'var(--container-content)',
+  wide: 'var(--container-wide)',
+  prose: 'var(--container-prose)',
+}[width];
+
+const background = {
+  page: 'var(--surface-page)',
+  sunken: 'var(--surface-sunken)',
+  inverse: 'var(--surface-inverse)',
+}[tone];
+
+const color = tone === 'inverse' ? 'var(--text-inverse)' : 'var(--text-primary)';
+---
+
+<section
+  id={id}
+  data-tone={tone}
+  data-pillar={pillar}
+  aria-labelledby={labelledby}
+  style={`background-color: ${background}; color: ${color};`}
+  class={`py-16 sm:py-20 lg:py-28 ${className}`}
+>
+  <div class="mx-auto px-5 lg:px-10" style={`max-width: ${maxWidth};`}>
+    <slot />
+  </div>
+</section>

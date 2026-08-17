@@ -1,0 +1,41 @@
+---
+/**
+ * The homepage signature moment. Phase-2 design §11 S3.
+ *
+ * Five approved nodes: Education → Technology → Innovation → Industry →
+ * Opportunity. This is the one place on the site where animation carries
+ * meaning rather than polish — it *demonstrates* the positioning instead of
+ * asserting it, which is why it earns its cost.
+ *
+ * Education and Technology take their pillar fills; this and the services index
+ * are the only places both accents appear together (§9.2 accent discipline).
+ */
+import PathLine from './PathLine.astro';
+
+const nodes = [
+  {
+    label: 'Education',
+    detail: 'Schools, colleges and universities carrying responsibility for what comes next.',
+    accent: 'var(--pillar-edu-fill)',
+  },
+  {
+    label: 'Technology',
+    detail: 'The systems and digital capability institutions increasingly depend on.',
+    accent: 'var(--pillar-tech-fill)',
+  },
+  {
+    label: 'Innovation',
+    detail: 'New methods and new tools, and the discipline to apply them well.',
+  },
+  {
+    label: 'Industry',
+    detail: 'Employers who need people able to do the work.',
+  },
+  {
+    label: 'Opportunity',
+    detail: 'What becomes available once the other four are connected.',
+  },
+];
+---
+
+<PathLine nodes={nodes} />

@@ -1,0 +1,126 @@
+---
+/**
+ * NAVADISHA — BASE LAYOUT
+ * Phase-0 doc §11.3 (technical SEO) and §6.4 (accessibility).
+ *
+ * Every page renders through here. Metadata is AUTHORED per page, never
+ * templated from the title — §10.1 "specific over superlative" applies to
+ * meta descriptions too, and templated descriptions are why most sites'
+ * search snippets read as filler.
+ */
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { company, hasComplianceData, hasContactData } from '../data/company.ts';
+
+interface Props {
+  /** <title> content, max 60 chars (§11.3). Authored, not derived. */
+  title: string;
+  /** Meta description, max 155 chars. Authored. */
+  description: string;
+  /** Retints the page to one pillar. A page uses base + ONE accent (§9.2). */
+  pillar?: 'education' | 'technology';
+  /** Per-page OG image. Falls back to the site default. */
+  ogImage?: string;
+  /** Set on pages that must not be indexed (thank-you, gated confirmations). */
+  noindex?: boolean;
+  /** Extra JSON-LD, e.g. Service / Course / Article / FAQPage. */
+  schema?: Record<string, unknown> | Record<string, unknown>[];
+  /**
+   * 'dark' where the page opens on an inverse hero, so the transparent header
+   * uses light nav text. Homepage only today. Contrast is verified in BOTH
+   * states, which is why this is a prop rather than a guess.
+   */
+  heroTone?: 'dark' | 'light';
+}
+
+const { title, description, pillar, ogImage, noindex = false, schema, heroTone = 'light' } = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImageUrl = new URL(ogImage ?? '/og-default.jpg', Astro.site).href;
+
+/**
+ * Organization / LocalBusiness JSON-LD.
+ * Emitted ONLY when real compliance data exists. Publishing a schema block
+ * full of nulls is worse than publishing none — it tells Google the entity is
+ * incomplete. Gated on blockers #2 and #7 (§11.3).
+ */
+const orgSchema = hasComplianceData()
+  ? {
+      '@context': 'https://schema.org',
+      '@type': ['Organization', 'LocalBusiness'],
+      name: company.legalName ?? company.displayName,
+      alternateName: company.shortName,
+      url: Astro.site?.href,
+      ...(hasContactData() && {
+        telephone: company.contact.phone,
+        email: company.contact.email,
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: company.contact.address.street,
+          addressLocality: company.contact.address.city,
+          addressRegion: company.contact.address.region,
+          addressCountry: company.contact.address.country,
+        },
+      }),
+      taxID: company.registration.panVat,
+    }
+  : null;
+
+const schemaBlocks = [orgSchema, ...(Array.isArray(schema) ? schema : schema ? [schema] : [])].filter(
+  Boolean,
+);
+---
+
+<!doctype html>
+<html lang="en" data-pillar={pillar}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={company.shortName} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    {/* Nepali locale reserved but NOT built (§5.5, R12). Do not occupy /ne/
+         until the translation decision closes (blocker #15). */}
+
+    {/* Self-hosted subset WOFF2, no third-party CDN (§9.2). Preload ONLY the
+         two latin faces used above the fold — preloading the full set,
+         including the 121KB Devanagari, would compete with the hero for
+         bandwidth on exactly the 4G connections this is optimised for. */}
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/manrope-6.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/jakarta-4.woff2" />
+
+    <link rel="icon" href="/brand/mark-32.png" sizes="32x32" />
+    <link rel="icon" href="/brand/mark-192.png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="/brand/mark-180.png" />
+    <meta name="theme-color" content="#0A4D8C" />
+
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    {
+      schemaBlocks.map((block) => (
+        <script type="application/ld+json" set:html={JSON.stringify(block)} />
+      ))
+    }
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header heroTone={heroTone} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

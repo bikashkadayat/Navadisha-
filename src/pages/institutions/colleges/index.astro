@@ -1,0 +1,272 @@
+---
+/**
+ * COLLEGES & +2 — the priority institutional page.
+ *
+ * This page carries the bridge positioning better than any other, because it is
+ * the one place an institutional visitor is handed something concrete to do for
+ * their students. Education → Technology → Industry demonstrated rather than
+ * asserted.
+ *
+ * POSITIONING GUARDS:
+ *   · NO university consulting claims. Accreditation, curriculum governance and
+ *     quality-assurance advisory are explicitly out of scope — Navadisha has no
+ *     higher-education engagement and no credentials to support them.
+ *   · NO placement promises. We do not place students and must not imply it.
+ *   · Colleges → AI for Students IS NOW WIRED (batch 3). The navigation audit
+ *     identified this as the single highest-value link on the site: the one
+ *     place the bridge is demonstrated rather than described, because an
+ *     institutional visitor is handed a concrete thing to do for their students.
+ */
+import Base from '../../../layouts/Base.astro';
+import Section from '../../../components/Section.astro';
+import PageHero from '../../../components/PageHero.astro';
+import CompassRule from '../../../components/CompassRule.astro';
+import PathLine from '../../../components/PathLine.astro';
+import SegmentCard from '../../../components/SegmentCard.astro';
+import FaqList from '../../../components/FaqList.astro';
+import Button from '../../../components/Button.astro';
+import ConversionBand from '../../../components/ConversionBand.astro';
+import { otherSegments } from '../../../data/institutions.ts';
+import { faqSchema } from '../../../data/schema.ts';
+import { whatsappLink } from '../../../data/company.ts';
+
+const wa = whatsappLink('Hello Navadisha — I am contacting you about our college. ');
+const others = otherSegments('colleges');
+
+const institutionSide = [
+  {
+    title: 'A website that carries the academic offer',
+    body: 'Programme pages, faculty, admission requirements and fee structures, kept current by your own administrative staff rather than by whoever built the site.',
+  },
+  {
+    title: 'Digital systems that get used',
+    body: 'Help specifying what the college actually needs before it is purchased. Most wasted technology spend happens at the specification stage, not the build.',
+  },
+  {
+    title: 'Positioning against nearby colleges',
+    body: 'A clear account of what distinguishes this college, expressed so a prospective student and a parent can both repeat it.',
+  },
+];
+
+const studentSide = [
+  {
+    title: 'Practical technology workshops',
+    body: 'Short, applied sessions delivered on your campus or hybrid — starting with AI for Students, a one-day introduction for school and college students.',
+  },
+  {
+    title: 'Delivered by practitioners',
+    body: 'Sessions are run by people currently building software and running digital literacy programmes, not by a separate training arm reading from a deck.',
+  },
+  {
+    title: 'Additive to your curriculum',
+    body: 'Designed to sit alongside the syllabus rather than compete with it. Nothing here requires curriculum change or affiliating-body approval.',
+  },
+];
+
+const delivery = [
+  { label: 'Diagnose', detail: 'Two to three weeks. Interviews, systems review, and a look at how students actually experience the institution digitally.' },
+  { label: 'Direct', detail: 'A phased plan sequenced around your academic calendar and admission cycles.' },
+  { label: 'Deliver', detail: 'Systems and web work for the institution; workshops for students. Either or both.' },
+  { label: 'Enable', detail: 'Documentation, staff training and handover. Named people run it before we close.' },
+];
+
+const faqs = [
+  {
+    q: 'Do you advise on curriculum or accreditation?',
+    a: 'No. Curriculum governance, accreditation and quality assurance sit with your affiliating body and with people who specialise in it. We work on digital systems, institutional presence, and practical technology capability for your students. If your question is really an accreditation question, we will tell you so.',
+  },
+  {
+    q: 'Do you place students in jobs?',
+    a: 'No. We do not run placements and we do not promise employment outcomes. The workshops build practical capability that is useful in work; converting that into a job depends on many things we do not control.',
+  },
+  {
+    q: 'How does the AI for Students workshop work?',
+    a: 'One day, delivered on your campus or hybrid, for school and college students. It is currently at planned status — tentatively October 2026, with dates being confirmed. If you would like it run for your students, tell us and we will include you when scheduling.',
+  },
+  {
+    q: 'Can we engage you for the workshop only, without the systems work?',
+    a: 'Yes. The two sides of this page are independent. Many colleges will only want one of them, and there is no requirement to take both.',
+  },
+  {
+    q: 'What does it cost?',
+    a: 'Quoted after a first conversation rather than published, because pricing work before understanding it produces a number that has to be revised. The diagnostic is fixed-fee; delivery is scoped after it.',
+  },
+];
+---
+
+<Base
+  title="College Development | Navadisha"
+  description="Digital systems and presence for Nepali colleges, plus practical technology workshops for students. Scoped around your academic calendar."
+  pillar="education"
+  schema={faqSchema(faqs)}
+>
+  <PageHero
+    crumbs={[{ label: 'Home', href: '/' }, { label: 'Institutions', href: '/institutions/' }, { label: 'Colleges & +2' }]}
+    eyebrow="Colleges & +2"
+    title="Your students are digitally native. Most college systems are not."
+    lede="We work with colleges on two sides of the same problem: the digital systems and presence the institution runs on, and the practical technology capability its students leave with."
+  >
+    <div class="mt-10 flex flex-wrap gap-4">
+      <Button href="/contact/" note="No cost, no obligation" arrow>Book a 30-minute conversation</Button>
+      {wa && <Button href={wa} variant="secondary" note="We usually reply within a day">WhatsApp us</Button>}
+    </div>
+  </PageHero>
+
+  {/* ── The two sides ── */}
+  <Section tone="sunken" labelledby="sides-h">
+    <CompassRule pillar />
+    <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--pillar);">Two sides</p>
+    <h2 id="sides-h" class="mt-4 measure" style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;">
+      Most suppliers work with the institution or with the students. We do both, and they inform each other.
+    </h2>
+
+    <div class="mt-12 grid gap-6 lg:grid-cols-2">
+      <div class="rounded-xl border p-8" data-pillar="education" style="background-color: var(--surface-raised); border-color: var(--border-subtle); border-left-width: 3px; border-left-color: var(--pillar-fill);">
+        <p class="text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--pillar);">
+          For the institution
+        </p>
+        <ul class="mt-7 space-y-6">
+          {
+            institutionSide.map((s) => (
+              <li>
+                <h3 style="font-family: var(--font-display); font-size: var(--text-heading-sm); font-weight: 720; letter-spacing: -0.012em;">
+                  {s.title}
+                </h3>
+                <p class="mt-2 text-sm" style="color: var(--text-secondary);">{s.body}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="rounded-xl border p-8" data-pillar="technology" style="background-color: var(--surface-raised); border-color: var(--border-subtle); border-left-width: 3px; border-left-color: var(--pillar-fill);">
+        <p class="text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--pillar);">
+          For your students
+        </p>
+        <ul class="mt-7 space-y-6">
+          {
+            studentSide.map((s) => (
+              <li>
+                <h3 style="font-family: var(--font-display); font-size: var(--text-heading-sm); font-weight: 720; letter-spacing: -0.012em;">
+                  {s.title}
+                </h3>
+                <p class="mt-2 text-sm" style="color: var(--text-secondary);">{s.body}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </Section>
+
+  {/* ── The bridge, demonstrated ── */}
+  <Section labelledby="bridge-h">
+    <div class="grid gap-12 lg:grid-cols-12">
+      <div class="lg:col-span-7">
+        <CompassRule pillar />
+        <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--pillar);">
+          Why this combination
+        </p>
+        <h2 id="bridge-h" class="mt-4" style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;">
+          A college sits between education and industry. So should its supplier.
+        </h2>
+        <div class="mt-8 space-y-5 measure" style="color: var(--text-secondary);">
+          <p>
+            A college's job is to prepare people for what comes after it. That makes the gap
+            between what is taught and what industry currently uses an institutional problem, not
+            a student problem — and it is not a problem a website vendor or a curriculum
+            consultant can address on their own.
+          </p>
+          <p>
+            Working on both sides means the systems we build for the institution and the
+            capability we build in its students are informed by the same understanding. It also
+            means we can be honest about which of the two would move the needle for you, rather
+            than recommending whichever we happen to sell.
+          </p>
+          <p>
+            <strong style="color: var(--text-primary);">Where we stop.</strong> We do not advise
+            on curriculum, accreditation or quality assurance, and we do not place students. Those
+            are real disciplines that we have no standing in.
+          </p>
+        </div>
+      </div>
+
+      {/* AI for Students — described, deliberately NOT linked. /programs/ is
+          not built yet, and a link to a 404 is worse than no link. */}
+      <div class="lg:col-span-5 lg:pl-6">
+        <div class="rounded-xl border p-8" style="background-color: var(--surface-raised); border-color: var(--border-subtle); border-left-width: 3px; border-left-color: var(--pillar-edu-fill);">
+          <div class="flex flex-wrap items-center gap-3">
+            <p class="text-[0.6875rem] font-bold uppercase tracking-[0.13em]" style="color: var(--text-tertiary);">
+              Workshop
+            </p>
+            <span
+              class="rounded-full px-2.5 py-1 text-[0.625rem] font-bold uppercase tracking-[0.09em]"
+              style="background-color: var(--pillar-edu-surface); color: var(--pillar-edu);"
+            >
+              Planned
+            </span>
+          </div>
+
+          <p class="mt-5" style="font-family: var(--font-display); font-size: var(--text-heading-md); font-weight: 720; letter-spacing: -0.018em;">
+            <a href="/programs/ai-for-students/" style="color: var(--text-primary); text-decoration: none;">
+              AI for Students
+            </a>
+          </p>
+
+          <dl class="mt-6 space-y-3 text-sm">
+            <div class="flex gap-3"><dt style="color: var(--text-tertiary); min-width: 5rem;">Format</dt><dd style="color: var(--text-secondary);">One day</dd></div>
+            <div class="flex gap-3"><dt style="color: var(--text-tertiary); min-width: 5rem;">For</dt><dd style="color: var(--text-secondary);">School and college students</dd></div>
+            <div class="flex gap-3"><dt style="color: var(--text-tertiary); min-width: 5rem;">Mode</dt><dd style="color: var(--text-secondary);">On-site or hybrid</dd></div>
+            <div class="flex gap-3"><dt style="color: var(--text-tertiary); min-width: 5rem;">Timing</dt><dd style="color: var(--text-secondary);">Tentatively October 2026</dd></div>
+            <div class="flex gap-3"><dt style="color: var(--text-tertiary); min-width: 5rem;">Trainer</dt><dd style="color: var(--text-secondary);">Bikash Kadayat</dd></div>
+          </dl>
+
+          <p class="mt-6 text-sm" style="color: var(--text-tertiary);">
+            Dates are being confirmed. Tell us if you would like it run for your students and we
+            will include you when scheduling.
+          </p>
+
+          <div class="mt-7 flex flex-wrap gap-3">
+            <Button href="/programs/ai-for-students/" note="No payment, no commitment yet" arrow>
+              Workshop details
+            </Button>
+            <Button href="/contact/" variant="secondary">Discuss for your students</Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </Section>
+
+  <Section tone="sunken" labelledby="delivery-h">
+    <CompassRule pillar />
+    <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--pillar);">Delivery model</p>
+    <h2 id="delivery-h" class="mt-4" style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;">
+      How an engagement runs.
+    </h2>
+    <div class="mt-14"><PathLine nodes={delivery} numbered /></div>
+    <p class="mt-12">
+      <a href="/about/method/" class="text-sm font-semibold" style="color: var(--text-accent);">
+        What each stage requires from you →
+      </a>
+    </p>
+  </Section>
+
+  <Section labelledby="faq-h">
+    <CompassRule pillar />
+    <div class="mt-6"><FaqList faqs={faqs} headingId="faq-h" /></div>
+  </Section>
+
+  <Section tone="sunken" labelledby="other-h">
+    <h2 id="other-h" class="text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--text-tertiary);">
+      Other institutions we work with
+    </h2>
+    <ul class="mt-8 grid gap-6 md:grid-cols-2">
+      {others.map((s) => <li><SegmentCard name={s.name} href={s.href} detail={s.detail} /></li>)}
+    </ul>
+  </Section>
+
+  <ConversionBand
+    heading="Start with a 30-minute conversation."
+    lede="Whether the priority is your systems or your students, describe the situation and we will tell you which of the two we would start with — or whether neither is the right answer."
+  />
+</Base>

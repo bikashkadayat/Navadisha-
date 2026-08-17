@@ -1,0 +1,244 @@
+---
+/**
+ * NGOs & DEVELOPMENT PARTNERS
+ *
+ * The best-evidenced institutional page on the site. Nepal Internet Foundation
+ * is sector-matched, the client name is usable, and the work is exactly what
+ * this audience buys — so the case study leads rather than sitting in a
+ * supporting slot.
+ *
+ * HONESTY REQUIREMENT specific to this audience: donor-funded procurement
+ * frequently requires registration and tax clearance, which Navadisha does not
+ * yet have. That is stated on this page rather than discovered by a programme
+ * manager three conversations in.
+ */
+import Base from '../../../layouts/Base.astro';
+import Section from '../../../components/Section.astro';
+import PageHero from '../../../components/PageHero.astro';
+import CompassRule from '../../../components/CompassRule.astro';
+import PathLine from '../../../components/PathLine.astro';
+import SegmentCard from '../../../components/SegmentCard.astro';
+import CaseStudyFeature from '../../../components/CaseStudyFeature.astro';
+import FaqList from '../../../components/FaqList.astro';
+import Button from '../../../components/Button.astro';
+import ConversionBand from '../../../components/ConversionBand.astro';
+import { getCollection } from 'astro:content';
+import { otherSegments } from '../../../data/institutions.ts';
+import { faqSchema } from '../../../data/schema.ts';
+import { whatsappLink, registrationNotice } from '../../../data/company.ts';
+
+const wa = whatsappLink('Hello Navadisha — I am contacting you about our organisation. ');
+const others = otherSegments('development');
+const notice = registrationNotice();
+
+const work = await getCollection('work', ({ data }) => !data.draft && !data.illustrative);
+const nif = work.find((w) => w.data.sector === 'development') ?? work[0];
+
+const capabilities = [
+  {
+    title: 'Public websites',
+    body: 'Sites that present programmes, initiatives, partnerships and organisational information clearly — to funders, partners and the communities you serve.',
+  },
+  {
+    title: 'Content architecture',
+    body: 'A structure your own team can publish into. Programme updates and reports should not require a developer, and if they do, the site goes stale within a year.',
+  },
+  {
+    title: 'Digital literacy delivery',
+    body: 'Practical training designed and delivered for community and beneficiary groups, drawing on work in digital inclusion and community connectivity.',
+  },
+  {
+    title: 'Documentation and handover',
+    body: 'Written documentation, trained named staff, and full transfer of files and credentials — the things a donor audit asks about and most suppliers cannot produce.',
+  },
+];
+
+const workingWith = [
+  {
+    title: 'Reporting and documentation',
+    body: 'We document decisions and produce written outputs at each stage. If a deliverable needs to sit inside a donor report, tell us the format at the outset and it will be produced that way.',
+  },
+  {
+    title: 'Scope discipline',
+    body: 'Grant budgets are fixed and timelines are rigid. Scope changes are raised as changes with cost and timing impact stated, never absorbed silently and discovered at the end.',
+  },
+  {
+    title: 'Capability transfer as a deliverable',
+    body: 'Handover is a scheduled stage, not a courtesy. That matters more in the development sector than anywhere else, because programmes end and the systems have to outlive the funding.',
+  },
+  {
+    title: 'Honest procurement position',
+    body: 'Company registration is in progress. Where your process requires a registration certificate or tax clearance, we will say so at the first conversation rather than partway through.',
+  },
+];
+
+const method = [
+  { label: 'Diagnose', detail: 'Who the work is actually for, and what they currently cannot find or do.' },
+  { label: 'Direct', detail: 'A plan that fits the grant period and the reporting cycle it sits inside.' },
+  { label: 'Deliver', detail: 'Build, test and populate, with review checkpoints rather than one reveal.' },
+  { label: 'Enable', detail: 'Documentation, training and handover so the work outlives the funding.' },
+];
+
+const faqs = [
+  {
+    q: 'Can you participate in donor-funded procurement?',
+    a: 'It depends on the requirement. Company registration is in progress, so where a process requires a registration certificate, PAN/VAT or tax clearance as a condition of contracting, we are not currently eligible. Where it does not, we can work with you now. We will tell you which applies at the first conversation.',
+  },
+  {
+    q: 'Can you produce deliverables in a donor-required format?',
+    a: 'Yes, if we know the format at the outset. Reporting requirements shape how work is documented, and retrofitting documentation to a template after the fact produces worse documentation.',
+  },
+  {
+    q: 'Our programme ends in a fixed period. What happens to the website afterwards?',
+    a: 'This is exactly why handover is a defined stage rather than a courtesy. You own the source files, accounts and credentials, your team is trained on the systems, and nothing we build requires us to keep it running. A site that dies when the grant ends is a supplier failure, not an inevitability.',
+  },
+  {
+    q: 'Do you work outside Kathmandu?',
+    a: 'Yes. Diagnostic work benefits from time on site; the rest can run remotely. Digital literacy delivery can be on site, remote or hybrid depending on the community and the connectivity available.',
+  },
+  {
+    q: 'What does it cost?',
+    a: 'Quoted after a first conversation. Where you have a fixed grant line for the work, tell us the figure — a plan built around a real budget is more useful than a proposal that has to be cut down afterwards.',
+  },
+];
+---
+
+<Base
+  title="NGOs & Development Partners | Navadisha"
+  description="Public websites, content architecture and digital literacy delivery for Nepali NGOs and donor-funded organisations. Built to outlive the funding period."
+  pillar="technology"
+  schema={faqSchema(faqs)}
+>
+  <PageHero
+    crumbs={[{ label: 'Home', href: '/' }, { label: 'Institutions', href: '/institutions/' }, { label: 'NGOs & Development' }]}
+    eyebrow="NGOs & development partners"
+    title="Programme work is visible to the people it reaches, and to almost nobody else."
+    lede="We build public websites, content structures and digital literacy delivery for organisations working in development — scoped so the work outlives the grant that funded it."
+  >
+    <div class="mt-10 flex flex-wrap gap-4">
+      <Button href="/contact/" note="No cost, no obligation" arrow>Discuss a programme or partnership</Button>
+      {wa && <Button href={wa} variant="secondary" note="We usually reply within a day">WhatsApp us</Button>}
+    </div>
+  </PageHero>
+
+  {/* ── The case study leads. This is the one page where proof comes first. ── */}
+  {
+    nif && (
+      <Section tone="sunken" labelledby="case-h">
+        <CompassRule pillar />
+        <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--pillar);">
+          Delivered work
+        </p>
+        <h2 id="case-h" class="mt-4" style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;">
+          Nepal Internet Foundation
+        </h2>
+        <p class="mt-6 measure" style="font-size: var(--text-body-lg); color: var(--text-secondary);">
+          Our most directly comparable engagement, for an organisation working on connectivity and
+          digital access in Nepal.
+        </p>
+        <div class="mt-12">
+          <CaseStudyFeature caseStudy={nif} />
+        </div>
+      </Section>
+    )
+  }
+
+  <Section labelledby="cap-h">
+    <CompassRule pillar />
+    <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--pillar);">What we do</p>
+    <h2 id="cap-h" class="mt-4" style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;">
+      Four things, for organisations working in development.
+    </h2>
+
+    <div class="mt-12 grid gap-6 md:grid-cols-2">
+      {
+        capabilities.map((c, i) => (
+          <div class="rounded-xl border p-8" style="background-color: var(--surface-raised); border-color: var(--border-subtle);">
+            <p class="tabular" style="font-family: var(--font-display); font-size: 1.75rem; font-weight: 800; line-height: 1; color: var(--text-decorative); letter-spacing: -0.04em;" aria-hidden="true">
+              {String(i + 1).padStart(2, '0')}
+            </p>
+            <h3 class="mt-4" style="font-family: var(--font-display); font-size: var(--text-heading-sm); font-weight: 720; letter-spacing: -0.012em;">
+              {c.title}
+            </h3>
+            <p class="mt-3 text-sm" style="color: var(--text-secondary);">{c.body}</p>
+          </div>
+        ))
+      }
+    </div>
+  </Section>
+
+  <Section tone="sunken" labelledby="working-h">
+    <CompassRule pillar />
+    <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--pillar);">
+      Working with development partners
+    </p>
+    <h2 id="working-h" class="mt-4 measure" style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;">
+      What is different about working with donor-funded organisations.
+    </h2>
+
+    <div class="mt-12 space-y-4">
+      {
+        workingWith.map((w) => (
+          <div class="rounded-xl border p-7" style="background-color: var(--surface-raised); border-color: var(--border-subtle); border-left-width: 3px; border-left-color: var(--pillar-fill);">
+            <h3 style="font-family: var(--font-display); font-size: var(--text-heading-sm); font-weight: 720; letter-spacing: -0.012em;">
+              {w.title}
+            </h3>
+            <p class="mt-3 measure text-sm" style="color: var(--text-secondary);">{w.body}</p>
+          </div>
+        ))
+      }
+    </div>
+
+    {
+      notice && (
+        <div
+          class="mt-8 rounded-xl border p-7"
+          style="background-color: var(--surface-raised); border-color: var(--border-subtle); border-left-width: 3px; border-left-color: var(--color-warning);"
+        >
+          <p class="text-[0.6875rem] font-bold uppercase tracking-[0.13em]" style="color: var(--text-tertiary);">
+            Procurement status
+          </p>
+          <p class="mt-4 measure text-sm" style="color: var(--text-secondary);">{notice}</p>
+          <p class="mt-4">
+            <a href="/about/company/" class="text-sm font-semibold" style="color: var(--text-accent);">
+              Full company and compliance information →
+            </a>
+          </p>
+        </div>
+      )
+    }
+  </Section>
+
+  <Section labelledby="method-h">
+    <CompassRule pillar />
+    <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--pillar);">Delivery model</p>
+    <h2 id="method-h" class="mt-4" style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;">
+      How an engagement runs.
+    </h2>
+    <div class="mt-14"><PathLine nodes={method} numbered /></div>
+    <p class="mt-12">
+      <a href="/about/method/" class="text-sm font-semibold" style="color: var(--text-accent);">
+        What each stage requires from you →
+      </a>
+    </p>
+  </Section>
+
+  <Section tone="sunken" labelledby="faq-h">
+    <CompassRule pillar />
+    <div class="mt-6"><FaqList faqs={faqs} headingId="faq-h" /></div>
+  </Section>
+
+  <Section labelledby="other-h">
+    <h2 id="other-h" class="text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--text-tertiary);">
+      Other institutions we work with
+    </h2>
+    <ul class="mt-8 grid gap-6 md:grid-cols-2">
+      {others.map((s) => <li><SegmentCard name={s.name} href={s.href} detail={s.detail} /></li>)}
+    </ul>
+  </Section>
+
+  <ConversionBand
+    heading="Discuss a programme or partnership."
+    lede="Tell us what the programme needs to achieve and what the reporting requires. If your procurement rules mean we are not eligible yet, we will say so straight away."
+  />
+</Base>

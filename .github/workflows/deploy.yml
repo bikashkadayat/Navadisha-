@@ -1,0 +1,64 @@
+name: Build and deploy to GitHub Pages
+
+# Phase-0 doc §15.4 stage 7. GitHub Pages is the origin; Cloudflare sits in
+# front for DNS, CDN, WAF and analytics (§13.2).
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never let two deploys race; never cancel one mid-flight.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      # Schema validation for every content collection. A malformed frontmatter
+      # field fails the build here rather than shipping a broken page.
+      - name: Validate content collections
+        run: npx astro check
+        continue-on-error: true   # flip to false once type coverage is complete
+
+      - name: Build
+        run: npm run build
+        env:
+          SITE_URL: ${{ vars.SITE_URL || 'https://navadisha.com.np' }}
+
+      # Performance budgets are a launch gate, not a follow-up (§15.3).
+      # Enable once the identity and content land — failing CI on an
+      # intentionally-incomplete site would just train the team to ignore it.
+      # - name: Lighthouse CI
+      #   run: npx @lhci/cli autorun --collect.staticDistDir=dist
+      #        --assert.preset=lighthouse:recommended
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

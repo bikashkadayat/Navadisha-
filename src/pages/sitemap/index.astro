@@ -1,0 +1,212 @@
+---
+/**
+ * HTML SITEMAP
+ *
+ * Human-readable companion to /sitemap-index.xml. Two audiences: someone who
+ * cannot find a page, and a crawler following a flat link graph.
+ *
+ * ⚠ GENERATED FROM COLLECTIONS, NOT HAND-LISTED. A hand-maintained sitemap
+ * drifts from reality within a month and then actively misleads. Services,
+ * programmes and case studies are pulled from the same collections the pages
+ * render from, so this list cannot list something that does not exist — or omit
+ * something that does.
+ *
+ * The `available` flag on static routes exists for the same reason: an entry is
+ * only rendered as a link where the page is actually built.
+ */
+import Base from '../../layouts/Base.astro';
+import Section from '../../components/Section.astro';
+import PageHero from '../../components/PageHero.astro';
+import CompassRule from '../../components/CompassRule.astro';
+import { getCollection } from 'astro:content';
+import { segments } from '../../data/institutions.ts';
+import { programLines, statusLabel } from '../../data/programs.ts';
+
+const [services, work] = await Promise.all([
+  getCollection('services', ({ data }) => !data.draft),
+  getCollection('work', ({ data }) => !data.draft),
+]);
+
+const education = services.filter((s) => s.data.pillar === 'education').sort((a, b) => a.data.order - b.data.order);
+const technology = services.filter((s) => s.data.pillar === 'technology').sort((a, b) => a.data.order - b.data.order);
+
+interface Entry {
+  label: string;
+  href: string;
+  note?: string;
+}
+
+const groups: { heading: string; intro: string; entries: Entry[] }[] = [
+  {
+    heading: 'Main',
+    intro: 'The five top-level sections, plus this page.',
+    entries: [
+      { label: 'Home', href: '/', note: 'What we do and who for' },
+      { label: 'For Institutions', href: '/institutions/', note: 'Schools, colleges, NGOs' },
+      { label: 'For Students', href: '/students/', note: 'Workshops and career questions' },
+      { label: 'Services', href: '/services/', note: 'Both practices' },
+      { label: 'Selected Work', href: '/work/', note: 'Delivered engagements' },
+      { label: 'About', href: '/about/', note: 'Story, method, team, company' },
+      { label: 'Contact', href: '/contact/', note: 'Message, WhatsApp or call' },
+    ],
+  },
+  {
+    heading: 'Institutions',
+    intro: 'Segment pages. Universities and government are not published — see the company page for why.',
+    entries: [
+      { label: 'For Institutions', href: '/institutions/', note: 'Hub' },
+      ...segments.map((s) => ({ label: s.name, href: s.href })),
+    ],
+  },
+  {
+    heading: 'Students',
+    intro: 'Mobile-first pages for students and their families.',
+    entries: [
+      { label: 'For Students', href: '/students/', note: 'Hub' },
+      { label: 'Workshops', href: '/students/workshops/', note: 'What you can attend' },
+    ],
+  },
+  {
+    heading: 'Services · Education',
+    intro: 'Institutional advisory and education-side work.',
+    entries: education.map((s) => ({ label: s.data.title, href: `/services/${s.id}/`, note: s.data.summary })),
+  },
+  {
+    heading: 'Services · Technology',
+    intro: 'Systems, brand and digital delivery.',
+    entries: technology.map((s) => ({ label: s.data.title, href: `/services/${s.id}/`, note: s.data.summary })),
+  },
+  {
+    heading: 'About',
+    intro: 'Who we are, how we work, and our current company status.',
+    entries: [
+      { label: 'Our Story', href: '/about/' },
+      { label: 'Our Method', href: '/about/method/', note: 'Diagnose, Direct, Deliver, Enable' },
+      { label: 'Team & Leadership', href: '/about/team/' },
+      { label: 'Company & Compliance', href: '/about/company/', note: 'Registration status' },
+    ],
+  },
+  {
+    heading: 'Work',
+    intro: 'Delivered engagements. One at present.',
+    entries: [
+      { label: 'Selected Work', href: '/work/', note: 'Index and the standard we hold to' },
+      ...work.map((w) => ({ label: w.data.title, href: `/work/${w.id}/`, note: w.data.client })),
+    ],
+  },
+  {
+    heading: 'Legal',
+    intro: 'What this site does with your information, and the terms of using it.',
+    entries: [
+      { label: 'Privacy Policy', href: '/privacy/', note: 'No cookies, no tracking' },
+      { label: 'Terms of Use', href: '/terms/' },
+      { label: 'Sitemap', href: '/sitemap/', note: 'This page' },
+    ],
+  },
+];
+
+/** Programmes are listed separately — most are not linkable, and why matters. */
+const linkablePrograms = programLines.filter((p) => p.href);
+const unlinkablePrograms = programLines.filter((p) => !p.href);
+---
+
+<Base
+  title="Sitemap | Navadisha"
+  description="Every page on the Navadisha website, grouped by section — institutions, students, services, programmes, work, about and legal."
+>
+  <PageHero
+    crumbs={[{ label: 'Home', href: '/' }, { label: 'Sitemap' }]}
+    eyebrow="Sitemap"
+    title="Every page on this site."
+    lede="Grouped by section. Generated from the same content the pages are built from, so it cannot list something that does not exist."
+  />
+
+  {
+    groups.map((g, i) => (
+      <Section tone={i % 2 === 0 ? 'sunken' : 'page'} labelledby={`sm-${i}`}>
+        <CompassRule />
+        <h2
+          id={`sm-${i}`}
+          class="mt-6"
+          style="font-size: var(--text-heading-lg); font-weight: 760; letter-spacing: -0.024em;"
+        >
+          {g.heading}
+        </h2>
+        <p class="mt-4 measure text-sm" style="color: var(--text-secondary);">
+          {g.intro}
+        </p>
+
+        <ul class="mt-8 grid gap-x-8 gap-y-1 sm:grid-cols-2">
+          {g.entries.map((e) => (
+            <li class="border-b py-3" style="border-color: var(--border-subtle);">
+              <a href={e.href} class="text-sm font-semibold" style="color: var(--text-primary);">
+                {e.label}
+              </a>
+              {e.note && (
+                <span class="ml-2 text-sm" style="color: var(--text-tertiary);">
+                  — {e.note}
+                </span>
+              )}
+            </li>
+          ))}
+        </ul>
+      </Section>
+    ))
+  }
+
+  {/* Programmes — status-aware, matching the rule used everywhere else. */}
+  <Section tone="sunken" labelledby="sm-programs">
+    <CompassRule />
+    <h2 id="sm-programs" class="mt-6" style="font-size: var(--text-heading-lg); font-weight: 760; letter-spacing: -0.024em;">
+      Programmes
+    </h2>
+    <p class="mt-4 measure text-sm" style="color: var(--text-secondary);">
+      Only programmes with a page are linked. The rest are named with their status and nothing
+      else, because there is nothing behind them yet.
+    </p>
+
+    <ul class="mt-8 grid gap-x-8 gap-y-1 sm:grid-cols-2">
+      <li class="border-b py-3" style="border-color: var(--border-subtle);">
+        <a href="/programs/" class="text-sm font-semibold" style="color: var(--text-primary);">
+          Programmes
+        </a>
+        <span class="ml-2 text-sm" style="color: var(--text-tertiary);">— Index</span>
+      </li>
+      {
+        linkablePrograms.map((p) => (
+          <li class="border-b py-3" style="border-color: var(--border-subtle);">
+            <a href={p.href} class="text-sm font-semibold" style="color: var(--text-primary);">
+              {p.title}
+            </a>
+            <span class="ml-2 text-sm" style="color: var(--text-tertiary);">— {statusLabel[p.status]}</span>
+          </li>
+        ))
+      }
+      {
+        unlinkablePrograms.map((p) => (
+          <li class="border-b py-3" style="border-color: var(--border-subtle);">
+            <span class="text-sm font-semibold" style="color: var(--text-tertiary);">
+              {p.title}
+            </span>
+            <span class="ml-2 text-sm" style="color: var(--text-tertiary);">
+              — {statusLabel[p.status]}, no page yet
+            </span>
+          </li>
+        ))
+      }
+    </ul>
+  </Section>
+
+  <Section labelledby="xml-h">
+    <CompassRule />
+    <h2 id="xml-h" class="mt-6" style="font-size: var(--text-heading-lg); font-weight: 760; letter-spacing: -0.024em;">
+      For search engines
+    </h2>
+    <p class="mt-5 measure" style="color: var(--text-secondary);">
+      An XML sitemap is generated automatically at{' '}
+      <a href="/sitemap-index.xml" style="color: var(--text-accent); font-weight: 600;">/sitemap-index.xml</a>{' '}
+      and referenced from <code>robots.txt</code>. It is kept in step with the build, so it never
+      lists a page that has been removed.
+    </p>
+  </Section>
+</Base>

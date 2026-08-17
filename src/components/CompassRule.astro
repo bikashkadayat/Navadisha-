@@ -1,0 +1,22 @@
+---
+/**
+ * SIGNATURE DEVICE 2 — the compass rule.
+ * Phase-2 design §02. Replaces the generic <hr> everywhere.
+ *
+ * A hairline rule with a short vertical tick at its left end, marking the
+ * "north" of a section. Cheap to render, and it accumulates into a recognisable
+ * rhythm down a long page — which is most of what a signature device is for.
+ */
+interface Props {
+  /** Tick takes the pillar colour instead of primary when inside a pillar context. */
+  pillar?: boolean;
+  class?: string;
+}
+const { pillar = false, class: className = '' } = Astro.props;
+const tickColor = pillar ? 'var(--pillar-fill, var(--action-primary-default))' : 'var(--action-primary-default)';
+---
+
+<div class={`flex items-end gap-0 ${className}`} aria-hidden="true">
+  <span class="block w-[3px] shrink-0" style={`height: 10px; background-color: ${tickColor};`}></span>
+  <span class="block h-px flex-1" style="background-color: var(--border-subtle);"></span>
+</div>

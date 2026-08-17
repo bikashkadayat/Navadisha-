@@ -1,0 +1,358 @@
+---
+/**
+ * CONTACT FORM — the site's primary conversion mechanism.
+ *
+ * ARCHITECTURE: posts JSON to the Cloudflare Worker (worker/src/index.ts). The
+ * payload shape matches the Worker's `LeadPayload`, which in turn mirrors the
+ * Phase-2 Django `Lead` model — so the Django migration changes one constant,
+ * the endpoint URL, and nothing else.
+ *
+ * THE AUDIENCE FIELD is the highest-value single input on the site. It routes
+ * the enquiry now and becomes the CRM segmentation field in Phase 2 without a
+ * migration. It is required for that reason.
+ *
+ * PROGRESSIVE ENHANCEMENT — stated honestly rather than pretended:
+ * submission requires JavaScript, because a native cross-origin POST to the
+ * Worker would render raw JSON to the visitor. A <noscript> block therefore
+ * offers WhatsApp, phone and email, which are all fully functional without
+ * script. Nobody is left with a dead form.
+ *
+ * ACCESSIBILITY: persistent visible labels (never placeholder-only), errors
+ * tied to fields via aria-describedby, aria-invalid on failure, and a polite
+ * live region for status. Errors are never signalled by colour alone.
+ */
+import { company, whatsappLink, hasContactData } from '../data/company.ts';
+
+interface Props {
+  /** Pre-selects the audience when linked from a segment page. */
+  defaultAudience?: 'institution' | 'student' | 'business' | 'training' | 'other';
+  /** Recorded with the lead so we know which page produced it. */
+  sourcePage?: string;
+}
+const { defaultAudience, sourcePage } = Astro.props;
+
+/**
+ * Worker endpoint. Not yet deployed — see worker/DEPLOYMENT.md. Until it is,
+ * submissions fail gracefully and the form directs the visitor to WhatsApp,
+ * which is a working channel today.
+ */
+const ENDPOINT = import.meta.env.PUBLIC_FORM_ENDPOINT ?? '';
+const TURNSTILE_KEY = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '';
+
+const wa = whatsappLink('Hello Navadisha — ');
+
+const audiences = [
+  { value: 'institution', label: 'An institution — school, college or university' },
+  { value: 'student', label: 'A student' },
+  { value: 'business', label: 'A business or organisation' },
+  { value: 'training', label: 'A training partner' },
+  { value: 'other', label: 'Something else' },
+];
+---
+
+<form
+  class="contact-form"
+  data-contact-form
+  data-endpoint={ENDPOINT}
+  data-source={sourcePage ?? Astro.url.pathname}
+  novalidate
+>
+  <div class="field-grid">
+    <div class="field">
+      <label for="cf-name">Your name <span class="req" aria-hidden="true">*</span></label>
+      <input id="cf-name" name="name" type="text" autocomplete="name" required aria-describedby="cf-name-err" />
+      <p class="err" id="cf-name-err" hidden></p>
+    </div>
+
+    <div class="field">
+      <label for="cf-email">Email <span class="req" aria-hidden="true">*</span></label>
+      <input
+        id="cf-email"
+        name="email"
+        type="email"
+        inputmode="email"
+        autocomplete="email"
+        required
+        aria-describedby="cf-email-err"
+      />
+      <p class="err" id="cf-email-err" hidden></p>
+    </div>
+
+    <div class="field">
+      <label for="cf-phone">Phone <span class="opt">optional</span></label>
+      <input id="cf-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" />
+    </div>
+
+    <div class="field">
+      <label for="cf-org">Organisation <span class="opt">optional</span></label>
+      <input id="cf-org" name="organisation" type="text" autocomplete="organization" />
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="cf-audience">I am <span class="req" aria-hidden="true">*</span></label>
+    <select id="cf-audience" name="audience" required aria-describedby="cf-audience-err">
+      <option value="">Please choose…</option>
+      {
+        audiences.map((a) => (
+          <option value={a.value} selected={a.value === defaultAudience}>
+            {a.label}
+          </option>
+        ))
+      }
+    </select>
+    <p class="err" id="cf-audience-err" hidden></p>
+  </div>
+
+  <div class="field">
+    <label for="cf-message">What would you like to talk about? <span class="req" aria-hidden="true">*</span></label>
+    <textarea id="cf-message" name="message" rows="6" required aria-describedby="cf-message-err cf-message-hint"
+    ></textarea>
+    <p class="hint" id="cf-message-hint">
+      A sentence or two is enough. We will ask the rest in the conversation.
+    </p>
+    <p class="err" id="cf-message-err" hidden></p>
+  </div>
+
+  {/* Honeypot. Hidden from people, attractive to bots. Never aria-hidden alone —
+      it is removed from the tab order and the accessibility tree entirely. */}
+  <div class="hp" aria-hidden="true">
+    <label for="cf-website">Website</label>
+    <input id="cf-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+  </div>
+
+  {TURNSTILE_KEY && <div class="cf-turnstile" data-sitekey={TURNSTILE_KEY} data-theme="auto" />}
+
+  <div class="actions">
+    <button type="submit" class="submit">
+      <span class="submit-label">Send message</span>
+      <span class="submit-arrow" aria-hidden="true">→</span>
+    </button>
+    <p class="commitment">{company.responseCommitment}</p>
+  </div>
+
+  {/* Polite live region — a screen-reader user must be told the outcome. */}
+  <p class="status" data-form-status role="status" aria-live="polite" hidden></p>
+
+  <noscript>
+    <div class="noscript-fallback">
+      <p><strong>This form needs JavaScript to send.</strong> These channels work without it:</p>
+      <ul>
+        {wa && <li><a href={wa}>WhatsApp us</a></li>}
+        {hasContactData() && <li><a href={`tel:${company.contact.phone}`}>Call {company.contact.phoneDisplay}</a></li>}
+        {company.contact.email && <li><a href={`mailto:${company.contact.email}`}>Email {company.contact.email}</a></li>}
+      </ul>
+    </div>
+  </noscript>
+</form>
+
+<style>
+  .contact-form { display: flex; flex-direction: column; gap: 1.5rem; }
+  .field-grid { display: grid; gap: 1.5rem; }
+  @media (min-width: 640px) { .field-grid { grid-template-columns: 1fr 1fr; } }
+
+  .field { display: flex; flex-direction: column; gap: 0.5rem; }
+  .field label {
+    font-size: 0.875rem;
+    font-weight: 620;
+    color: var(--text-primary);
+  }
+  .req { color: var(--pillar-edu, var(--color-edu-700)); }
+  .opt { font-weight: 400; color: var(--text-tertiary); font-size: 0.8125rem; }
+
+  .field input,
+  .field select,
+  .field textarea {
+    width: 100%;
+    min-height: 44px;
+    padding: 0.7rem 0.9rem;
+    font: inherit;
+    font-size: 1rem; /* 16px — anything smaller triggers iOS zoom on focus */
+    color: var(--text-primary);
+    background-color: var(--surface-raised);
+    border: 1px solid var(--border-default);
+    border-radius: 8px;
+    transition: border-color 150ms ease-out;
+  }
+  .field textarea { resize: vertical; min-height: 8rem; }
+  .field input:focus-visible,
+  .field select:focus-visible,
+  .field textarea:focus-visible { border-color: var(--focus-ring); }
+
+  .field [aria-invalid='true'] { border-color: var(--color-error); border-width: 2px; }
+
+  .hint { margin: 0; font-size: 0.8125rem; color: var(--text-tertiary); }
+  .err {
+    margin: 0;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-error);
+  }
+  /* Errors are never colour-only — a symbol carries the same information. */
+  .err::before { content: '⚠ '; }
+
+  .hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; }
+  .submit {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    padding: 0.75rem 1.5rem;
+    font: inherit;
+    font-size: 0.9375rem;
+    font-weight: 650;
+    color: var(--action-primary-text);
+    background-color: var(--action-primary-default);
+    border: 1px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 150ms ease-out;
+  }
+  .submit:hover:not(:disabled) { background-color: var(--action-primary-hover); }
+  .submit:disabled { background-color: var(--action-disabled-bg); color: var(--action-disabled-text); cursor: progress; }
+  .submit-arrow { display: inline-block; transition: transform 150ms ease-out; }
+  .submit:hover:not(:disabled) .submit-arrow { transform: translateX(2px); }
+  .commitment { margin: 0; font-size: 0.8125rem; color: var(--text-tertiary); }
+
+  .status {
+    margin: 0;
+    padding: 1rem 1.25rem;
+    border-radius: 8px;
+    font-size: 0.9375rem;
+    border: 1px solid var(--border-subtle);
+    background-color: var(--surface-sunken);
+  }
+  .status[data-state='success'] { border-left: 3px solid var(--color-success); }
+  .status[data-state='error'] { border-left: 3px solid var(--color-error); }
+
+  .noscript-fallback {
+    padding: 1.25rem;
+    border: 1px solid var(--border-subtle);
+    border-left: 3px solid var(--color-warning);
+    border-radius: 0 8px 8px 0;
+    background-color: var(--surface-sunken);
+    font-size: 0.9375rem;
+  }
+  .noscript-fallback p { margin: 0 0 0.5rem; }
+  .noscript-fallback ul { margin: 0; padding-left: 1.25rem; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .submit, .submit-arrow, .field input, .field select, .field textarea { transition: none; }
+  }
+</style>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
+  if (form) {
+    const status = form.querySelector<HTMLElement>('[data-form-status]')!;
+    const submit = form.querySelector<HTMLButtonElement>('.submit')!;
+    const label = form.querySelector<HTMLElement>('.submit-label')!;
+    const endpoint = form.dataset.endpoint ?? '';
+
+    const setError = (name: string, message: string | null) => {
+      const input = form.querySelector<HTMLElement>(`[name="${name}"]`);
+      const err = form.querySelector<HTMLElement>(`#cf-${name === 'organisation' ? 'org' : name}-err`);
+      if (!input) return;
+      if (message) {
+        input.setAttribute('aria-invalid', 'true');
+        if (err) { err.textContent = message; err.hidden = false; }
+      } else {
+        input.removeAttribute('aria-invalid');
+        if (err) { err.textContent = ''; err.hidden = true; }
+      }
+    };
+
+    const validate = (data: Record<string, string>) => {
+      const errors: Record<string, string> = {};
+      if (!data.name?.trim()) errors.name = 'Please tell us your name.';
+      if (!data.email?.trim()) errors.email = 'Please enter an email address we can reply to.';
+      else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(data.email)) errors.email = 'That does not look like an email address.';
+      if (!data.audience) errors.audience = 'Please tell us which of these describes you.';
+      if (!data.message?.trim()) errors.message = 'Please tell us briefly what you need.';
+      return errors;
+    };
+
+    const show = (state: 'success' | 'error', message: string) => {
+      status.dataset.state = state;
+      status.textContent = message;
+      status.hidden = false;
+    };
+
+    // Validate on blur, not on every keystroke — mid-typing errors are hostile.
+    form.querySelectorAll('input, select, textarea').forEach((el) => {
+      el.addEventListener('blur', () => {
+        const name = (el as HTMLInputElement).name;
+        if (!name || name === 'website') return;
+        const data = Object.fromEntries(new FormData(form) as any) as Record<string, string>;
+        setError(name, validate(data)[name] ?? null);
+      });
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      status.hidden = true;
+
+      const raw = Object.fromEntries(new FormData(form) as any) as Record<string, string>;
+      const errors = validate(raw);
+
+      ['name', 'email', 'audience', 'message'].forEach((f) => setError(f, errors[f] ?? null));
+
+      if (Object.keys(errors).length) {
+        const first = form.querySelector<HTMLElement>('[aria-invalid="true"]');
+        first?.focus();
+        show('error', 'Please check the highlighted fields and try again.');
+        return;
+      }
+
+      if (!endpoint) {
+        // Worker not yet deployed. Say so plainly and offer a channel that works.
+        show(
+          'error',
+          'Our message form is not live yet. Please reach us on WhatsApp or by phone — both are working, and we will reply within one working day.',
+        );
+        return;
+      }
+
+      submit.disabled = true;
+      label.textContent = 'Sending…';
+
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            ...raw,
+            sourcePage: form.dataset.source ?? location.pathname,
+            turnstileToken: (raw['cf-turnstile-response'] as string) ?? undefined,
+          }),
+        });
+
+        const body = await res.json().catch(() => ({}));
+
+        if (res.ok) {
+          form.reset();
+          // State what happens next and when. A bare "thank you" wastes the moment.
+          show(
+            'success',
+            'Thank you — your message has reached us. We reply within one working day, and you should have a confirmation email shortly.',
+          );
+        } else {
+          show('error', body.error ?? 'Something went wrong sending that. Please try WhatsApp or phone instead.');
+        }
+      } catch {
+        show('error', 'We could not reach our server. Please try WhatsApp or phone — both are working.');
+      } finally {
+        submit.disabled = false;
+        label.textContent = 'Send message';
+      }
+    });
+  }
+</script>

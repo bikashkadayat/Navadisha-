@@ -1,0 +1,26 @@
+# Navadisha form relay — Phase-0 doc §12.2
+#
+# Deploy:  cd worker && npx wrangler deploy
+#
+# Secrets (npx wrangler secret put <NAME>) — never commit these:
+#   TURNSTILE_SECRET   Cloudflare Turnstile secret key
+#   RESEND_API_KEY     transactional email provider key
+#
+# Create the KV namespace first, then paste its id below:
+#   npx wrangler kv namespace create LEADS
+#
+# ⚠ The LEADS namespace is the Phase-2 CRM's seed data. Do not set a TTL on
+#   lead:* keys and do not clear it between deploys.
+
+name = "navadisha-forms"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+
+[vars]
+NOTIFY_TO      = "contact@navadisha.com.np"                 # ✅ confirmed
+NOTIFY_FROM    = "contact@navadisha.com.np"                 # ✅ domain sender — verify navadisha.com.np with the provider
+ALLOWED_ORIGIN = "https://navadisha.bikashkadayat.com.np"   # ✅ confirmed
+
+[[kv_namespaces]]
+binding = "LEADS"
+id = ""            # TODO: paste the id from `wrangler kv namespace create LEADS`

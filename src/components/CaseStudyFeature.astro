@@ -1,0 +1,96 @@
+---
+/**
+ * SINGLE-CASE-STUDY LAYOUT. Phase-2 design §06.
+ *
+ * A three-card grid holding one card looks broken and advertises the gap.
+ * A full-width editorial band holding one case study reads as focus.
+ *
+ * The homepage switches from this component to a CaseStudyCard grid
+ * automatically once three featured case studies exist — no launch-day
+ * decision, nothing to remember.
+ */
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  caseStudy: CollectionEntry<'work'>;
+}
+const { caseStudy } = Astro.props;
+const d = caseStudy.data;
+---
+
+<article class="grid gap-10 lg:grid-cols-12 lg:gap-14">
+  <div class="lg:col-span-7">
+    {
+      d.illustrative && (
+        <p
+          class="mb-4 inline-block rounded px-2.5 py-1 text-[0.6875rem] font-bold uppercase tracking-[0.11em]"
+          style="background-color: var(--surface-sunken); color: var(--color-warning);"
+        >
+          Illustrative — method applied
+        </p>
+      )
+    }
+
+    <p
+      class="text-[0.6875rem] font-bold uppercase tracking-[0.13em]"
+      style="color: var(--text-tertiary);"
+    >
+      {d.client}
+    </p>
+
+    <h3
+      class="mt-3"
+      style="font-family: var(--font-display); font-size: var(--text-heading-lg); font-weight: 760; letter-spacing: -0.024em;"
+    >
+      {d.title}
+    </h3>
+
+    <div class="mt-6 space-y-4 measure" style="color: var(--text-secondary);">
+      <p>{d.challenge}</p>
+      <p>{d.approach}</p>
+    </div>
+
+    <p class="mt-8">
+      <a
+        href={`/work/${caseStudy.id}/`}
+        class="inline-flex items-center gap-1.5 text-sm font-semibold"
+        style="color: var(--text-accent);"
+      >
+        Read the project
+        <span aria-hidden="true">→</span>
+      </a>
+    </p>
+  </div>
+
+  {/* Outcomes rail. Verified values only — the schema requires at least one,
+       and §10.2 asks for a number. Where a number does not yet exist we show
+       the verified qualitative outcome rather than inventing a figure. */}
+  <div class="lg:col-span-5">
+    <dl
+      class="rounded-xl border p-7"
+      style="background-color: var(--surface-raised); border-color: var(--border-subtle);"
+    >
+      <dt
+        class="text-[0.6875rem] font-bold uppercase tracking-[0.13em]"
+        style="color: var(--text-tertiary);"
+      >
+        Outcomes
+      </dt>
+      <dd class="mt-5 space-y-5">
+        {
+          d.outcomes.map((o) => (
+            <div class="border-t pt-4 first:border-t-0 first:pt-0" style="border-color: var(--border-subtle);">
+              <p
+                class="tabular"
+                style="font-family: var(--font-display); font-size: var(--text-heading-sm); font-weight: 720; color: var(--text-primary);"
+              >
+                {o.value}
+              </p>
+              <p class="mt-1 text-sm" style="color: var(--text-secondary);">{o.metric}</p>
+            </div>
+          ))
+        }
+      </dd>
+    </dl>
+  </div>
+</article>

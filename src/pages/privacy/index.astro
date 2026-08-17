@@ -1,0 +1,194 @@
+---
+/**
+ * PRIVACY POLICY
+ *
+ * Describes what this site ACTUALLY does. Nothing else.
+ *
+ * The site's real privacy position is unusually strong and worth stating rather
+ * than burying in template language:
+ *   · zero cookies set — verified, no analytics, no consent banner needed
+ *   · zero third-party requests — fonts are self-hosted, no CDN, no embeds
+ *   · no tracking pixels, no advertising, no data sharing
+ *   · the only data collected is what someone types into the contact form
+ *
+ * ⛔ MUST NOT contain clauses for systems not in use: no cookie consent
+ * language, no advertising partners, no data brokers, no "we may share with
+ * affiliates", no CCPA/GDPR boilerplate copied from a template. Every paragraph
+ * below maps to something that actually happens.
+ */
+import Base from '../../layouts/Base.astro';
+import Section from '../../components/Section.astro';
+import PageHero from '../../components/PageHero.astro';
+import CompassRule from '../../components/CompassRule.astro';
+import { company, hasContactData } from '../../data/company.ts';
+
+const updated = '16 August 2026';
+
+const sections = [
+  {
+    id: 'collect',
+    heading: 'What we collect',
+    body: [
+      'Only what you type into the contact form: your name, email address, and — if you choose to give them — your phone number and organisation. You also tell us which category describes you, and what you want to talk about.',
+      'Alongside that we record the page you sent the message from, the date and time, your IP address and your browser identification string. The IP address is used to limit how many messages can be sent from one connection in an hour, which is what stops the form being used for spam.',
+      'That is the complete list. We do not collect anything else, and there is no other form on this site.',
+    ],
+  },
+  {
+    id: 'cookies',
+    heading: 'Cookies and tracking',
+    body: [
+      'This site sets no cookies. There is no consent banner because there is nothing to consent to.',
+      'There is no analytics, no tracking pixel, no advertising network, no session recording and no fingerprinting. We do not know who visits this site or which pages they read.',
+      'Fonts are served from this site rather than from a font provider, so loading a page does not tell any third party that you were here. There are no embedded maps, videos or social widgets for the same reason.',
+      'If we add privacy-respecting analytics later — the kind that counts page views without cookies or personal data — this page will be updated before it goes live, and it will be named here.',
+    ],
+  },
+  {
+    id: 'use',
+    heading: 'What we do with it',
+    body: [
+      'We read your message and reply to it. That is the purpose.',
+      'When you send a message, two emails are generated: one to us so we see it, and one to you confirming we received it. We do not add you to a mailing list, and there is no automated follow-up sequence.',
+      'We do not sell, rent or share your information with anyone for marketing. We have no advertising partners and no data-sharing arrangements.',
+    ],
+  },
+  {
+    id: 'storage',
+    heading: 'Where it is stored, and for how long',
+    body: [
+      'Messages are stored in Cloudflare Workers KV, a storage service operated by Cloudflare, and are also delivered to us by email through a transactional email provider.',
+      'We keep enquiries for as long as the conversation is potentially live, and to maintain a record of work we have discussed. In practice that means a few years rather than indefinitely.',
+      'Spam-prevention records — the count of recent messages from an IP address — are deleted automatically after one hour.',
+    ],
+  },
+  {
+    id: 'processors',
+    heading: 'Who else is involved',
+    body: [
+      'Three services, and no others:',
+    ],
+    list: [
+      'Cloudflare — serves this website, provides security filtering, and stores contact form submissions.',
+      'GitHub Pages — hosts the website files themselves.',
+      'A transactional email provider — delivers the two emails generated when you send a message.',
+    ],
+    after: [
+      'Each of these can technically see the data that passes through it in the course of providing the service. None of them is permitted to use it for anything else.',
+    ],
+  },
+  {
+    id: 'rights',
+    heading: 'Your control over it',
+    body: [
+      'Email us and we will tell you what we hold about you, correct it, or delete it. There is no form to fill in and no verification process beyond confirming you are the person who sent the message.',
+      'If you would rather not use the form at all, WhatsApp and telephone are on the contact page and neither creates a record on this website.',
+    ],
+  },
+  {
+    id: 'security',
+    heading: 'Security',
+    body: [
+      'The site is served over HTTPS. Form submissions are validated on the server, rate-limited by IP, and protected by a hidden field that automated submitters fill in and people do not.',
+      'We are a small practice and we will not claim security guarantees we cannot back. What we can say is that we collect very little, share none of it, and store it with an established provider.',
+    ],
+  },
+  {
+    id: 'changes',
+    heading: 'Changes to this policy',
+    body: [
+      'If what the site does changes, this page changes with it, and the date at the top is updated. We are not going to quietly add tracking and leave this text as it is.',
+    ],
+  },
+];
+---
+
+<Base
+  title="Privacy Policy | Navadisha"
+  description="What Navadisha's website collects, what it does not, and who else is involved. No cookies, no tracking, no third-party requests — stated plainly."
+>
+  <PageHero
+    crumbs={[{ label: 'Home', href: '/' }, { label: 'Privacy' }]}
+    eyebrow={`Last updated ${updated}`}
+    title="Privacy policy"
+    lede="This describes what this website actually does. It contains no clauses for systems we do not use, because a policy padded with irrelevant legal text tells you nothing about how your information is handled."
+  />
+
+  {/* The summary. Most people will read only this. */}
+  <Section tone="sunken" labelledby="summary-h">
+    <div
+      class="rounded-xl border p-8 sm:p-10"
+      style="background-color: var(--surface-raised); border-color: var(--border-subtle); border-left-width: 4px; border-left-color: var(--action-primary-default);"
+    >
+      <h2
+        id="summary-h"
+        style="font-family: var(--font-display); font-size: var(--text-heading-lg); font-weight: 760; letter-spacing: -0.024em;"
+      >
+        The short version
+      </h2>
+      <ul class="mt-7 space-y-4 measure" style="color: var(--text-secondary);">
+        <li><strong style="color: var(--text-primary);">This site sets no cookies</strong> and shows no consent banner, because there is nothing to consent to.</li>
+        <li><strong style="color: var(--text-primary);">There is no analytics or tracking of any kind.</strong> We do not know who visits or what they read.</li>
+        <li><strong style="color: var(--text-primary);">Nothing is loaded from a third party.</strong> Fonts are served from this site; there are no embedded maps, videos or social widgets.</li>
+        <li><strong style="color: var(--text-primary);">The only information we hold is what you type into the contact form</strong> — and we use it to reply to you.</li>
+        <li><strong style="color: var(--text-primary);">We never sell or share it.</strong> There are no advertising partners.</li>
+      </ul>
+    </div>
+  </Section>
+
+  {
+    sections.map((s, i) => (
+      <Section id={s.id} tone={i % 2 === 0 ? 'page' : 'sunken'} labelledby={`${s.id}-h`}>
+        <CompassRule />
+        <h2
+          id={`${s.id}-h`}
+          class="mt-6"
+          style="font-size: var(--text-heading-lg); font-weight: 760; letter-spacing: -0.024em;"
+        >
+          {s.heading}
+        </h2>
+        <div class="mt-6 measure space-y-4" style="color: var(--text-secondary);">
+          {s.body.map((p) => (
+            <p>{p}</p>
+          ))}
+          {s.list && (
+            <ul class="space-y-3 pl-5">
+              {s.list.map((l) => (
+                <li>{l}</li>
+              ))}
+            </ul>
+          )}
+          {s.after?.map((p) => <p>{p}</p>)}
+        </div>
+      </Section>
+    ))
+  }
+
+  <Section labelledby="contact-h">
+    <CompassRule />
+    <h2 id="contact-h" class="mt-6" style="font-size: var(--text-heading-lg); font-weight: 760; letter-spacing: -0.024em;">
+      Questions about any of this
+    </h2>
+    <div class="mt-6 measure space-y-4" style="color: var(--text-secondary);">
+      <p>
+        Write to{' '}
+        {company.contact.email && (
+          <a href={`mailto:${company.contact.email}`} style="color: var(--text-accent); font-weight: 600;">
+            {company.contact.email}
+          </a>
+        )}
+        {hasContactData() && (
+          <>
+            {' '}or call{' '}
+            <a href={`tel:${company.contact.phone}`} style="color: var(--text-accent); font-weight: 600;">
+              {company.contact.phoneDisplay}
+            </a>
+          </>
+        )}. You will reach one of the two founders.
+      </p>
+      <p>
+        {company.displayName} · {company.contact.address.street}, {company.contact.address.city}, Nepal
+      </p>
+    </div>
+  </Section>
+</Base>

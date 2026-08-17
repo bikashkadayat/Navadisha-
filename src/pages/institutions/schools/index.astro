@@ -1,0 +1,245 @@
+---
+/**
+ * SCHOOLS — Grades 1–12
+ *
+ * POSITIONING GUARD: digital systems and capability building. NOT enrolment
+ * guarantees, NOT admissions promises. Navadisha has delivered no school
+ * engagement, so any claim about enrolment outcomes would be unevidenced. The
+ * page says so explicitly rather than leaving the reader to infer a promise —
+ * naming the limit is what makes the rest of the page credible.
+ */
+import Base from '../../../layouts/Base.astro';
+import Section from '../../../components/Section.astro';
+import PageHero from '../../../components/PageHero.astro';
+import CompassRule from '../../../components/CompassRule.astro';
+import PathLine from '../../../components/PathLine.astro';
+import SegmentCard from '../../../components/SegmentCard.astro';
+import FaqList from '../../../components/FaqList.astro';
+import Button from '../../../components/Button.astro';
+import ConversionBand from '../../../components/ConversionBand.astro';
+import { otherSegments } from '../../../data/institutions.ts';
+import { faqSchema } from '../../../data/schema.ts';
+import { whatsappLink } from '../../../data/company.ts';
+
+const wa = whatsappLink('Hello Navadisha — I am contacting you about our school. ');
+const others = otherSegments('schools');
+
+const problems = [
+  {
+    title: 'Families decide before they visit',
+    body: 'Most parents form a view of a school from its website, its Facebook page and word of mouth, long before an open day. A school that is genuinely good and presents poorly loses to a weaker school that presents well.',
+  },
+  {
+    title: 'The website cannot be updated',
+    body: 'It was built once, by someone who has moved on, on a system nobody at the school can access. Notices go out on Facebook instead, and the site drifts further from reality each term.',
+  },
+  {
+    title: 'Parent communication is scattered',
+    body: 'Announcements live across Viber groups, printed notices and phone calls. Nobody has a record of what was sent, and parents who miss one channel miss everything.',
+  },
+  {
+    title: 'Admissions runs on paper',
+    body: 'Enquiries arrive by phone and walk-in, are recorded in a register, and are followed up from memory. The school cannot say how many enquiries became admissions, or where the drop-off happened.',
+  },
+  {
+    title: 'Staff digital skills are uneven',
+    body: 'A few teachers are confident with digital tools and the rest are not. Systems get purchased and then quietly abandoned, which is usually read as a technology failure when it is a training failure.',
+  },
+];
+
+const helps = [
+  {
+    title: 'A website your own staff maintain',
+    body: 'Built so an administrator can publish a notice, update a fee structure or add a staff member without contacting a developer. We train a named person before we hand over.',
+  },
+  {
+    title: 'Positioning parents can repeat',
+    body: 'Work on what your school is actually good at, expressed so a parent can say it to another parent. Applied consistently across the site, prospectus and social presence.',
+  },
+  {
+    title: 'Admissions process design',
+    body: 'Map how an enquiry currently travels, find where it is lost, and put a simple, recordable process in its place. Digital where that helps; paper where paper is genuinely better.',
+  },
+  {
+    title: 'Parent communication structure',
+    body: 'One place where announcements live, and a defined route to the channels parents actually use — rather than a new app nobody installs.',
+  },
+  {
+    title: 'Staff digital capability',
+    body: 'Practical training for the people who will run the systems, delivered on site. Sessions where staff perform the task rather than watch a demonstration.',
+  },
+];
+
+const delivery = [
+  { label: 'Diagnose', detail: 'Two weeks. Data, staff interviews, observation of admissions as it is actually performed.' },
+  { label: 'Direct', detail: 'A phased plan costed by term, written so you can take it to your board.' },
+  { label: 'Deliver', detail: 'We implement in the agreed order, around your academic calendar.' },
+  { label: 'Enable', detail: 'Documentation, training and handover. Named staff run it unaided before we close.' },
+];
+
+const outcomes = [
+  'A website your administrative staff update themselves, without a developer.',
+  'One consistent description of the school across every channel.',
+  'An admissions process you can measure — enquiries in, admissions out, and where the gap is.',
+  'Named staff trained on every system we leave behind.',
+  'Full ownership of files, accounts and credentials at handover.',
+];
+
+const faqs = [
+  {
+    q: 'Can you guarantee our enrolment will improve?',
+    a: 'No, and we would be suspicious of anyone who did. Enrolment is affected by fees, location, reputation, competition and the economy — most of which we do not control. What we can commit to is that your school will be accurately and professionally presented, that your admissions process will be measurable, and that your staff will be able to run what we build.',
+  },
+  {
+    q: 'How much does this cost?',
+    a: 'We quote after a first conversation rather than publishing a rate card, because pricing work before understanding it produces a number that has to be revised. The diagnostic stage is a fixed fee; delivery is scoped after it, so you can stop after the diagnostic if the plan is not right for you.',
+  },
+  {
+    q: 'We are outside Kathmandu. Can you still work with us?',
+    a: 'Yes. The diagnostic stage needs time on site. Most of the remaining work runs remotely with periodic visits, and training can be delivered on site or hybrid.',
+  },
+  {
+    q: 'What do you need from us?',
+    a: 'Three things, and engagements struggle without the third: access to data and staff scheduled in advance, decisions at the agreed points, and one internal person who owns the relationship and can convene others.',
+  },
+  {
+    q: 'What happens after handover?',
+    a: 'You own everything — source files, accounts, credentials. We offer a defined support taper with a stated end date rather than an open retainer. If you choose to work with someone else afterwards, nothing we built prevents that.',
+  },
+];
+---
+
+<Base
+  title="School Development | Navadisha"
+  description="Websites, admissions design, parent communication and staff digital training for Nepali schools. Built for your team to maintain, with full handover."
+  pillar="education"
+  schema={faqSchema(faqs)}
+>
+  <PageHero
+    crumbs={[{ label: 'Home', href: '/' }, { label: 'Institutions', href: '/institutions/' }, { label: 'Schools' }]}
+    eyebrow="Schools · Grades 1–12"
+    title="Your school is probably better than its website suggests."
+    lede="We work with schools on the digital side of how they are seen and how they run — the website, the admissions process, parent communication, and the staff capability to keep all three working."
+  >
+    <div class="mt-10 flex flex-wrap gap-4">
+      <Button href="/contact/" note="No cost, no obligation" arrow>Request a school digital review</Button>
+      {wa && <Button href={wa} variant="secondary" note="We usually reply within a day">WhatsApp us</Button>}
+    </div>
+  </PageHero>
+
+  <Section tone="sunken" labelledby="problems-h">
+    <CompassRule pillar />
+    <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--pillar);">The situation</p>
+    <h2 id="problems-h" class="mt-4 measure" style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;">
+      Five patterns we see in almost every school we talk to.
+    </h2>
+    <p class="mt-6 measure" style="font-size: var(--text-body-lg); color: var(--text-secondary);">
+      None of these is a failure of effort. They are what happens when a school is run by educators
+      who were never expected to also be operators and technologists.
+    </p>
+
+    <div class="mt-12 grid gap-6 md:grid-cols-2">
+      {
+        problems.map((p, i) => (
+          <div class="rounded-xl border p-8" style="background-color: var(--surface-raised); border-color: var(--border-subtle);">
+            <p class="tabular" style="font-family: var(--font-display); font-size: 1.75rem; font-weight: 800; line-height: 1; color: var(--text-decorative); letter-spacing: -0.04em;" aria-hidden="true">
+              {String(i + 1).padStart(2, '0')}
+            </p>
+            <h3 class="mt-4" style="font-family: var(--font-display); font-size: var(--text-heading-sm); font-weight: 720; letter-spacing: -0.012em;">
+              {p.title}
+            </h3>
+            <p class="mt-3 text-sm" style="color: var(--text-secondary);">{p.body}</p>
+          </div>
+        ))
+      }
+    </div>
+  </Section>
+
+  <Section labelledby="help-h">
+    <CompassRule pillar />
+    <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--pillar);">What we do</p>
+    <h2 id="help-h" class="mt-4" style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;">
+      How we help.
+    </h2>
+
+    <div class="mt-12 space-y-4">
+      {
+        helps.map((h) => (
+          <div class="rounded-xl border p-7" style="background-color: var(--surface-raised); border-color: var(--border-subtle); border-left-width: 3px; border-left-color: var(--pillar-fill);">
+            <h3 style="font-family: var(--font-display); font-size: var(--text-heading-sm); font-weight: 720; letter-spacing: -0.012em;">
+              {h.title}
+            </h3>
+            <p class="mt-3 measure text-sm" style="color: var(--text-secondary);">{h.body}</p>
+          </div>
+        ))
+      }
+    </div>
+  </Section>
+
+  <Section tone="sunken" labelledby="delivery-h">
+    <CompassRule pillar />
+    <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--pillar);">Delivery model</p>
+    <h2 id="delivery-h" class="mt-4" style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;">
+      How an engagement runs.
+    </h2>
+    <div class="mt-14"><PathLine nodes={delivery} numbered /></div>
+    <p class="mt-12">
+      <a href="/about/method/" class="text-sm font-semibold" style="color: var(--text-accent);">
+        What each stage requires from you →
+      </a>
+    </p>
+  </Section>
+
+  <Section labelledby="outcomes-h">
+    <div class="grid gap-12 lg:grid-cols-12">
+      <div class="lg:col-span-7">
+        <CompassRule pillar />
+        <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--pillar);">Outcomes</p>
+        <h2 id="outcomes-h" class="mt-4" style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;">
+          What you end up with.
+        </h2>
+        <ul class="mt-8 space-y-4 measure">
+          {outcomes.map((o) => <li class="text-sm" style="color: var(--text-secondary);">{o}</li>)}
+        </ul>
+      </div>
+
+      {/* The limit, stated. Naming what we do NOT promise is what makes the
+          list above believable to a principal who has been oversold before. */}
+      <div class="lg:col-span-5 lg:pl-6">
+        <div class="rounded-xl border p-8" style="background-color: var(--surface-raised); border-color: var(--border-subtle); border-left-width: 3px; border-left-color: var(--action-primary-default);">
+          <p class="text-[0.6875rem] font-bold uppercase tracking-[0.13em]" style="color: var(--text-tertiary);">
+            What we do not promise
+          </p>
+          <p class="mt-5 text-sm" style="color: var(--text-secondary);">
+            We do not guarantee enrolment numbers, and we do not sell admissions outcomes.
+            Enrolment depends on fees, location, reputation, competition and the wider economy —
+            most of which sit outside any supplier's control.
+          </p>
+          <p class="mt-4 text-sm" style="color: var(--text-secondary);">
+            What we can be held to is that your school is accurately presented, that your
+            admissions process becomes measurable, and that your staff can run what we leave behind.
+          </p>
+        </div>
+      </div>
+    </div>
+  </Section>
+
+  <Section tone="sunken" labelledby="faq-h">
+    <CompassRule pillar />
+    <div class="mt-6"><FaqList faqs={faqs} headingId="faq-h" /></div>
+  </Section>
+
+  <Section labelledby="other-h">
+    <h2 id="other-h" class="text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--text-tertiary);">
+      Other institutions we work with
+    </h2>
+    <ul class="mt-8 grid gap-6 md:grid-cols-2">
+      {others.map((s) => <li><SegmentCard name={s.name} href={s.href} detail={s.detail} /></li>)}
+    </ul>
+  </Section>
+
+  <ConversionBand
+    heading="Start with a school digital review."
+    lede="A first conversation about what is not working. No cost, and no obligation to continue."
+  />
+</Base>

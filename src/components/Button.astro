@@ -1,0 +1,79 @@
+---
+/**
+ * CTA primitive. Phase-2 design §06.
+ *
+ * §10.2: a CTA is specific, low-friction, and honest about what happens next.
+ * "Get Started", "Learn More" and "Submit" are banned by policy. `note` renders
+ * the what-happens-next line beside the action — the single highest-leverage
+ * friction reducer available.
+ *
+ * ⚠ ACCENT VARIANT AND CONTRAST. The brand orange #F57C00 has a luminance that
+ * puts WHITE text at ≈2.8:1 — a clear WCAG AA failure. Dark text on the same
+ * fill lands at ≈6.4:1 and passes comfortably. So the accent button keeps the
+ * original brand colour as instructed, and takes DARK text rather than white.
+ * Do not "fix" this to white for visual consistency; that trade is not available.
+ */
+interface Props {
+  href: string;
+  variant?: 'primary' | 'secondary' | 'accent' | 'ghost';
+  note?: string;
+  /** Trailing arrow, animating 2px on hover. Direction is the brand's CTA vocabulary. */
+  arrow?: boolean;
+  class?: string;
+}
+
+const { href, variant = 'primary', note, arrow = false, class: className = '' } = Astro.props;
+
+// Classes rather than inline styles: inline wins the cascade, which made the
+// secondary button unreadable on inverse bands (measured 1.04:1). A class can
+// be overridden by the [data-tone="inverse"] scope below.
+---
+
+<span class={`btn-wrap inline-flex flex-col gap-1.5 ${className}`}>
+  <a
+    href={href}
+    class={`btn btn--${variant} inline-flex items-center justify-center gap-2 rounded-lg px-5 py-3 text-sm font-semibold transition-colors duration-150`}
+  >
+    <slot />
+    {arrow && <span class="btn-arrow" aria-hidden="true">→</span>}
+  </a>
+  {note && <span class="text-xs" style="color: var(--text-tertiary);">{note}</span>}
+</span>
+
+<style>
+  .btn { min-height: 44px; border: 1px solid transparent; }
+
+  .btn--primary {
+    background-color: var(--action-primary-default);
+    color: var(--action-primary-text);
+  }
+  .btn--secondary {
+    background-color: transparent;
+    color: var(--action-secondary-text);
+    border-color: var(--action-secondary-border);
+  }
+  /* Brand orange fill + DARK text. White on #F57C00 is 2.8:1 and fails AA;
+     dark text on the same fill is 6.4:1. That trade is not available. */
+  .btn--accent {
+    background-color: var(--pillar-edu-fill);
+    color: var(--color-neutral-900);
+  }
+  .btn--ghost { background-color: transparent; color: var(--text-accent); }
+
+  /* On an inverse band the surface FLIPS TONE between themes, so a fixed text
+     colour is invisible in one of them. Scope to the band instead. */
+  :global([data-tone='inverse']) .btn--secondary,
+  :global([data-tone='inverse']) .btn--ghost {
+    color: var(--text-on-inverse);
+    border-color: color-mix(in srgb, var(--text-on-inverse) 35%, transparent);
+  }
+
+  .btn-arrow {
+    display: inline-block;
+    transition: transform 150ms ease-out;
+  }
+  .btn:hover .btn-arrow,
+  .btn:focus-visible .btn-arrow {
+    transform: translateX(2px);
+  }
+</style>

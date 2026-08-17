@@ -1,0 +1,124 @@
+---
+/**
+ * TEAM — §12.4: the single highest-impact trust element on a consulting site,
+ * and the largest single gap found in the reference audit (§9.1: nxn.com.pk
+ * names no human being anywhere). Consulting is bought from people.
+ *
+ * Photographs are still outstanding. Rather than ship avatar placeholders —
+ * which read as "we could not be bothered" — initials are set in the display
+ * face at large scale on the pillar surface. It looks deliberate, and it
+ * upgrades to real photography by populating one frontmatter field.
+ */
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Section from '../../components/Section.astro';
+import Button from '../../components/Button.astro';
+import { company } from '../../data/company.ts';
+
+const team = (await getCollection('team')).sort((a, b) => a.data.order - b.data.order);
+
+const initials = (name: string) =>
+  name.split(/\s+/).map((p) => p[0]).slice(0, 2).join('').toUpperCase();
+
+const personSchema = team.map((m) => ({
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: m.data.name,
+  jobTitle: m.data.role,
+  worksFor: { '@type': 'Organization', name: company.displayName },
+}));
+---
+
+<Base
+  title="Team & Leadership | Navadisha"
+  description="The people behind Navadisha — founders working across education consulting, technology delivery and digital inclusion in Nepal."
+  schema={personSchema}
+>
+  <Section width="wide" labelledby="team-h">
+    <nav aria-label="Breadcrumb" class="text-sm" style="color: var(--text-tertiary);">
+      <a href="/about/" style="color: var(--text-tertiary);">About</a>
+      <span aria-hidden="true"> / </span><span>Team</span>
+    </nav>
+
+    <h1 id="team-h" class="mt-8" style="font-size: var(--text-display-lg);">The people you would work with</h1>
+    <p class="mt-8 measure" style="font-size: var(--text-body-lg); color: var(--text-secondary);">
+      Navadisha is a small, founder-led practice. That is worth saying plainly rather than
+      dressing up: you deal directly with the people doing the work, and there is no account
+      manager between you and them.
+    </p>
+  </Section>
+
+  <Section tone="sunken">
+    <ul class="grid gap-8 md:grid-cols-2">
+      {
+        team.map((m) => (
+          <li
+            class="rounded-xl border p-8"
+            style="background-color: var(--surface-raised); border-color: var(--border-subtle);"
+          >
+            <div class="flex items-start gap-5">
+              {m.data.photo ? (
+                <img
+                  src={m.data.photo}
+                  alt={m.data.name}
+                  width="88"
+                  height="88"
+                  class="h-22 w-22 shrink-0 rounded-full object-cover"
+                  loading="lazy"
+                />
+              ) : (
+                <span
+                  aria-hidden="true"
+                  class="flex h-20 w-20 shrink-0 items-center justify-center rounded-full text-2xl font-extrabold"
+                  style="background-color: var(--color-base-600); color: #FFFFFF; font-family: var(--font-display); letter-spacing: -0.03em;"
+                >
+                  {initials(m.data.name)}
+                </span>
+              )}
+
+              <div class="min-w-0">
+                <h2 style="font-family: var(--font-display); font-size: var(--text-heading-md); font-weight: 800;">
+                  {m.data.name}
+                </h2>
+                <p class="mt-1 text-sm font-semibold" style="color: var(--text-accent);">{m.data.role}</p>
+
+                {m.data.credentials.length > 0 && (
+                  <ul class="mt-3 flex flex-wrap gap-2">
+                    {m.data.credentials.map((c) => (
+                      <li
+                        class="rounded-full px-3 py-1 text-xs"
+                        style="background-color: var(--surface-sunken); color: var(--text-secondary);"
+                      >
+                        {c}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+
+            <p class="mt-6 text-sm" style="color: var(--text-secondary);">{m.data.bio}</p>
+
+            {m.data.email && (
+              <p class="mt-5">
+                <a href={`mailto:${m.data.email}`} class="text-sm font-semibold" style="color: var(--text-accent);">
+                  {m.data.email}
+                </a>
+              </p>
+            )}
+          </li>
+        ))
+      }
+    </ul>
+  </Section>
+
+  <Section tone="inverse" labelledby="cta-h">
+    <h2 id="cta-h" style="font-size: var(--text-heading-lg);">Talk to us directly</h2>
+    <p class="mt-4 measure" style="color: var(--text-on-inverse-muted);">
+      There is no switchboard. You will be talking to one of the two people above.
+    </p>
+    <div class="mt-8">
+      <Button href="/contact/" note={company.responseCommitment}>Get in touch</Button>
+    </div>
+  </Section>
+</Base>

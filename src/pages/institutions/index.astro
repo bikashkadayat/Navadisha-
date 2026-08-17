@@ -1,0 +1,269 @@
+---
+/**
+ * INSTITUTIONS HUB
+ * Seven sections as specified: Hero · Segment Selector · What We Actually Do ·
+ * Our Method · Featured Work · Why Institutions Work With Us · CTA.
+ *
+ * The hub routes on SEGMENT rather than on service, because a committee buyer
+ * needs to see their own institution type reflected before they will read on.
+ *
+ * "What we actually do" is titled deliberately. Every capability listed is one
+ * Navadisha can currently evidence — this section is where the temptation to
+ * list aspirational advisory services would otherwise land.
+ */
+import Base from '../../layouts/Base.astro';
+import Section from '../../components/Section.astro';
+import PageHero from '../../components/PageHero.astro';
+import CompassRule from '../../components/CompassRule.astro';
+import PathLine from '../../components/PathLine.astro';
+import SegmentCard from '../../components/SegmentCard.astro';
+import CaseStudyFeature from '../../components/CaseStudyFeature.astro';
+import Button from '../../components/Button.astro';
+import ConversionBand from '../../components/ConversionBand.astro';
+import { getCollection } from 'astro:content';
+import { segments } from '../../data/institutions.ts';
+import { whatsappLink } from '../../data/company.ts';
+
+const work = await getCollection('work', ({ data }) => !data.draft && !data.illustrative);
+const nif = work.find((w) => w.data.sector === 'development') ?? work[0];
+
+const wa = whatsappLink('Hello Navadisha — I am contacting you about our institution. ');
+
+const method = [
+  { label: 'Diagnose', detail: 'Establish what is actually wrong, before proposing anything.' },
+  { label: 'Direct', detail: 'A prioritised path you can take to a board and defend.' },
+  { label: 'Deliver', detail: 'Implement the priorities, in the order agreed.' },
+  { label: 'Enable', detail: 'Transfer the capability. Your team runs it without us.' },
+];
+
+/** Every item here is evidenced by delivered work or founder credentials. */
+const capabilities = [
+  {
+    title: 'Public digital presence',
+    body: 'Websites and content structures an institution can actually maintain. Built so a staff member updates a notice or a programme page without returning to a developer.',
+  },
+  {
+    title: 'Digital systems',
+    body: 'Help specifying what an institution needs before it is purchased, and implementing it afterwards. Most wasted technology spend happens at the specification stage, not the build.',
+  },
+  {
+    title: 'Brand and communication',
+    body: 'Positioning and the materials that carry it — so what an institution is good at is legible to the families, students and partners choosing between options.',
+  },
+  {
+    title: 'Digital capability',
+    body: 'Practical training for staff and for students. Delivered on site or hybrid, by the people who build the systems rather than by a separate training arm.',
+  },
+];
+
+const reasons = [
+  {
+    title: 'You know who is doing the work',
+    body: 'Two named founders with published credentials. No account manager, no unnamed delivery team, no rotation part-way through an engagement.',
+  },
+  {
+    title: 'The method is published before you engage',
+    body: 'Four stages, with what we provide and what we need from you stated for each. You can assess how we work before committing to anything.',
+  },
+  {
+    title: 'Handover is a stage, not a courtesy',
+    body: 'Every engagement ends with documentation, training and full transfer of files and credentials. The test is that a named person at your institution has performed the ongoing task unaided.',
+  },
+  {
+    title: 'No lock-in',
+    body: 'We do not use proprietary systems that make replacing us expensive, and we do not hold your accounts or infrastructure.',
+  },
+];
+---
+
+<Base
+  title="For Institutions | Navadisha"
+  description="Navadisha works with Nepali schools, colleges and NGOs on digital presence, systems and capability. Published method, named team, full handover."
+>
+  <PageHero
+    crumbs={[{ label: 'Home', href: '/' }, { label: 'Institutions' }]}
+    eyebrow="For institutions"
+    title="Institutions rarely lack ambition. They lack systems, and a route to them."
+    lede="Navadisha works with schools, colleges and development organisations on digital presence, systems and capability. We begin by establishing what is actually wrong, because the stated problem is often a symptom of a different one."
+  >
+    <div class="mt-10 flex flex-wrap gap-4">
+      <Button href="/contact/" note="No cost, no obligation" arrow>Book a 30-minute conversation</Button>
+      {wa && <Button href={wa} variant="secondary" note="We usually reply within a day">WhatsApp us</Button>}
+    </div>
+  </PageHero>
+
+  {/* ── Segment selector ── */}
+  <Section tone="sunken" labelledby="segments-h">
+    <CompassRule />
+    <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--text-tertiary);">
+      Where you fit
+    </p>
+    <h2
+      id="segments-h"
+      class="mt-4"
+      style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;"
+    >
+      Three kinds of institution, three different problems.
+    </h2>
+    <p class="mt-6 measure" style="font-size: var(--text-body-lg); color: var(--text-secondary);">
+      The work differs enough between them that a single description would be useless to all
+      three. Start with the one that matches you.
+    </p>
+
+    <ul class="mt-12 grid gap-6 md:grid-cols-3">
+      {
+        segments.map((s) => (
+          <li>
+            <SegmentCard name={s.name} href={s.href} detail={s.detail} />
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="mt-8 text-sm" style="color: var(--text-tertiary);">
+      Working in higher education or the public sector? We are not yet set up to serve those
+      procurement requirements —
+      <a href="/about/company/" style="color: var(--text-accent);">see our current status</a>.
+    </p>
+  </Section>
+
+  {/* ── What we actually do ── */}
+  <Section labelledby="do-h">
+    <CompassRule />
+    <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--text-tertiary);">
+      Capability
+    </p>
+    <h2
+      id="do-h"
+      class="mt-4"
+      style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;"
+    >
+      What we actually do.
+    </h2>
+    <p class="mt-6 measure" style="font-size: var(--text-body-lg); color: var(--text-secondary);">
+      Four areas. We have kept this list to work we can currently evidence rather than the
+      full range of things a consulting practice could eventually offer.
+    </p>
+
+    <div class="mt-12 grid gap-6 md:grid-cols-2">
+      {
+        capabilities.map((c, i) => (
+          <div
+            class="rounded-xl border p-8"
+            style="background-color: var(--surface-raised); border-color: var(--border-subtle);"
+          >
+            <p
+              class="tabular"
+              style="font-family: var(--font-display); font-size: 1.75rem; font-weight: 800; line-height: 1; color: var(--text-decorative); letter-spacing: -0.04em;"
+              aria-hidden="true"
+            >
+              {String(i + 1).padStart(2, '0')}
+            </p>
+            <h3
+              class="mt-4"
+              style="font-family: var(--font-display); font-size: var(--text-heading-sm); font-weight: 720; letter-spacing: -0.012em;"
+            >
+              {c.title}
+            </h3>
+            <p class="mt-3 text-sm" style="color: var(--text-secondary);">
+              {c.body}
+            </p>
+          </div>
+        ))
+      }
+    </div>
+  </Section>
+
+  {/* ── Method ── */}
+  <Section tone="sunken" labelledby="method-h">
+    <CompassRule />
+    <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--text-tertiary);">
+      Method
+    </p>
+    <h2
+      id="method-h"
+      class="mt-4"
+      style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;"
+    >
+      How an engagement runs.
+    </h2>
+
+    <div class="mt-14">
+      <PathLine nodes={method} numbered />
+    </div>
+
+    <p class="mt-12">
+      <a href="/about/method/" class="text-sm font-semibold" style="color: var(--text-accent);">
+        What each stage requires from you →
+      </a>
+    </p>
+  </Section>
+
+  {/* ── Featured work ── */}
+  {
+    nif && (
+      <Section labelledby="work-h">
+        <CompassRule />
+        <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--text-tertiary);">
+          Selected work
+        </p>
+        <h2 id="work-h" class="sr-only">
+          Selected work
+        </h2>
+        <div class="mt-10">
+          <CaseStudyFeature caseStudy={nif} />
+        </div>
+      </Section>
+    )
+  }
+
+  {/* ── Why institutions work with us ── */}
+  <Section tone="sunken" labelledby="why-h">
+    <CompassRule />
+    <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--text-tertiary);">
+      Why work with us
+    </p>
+    <h2
+      id="why-h"
+      class="mt-4 measure"
+      style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;"
+    >
+      Four things we can commit to today.
+    </h2>
+    <p class="mt-6 measure" style="font-size: var(--text-body-lg); color: var(--text-secondary);">
+      We are a young practice. Rather than claim a track record we do not yet have, here is what
+      is verifiable now.
+    </p>
+
+    <div class="mt-12 grid gap-6 md:grid-cols-2">
+      {
+        reasons.map((r) => (
+          <div
+            class="rounded-xl border p-8"
+            style="background-color: var(--surface-raised); border-color: var(--border-subtle); border-left-width: 3px; border-left-color: var(--action-primary-default);"
+          >
+            <h3
+              style="font-family: var(--font-display); font-size: var(--text-heading-sm); font-weight: 720; letter-spacing: -0.012em;"
+            >
+              {r.title}
+            </h3>
+            <p class="mt-3 text-sm" style="color: var(--text-secondary);">
+              {r.body}
+            </p>
+          </div>
+        ))
+      }
+    </div>
+
+    <p class="mt-10">
+      <a href="/about/team/" class="text-sm font-semibold" style="color: var(--text-accent);">
+        Meet the people you would work with →
+      </a>
+    </p>
+  </Section>
+
+  <ConversionBand
+    heading="Start with a 30-minute conversation."
+    lede="Describe what is not working. We will tell you whether it is something we can help with, and if it is not, we will say so."
+  />
+</Base>
