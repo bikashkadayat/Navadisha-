@@ -101,9 +101,15 @@ const schemaBlocks = [orgSchema, ...(Array.isArray(schema) ? schema : schema ? [
     <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/manrope-6.woff2" />
     <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/jakarta-4.woff2" />
 
-    <link rel="icon" href="/brand/mark-32.png" sizes="32x32" />
-    <link rel="icon" href="/brand/mark-192.png" sizes="192x192" />
-    <link rel="apple-touch-icon" href="/brand/mark-180.png" />
+    {/* White mark knocked out of a solid brand-blue tile. The mark alone on
+        transparency disappears against unknown browser chrome; a filled tile is
+        legible on any. It is still not fully resolved at 32px — the bridge
+        railings and road dashes are finer than the grid — which needs a
+        purpose-drawn glyph, not a resample. */}
+    <link rel="icon" href="/brand/icon-32.png" sizes="32x32" />
+    <link rel="icon" href="/brand/icon-192.png" sizes="192x192" />
+    <link rel="icon" href="/brand/icon-512.png" sizes="512x512" />
+    <link rel="apple-touch-icon" href="/brand/icon-180.png" />
     <meta name="theme-color" content="#0A4D8C" />
 
     <link rel="sitemap" href="/sitemap-index.xml" />

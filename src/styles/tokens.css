@@ -130,7 +130,15 @@
 :root {
   color-scheme: light;
 
-  --surface-page:    var(--color-neutral-50);
+  /* `page` is TRUE WHITE, not neutral-50. Measured on the live site, neutral-50
+     (luminance 250) against sunken neutral-100 (244) gave six points of
+     separation out of 255 — invisible on a normal screen. Every light band read
+     as one continuous grey wash, white cards had five points of separation from
+     their own ground, and the only element with any visual force was the dark
+     band. That is what produced "too heavy": not too much dark, but nothing
+     else on the page carrying any weight. White doubles the light range and
+     gives `sunken` a reason to exist. */
+  --surface-page:    #FFFFFF;
   --surface-raised:  #FFFFFF;
   --surface-sunken:  var(--color-neutral-100);
   --surface-inverse: var(--color-neutral-900);

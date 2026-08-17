@@ -15,6 +15,10 @@
 import Base from '../../layouts/Base.astro';
 import Section from '../../components/Section.astro';
 import PageHero from '../../components/PageHero.astro';
+import { Picture } from 'astro:assets';
+import stripGroup from '../../assets/training/training-group.jpg';
+import stripSession from '../../assets/training/training-welcome.jpg';
+import stripClassroom from '../../assets/training/training-classroom.jpg';
 import CompassRule from '../../components/CompassRule.astro';
 import BridgeDiagram from '../../components/BridgeDiagram.astro';
 import ConversionBand from '../../components/ConversionBand.astro';
@@ -128,6 +132,53 @@ const beliefs = [
         is handed over rather than held.
       </p>
     </div>
+  </Section>
+
+  {/* ── In the field ──
+       Real photographs from a delivered programme, not stock. The caption names
+       the specific programme they come from and claims nothing beyond it: no
+       reach figure, no impact, no implication that this is representative of
+       volume we have not done. The images are the evidence; the caption keeps
+       them from being read as more than they are. */}
+  <Section labelledby="field-h">
+    <CompassRule />
+    <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--text-tertiary);">
+      In the field
+    </p>
+    <h2
+      id="field-h"
+      class="mt-4 measure"
+      style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;"
+    >
+      The digital literacy programme, as it actually ran.
+    </h2>
+
+    <figure class="mt-12">
+      <div class="grid gap-4 sm:grid-cols-3">
+        {[
+          { src: stripSession, alt: 'A facilitator presenting beside a programme banner reading “Enabling digitalization in the Musahar community”.' },
+          { src: stripClassroom, alt: 'Students seated in a classroom facing a screen during a digital literacy session.' },
+          { src: stripGroup, alt: 'Participants and facilitators assembled with a Digital Literacy Program banner.' },
+        ].map((img) => (
+          <Picture
+            src={img.src}
+            alt={img.alt}
+            widths={[320, 520, 760]}
+            sizes="(min-width: 640px) 30vw, 92vw"
+            formats={['avif']}
+            fallbackFormat="webp"
+            quality={68}
+            loading="lazy"
+            decoding="async"
+            class="strip-photo"
+          />
+        ))}
+      </div>
+      <figcaption class="mt-4 text-sm measure" style="color: var(--text-tertiary);">
+        Our digital literacy programme in the Musahar community. We have not published
+        participation or outcome figures for it, because none have been independently verified.
+      </figcaption>
+    </figure>
   </Section>
 
   {/* ── The Bridge ── */}
@@ -338,5 +389,16 @@ const beliefs = [
     .pillar-card:focus-visible .pillar-arrow {
       transform: translateX(3px);
     }
+  }
+</style>
+
+<style>
+  .strip-photo {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 0.75rem;
+    border: 1px solid var(--border-subtle);
   }
 </style>

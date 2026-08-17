@@ -23,6 +23,9 @@
 import Base from '../../../layouts/Base.astro';
 import Section from '../../../components/Section.astro';
 import PageHero from '../../../components/PageHero.astro';
+import { Picture } from 'astro:assets';
+import runSession from '../../../assets/training/training-session.jpg';
+import runClassroom from '../../../assets/training/training-classroom.jpg';
 import CompassRule from '../../../components/CompassRule.astro';
 import ProgramStatusBlock from '../../../components/ProgramStatusBlock.astro';
 import TeamCard from '../../../components/TeamCard.astro';
@@ -123,6 +126,61 @@ const courseSchema = {
         </div>
       </div>
     </div>
+  </Section>
+
+  {/* ── How we run a session ──
+       NOT in the hero, deliberately. This programme is at `planned` status and
+       the block directly above says in bold that it has not been delivered. A
+       photograph of a session at the top of the page would contradict that
+       within one screen — a reader takes a picture of a full classroom as proof
+       the thing happened, whatever the text says.
+       So the photographs appear here instead, after the status is established,
+       under a heading and caption that name the DIFFERENT, delivered programme
+       they actually come from. They evidence how we run sessions. They do not
+       evidence this workshop, because it has not run. */}
+  <Section labelledby="how-run-h">
+    <CompassRule pillar />
+    <p class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]" style="color: var(--pillar);">
+      How we run a session
+    </p>
+    <h2
+      id="how-run-h"
+      class="mt-4 measure"
+      style="font-size: var(--text-heading-xl); font-weight: 780; letter-spacing: -0.028em;"
+    >
+      What our sessions look like in practice.
+    </h2>
+    <p class="mt-6 measure" style="color: var(--text-secondary);">
+      These photographs are from our digital literacy programme in the Musahar community — a
+      different programme, already delivered. We are showing them because they are an accurate
+      picture of how we run a room, not because they are of this workshop.
+    </p>
+
+    <figure class="mt-10">
+      <div class="grid gap-4 sm:grid-cols-2">
+        {[
+          { src: runSession, alt: 'A facilitator presenting a slide listing basic computer, internet, digital-tool, data and online-safety skills.' },
+          { src: runClassroom, alt: 'Students seated in a classroom facing a presentation screen during a session.' },
+        ].map((img) => (
+          <Picture
+            src={img.src}
+            alt={img.alt}
+            widths={[400, 640, 900]}
+            sizes="(min-width: 640px) 46vw, 92vw"
+            formats={['avif']}
+            fallbackFormat="webp"
+            quality={68}
+            loading="lazy"
+            decoding="async"
+            class="run-photo"
+          />
+        ))}
+      </div>
+      <figcaption class="mt-4 text-sm measure" style="color: var(--text-tertiary);">
+        Digital literacy programme, Musahar community. Not the AI for Students workshop, which
+        has not yet been delivered.
+      </figcaption>
+    </figure>
   </Section>
 
   {/* ── Who runs it ── */}
@@ -227,3 +285,14 @@ const courseSchema = {
     lede="Ask before committing to anything. If it is not right for your students, we would rather tell you now."
   />
 </Base>
+
+<style>
+  .run-photo {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    border-radius: 0.75rem;
+    border: 1px solid var(--border-subtle);
+  }
+</style>

@@ -115,7 +115,12 @@ for (const file of files) {
   const h1s = (html.match(/<h1[\s>]/g) ?? []).length;
   if (h1s !== 1) fail(`${h1s} <h1> elements, expected exactly 1`);
 
-  const imgsNoAlt = (html.match(/<img(?![^>]*\balt=)[^>]*>/g) ?? []).length;
+  // A BARE `alt` is valid HTML and is exactly how Astro serialises alt="" for a
+  // decorative image, so it must pass. The old pattern required `alt=` and so
+  // failed every correctly-marked decorative image.
+  // Requiring whitespace before `alt` keeps `data-alt=` from satisfying it —
+  // `\balt` would have matched that, since `-` is a non-word character.
+  const imgsNoAlt = (html.match(/<img(?![^>]*\salt(?:[\s=>]|$))[^>]*>/g) ?? []).length;
   if (imgsNoAlt) fail(`${imgsNoAlt} <img> without alt`);
 
   if (!/class="skip-link"/.test(html)) fail('missing skip link');

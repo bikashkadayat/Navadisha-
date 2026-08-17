@@ -70,7 +70,16 @@
    * `-webkit-text-decoration: inherit`, and without matching it the underline
    * silently loses in Blink.
    */
-  p a {
+  /* Every link sitting INSIDE a run of text must be distinguishable without
+     colour (WCAG 1.4.1). `p a` alone missed figcaption, li and dd — Lighthouse
+     caught a caption link on a case-study page at 96 once figures were added.
+     These are the elements that hold prose; a link in a nav or a card is a
+     standalone control, not a link in a text block, and is excluded on purpose. */
+  p a,
+  figcaption a,
+  li a,
+  dd a,
+  blockquote a {
     -webkit-text-decoration: underline;
     text-decoration: underline;
     text-underline-offset: 0.2em;

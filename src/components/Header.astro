@@ -43,9 +43,22 @@ const wa = whatsappLink('Hello Navadisha — ');
 
 <header class="site-header" data-hero={heroTone} data-header>
   <div class="header-inner">
-    <a href="/" class="brand" aria-label={`${company.shortName} — home`}>
-      <img src="/brand/mark-108.png" alt="" width="36" height="36" aria-hidden="true" fetchpriority="high" />
-      <span class="wordmark">NAVADISHA</span>
+    {/* Mark + wordmark. NOT the full lockup: the "Consulting & Innovations Pvt.
+         Ltd." descriptor is 10% of the artwork's height, so at any logo size a
+         64–84px header bar can carry it renders under 5px tall — visible as a
+         grey smudge rather than as words, which reads worse than omitting it.
+         The complete lockup runs in the footer, where it has the room.
+         The link carries the accessible name; the image is decorative so the
+         name is not announced twice. */}
+    <a href="/" class="brand" aria-label={`${company.legalName} — home`}>
+      <img
+        src="/brand/navadisha-wordmark-ink.svg"
+        alt=""
+        width="560"
+        height="165"
+        aria-hidden="true"
+        fetchpriority="high"
+      />
     </a>
 
     <nav class="desktop-nav" aria-label="Primary">
@@ -236,7 +249,7 @@ const wa = whatsappLink('Hello Navadisha — ');
     gap: 1.5rem;
   }
   @media (min-width: 1024px) {
-    .header-inner { height: 72px; padding-inline: 2.5rem; }
+    .header-inner { height: 80px; padding-inline: 2.5rem; }
   }
 
   /* Token-driven, flips with state. Both states clear 4.5:1. */
@@ -264,16 +277,10 @@ const wa = whatsappLink('Hello Navadisha — ');
     .site-header.is-stuck { background-color: var(--surface-page); }
   }
 
-  .brand { display: flex; align-items: center; gap: 0.625rem; flex-shrink: 0; text-decoration: none; }
-  .brand img { height: 2.25rem; width: 2.25rem; }
-  .wordmark {
-    font-family: var(--font-display);
-    font-size: 1.3rem;
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    color: var(--nav-fg-strong);
-    transition: color 200ms ease-out;
-  }
+  .brand { display: flex; align-items: center; flex-shrink: 0; text-decoration: none; }
+  /* Sized by height; width follows the 3.39:1 artwork ratio. */
+  .brand img { height: 2rem; width: auto; display: block; }
+  @media (min-width: 1024px) { .brand img { height: 2.5rem; } }
 
   .desktop-nav { margin-left: auto; display: none; align-items: center; gap: 0.25rem; }
   @media (min-width: 1024px) { .desktop-nav { display: flex; } }
@@ -525,7 +532,7 @@ const wa = whatsappLink('Hello Navadisha — ');
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .site-header, .wordmark, .nav-link, .chev, .cta, .cta-arrow, .mega-lists a { transition: none; }
+    .site-header, .nav-link, .chev, .cta, .cta-arrow, .mega-lists a { transition: none; }
   }
 </style>
 

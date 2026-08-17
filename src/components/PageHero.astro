@@ -9,6 +9,7 @@
  */
 import Section from './Section.astro';
 import CompassRule from './CompassRule.astro';
+import { Picture } from 'astro:assets';
 
 interface Crumb {
   label: string;
@@ -20,8 +21,15 @@ interface Props {
   lede?: string;
   crumbs?: Crumb[];
   tone?: 'page' | 'sunken' | 'inverse';
+  /**
+   * Optional atmospheric band below the lede. Decorative by definition — it
+   * carries alt="" and no caption, because a captioned photograph under a page
+   * title reads as a depiction of Navadisha's own work. Pages that have no
+   * honest image simply omit it. See src/data/photo-credits.ts.
+   */
+  image?: ImageMetadata;
 }
-const { eyebrow, title, lede, crumbs = [], tone = 'page' } = Astro.props;
+const { eyebrow, title, lede, crumbs = [], tone = 'page', image } = Astro.props;
 const inverse = tone === 'inverse';
 ---
 
@@ -79,5 +87,33 @@ const inverse = tone === 'inverse';
     )
   }
 
+  {
+    image && (
+      <Picture
+        src={image}
+        alt=""
+        widths={[640, 1000, 1400]}
+        sizes="(min-width: 1024px) 80rem, 92vw"
+        formats={['avif']}
+        fallbackFormat="webp"
+        quality={66}
+        loading="eager"
+        fetchpriority="high"
+        class="page-band mt-12"
+      />
+    )
+  }
+
   <slot />
 </Section>
+
+<style>
+  .page-band {
+    display: block;
+    width: 100%;
+    aspect-ratio: 21 / 9;
+    object-fit: cover;
+    border-radius: 0.75rem;
+    border: 1px solid var(--border-subtle);
+  }
+</style>

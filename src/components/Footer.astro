@@ -26,17 +26,32 @@ const showContact = hasContactData();
 const notice = registrationNotice();
 ---
 
-<footer class="mt-24 border-t" style="border-color: var(--border-subtle); background-color: var(--surface-sunken);">
-  <div class="mx-auto px-5 py-16 lg:px-10" style="max-width: var(--container-wide);">
+{/* Dark, and deliberately flush against the ConversionBand above it — no top
+    margin. The two form one contiguous closing block: the dark now marks where
+    reading ends and acting begins, rather than bookending the page for its own
+    sake. data-tone='inverse' is what flips the text tokens (global.css). */}
+<footer
+  data-tone="inverse"
+  class="border-t"
+  style="background-color: var(--surface-inverse); color: var(--text-inverse); border-color: var(--border-subtle);"
+>
+  {/* Top padding is deliberately lighter than the section rhythm: the band
+       above already contributes its own bottom padding, and dark-on-dark the
+       two read as one void unless the hairline articulates the join. */}
+  <div class="mx-auto px-5 pt-14 pb-20 lg:px-10" style="max-width: var(--container-wide);">
     <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
       <div>
-        <p class="font-semibold tracking-tight" style="font-family: var(--font-display); font-size: 1.125rem;">
-          Navadisha
-        </p>
-        <p class="mt-2 text-sm" style="color: var(--text-secondary);">
-          Consulting &amp; Innovations
-        </p>
-        <p class="mt-4 text-sm" style="color: var(--text-tertiary); max-width: 24ch;">
+        <img
+          src="/brand/navadisha-lockup-light.svg"
+          alt=""
+          width="640"
+          height="194"
+          aria-hidden="true"
+          loading="lazy"
+          decoding="async"
+          style="height: 3.5rem; width: auto; display: block;"
+        />
+        <p class="mt-5 text-sm" style="color: var(--text-tertiary); max-width: 24ch;">
           The bridge between Nepal&rsquo;s education system and its industry.
         </p>
       </div>

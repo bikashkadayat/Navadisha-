@@ -53,7 +53,11 @@ lessons:
       scope every engagement.
 servicesApplied:
   - web-development
-featured: true
+# Unfeatured, not removed. Four featured cases with a three-card homepage grid
+# meant date order silently decided which client was dropped. The three
+# client-facing platforms now hold the homepage slots; this engagement remains
+# published in full at /work/ and is still real, delivered work.
+featured: false
 seo:
   title: Nepal Internet Foundation website | Navadisha
   description: Navadisha designed and deployed the public website for Nepal Internet Foundation — responsive, scalable content architecture, maintained by their own team.

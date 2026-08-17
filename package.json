@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Navadisha Consulting & Innovations \u2014 Phase-1 static site (Astro, GitHub Pages, Cloudflare)",
+  "description": "Navadisha Consulting & Innovations — Phase-1 static site (Astro, GitHub Pages, Cloudflare)",
   "engines": {
     "node": "^20.19.0 || >=22.12.0"
   },
@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.0.0",
+    "puppeteer-core": "^25.7.0",
     "tailwindcss": "^4.0.0"
   }
 }

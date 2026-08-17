@@ -20,6 +20,8 @@ import Section from '../../components/Section.astro';
 import PageHero from '../../components/PageHero.astro';
 import CompassRule from '../../components/CompassRule.astro';
 import ConversionBand from '../../components/ConversionBand.astro';
+import { Picture } from 'astro:assets';
+import { workImageFor } from '../../data/work-images.ts';
 
 export const getStaticPaths = (async () => {
   const work = await getCollection('work', ({ data }) => !data.draft);
@@ -29,6 +31,7 @@ export const getStaticPaths = (async () => {
 const { entry } = Astro.props;
 const { Content } = await render(entry);
 const d = entry.data;
+const artefact = workImageFor(entry.id);
 
 const services = await Promise.all(d.servicesApplied.map((s) => getEntry(s)));
 
@@ -67,6 +70,37 @@ const articleSchema = {
     title={d.title}
     lede={d.challenge}
   />
+
+  {/* The artefact. A live, checkable link under a screenshot is the strongest
+       proof this page can carry — a reader does not have to take our word for
+       any of it. Screenshots come from src/data/work-images.ts, which admits
+       real captures only; a case study without one renders without an image. */}
+  {
+    artefact && (
+      <Section class="!pt-0">
+        <figure>
+          <Picture
+            src={artefact.src}
+            alt={artefact.alt}
+            widths={[640, 1000, 1440]}
+            sizes="(min-width: 1024px) 72rem, 92vw"
+            formats={['avif']}
+            fallbackFormat="webp"
+            quality={74}
+            loading="eager"
+            fetchpriority="high"
+            class="case-shot"
+          />
+          <figcaption class="mt-4 text-sm" style="color: var(--text-tertiary);">
+            {d.client} as delivered ·{' '}
+            <a href={artefact.capturedFrom} rel="noopener noreferrer nofollow" style="color: var(--text-accent);">
+              View the live site
+            </a>
+          </figcaption>
+        </figure>
+      </Section>
+    )
+  }
 
   {
     d.illustrative && (
@@ -260,3 +294,16 @@ const articleSchema = {
     lede="Describe what you are trying to change. We will tell you whether it is work we should be doing."
   />
 </Base>
+
+<style>
+  .case-shot {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    object-position: top;
+    border-radius: 0.75rem;
+    border: 1px solid var(--border-subtle);
+    box-shadow: 0 18px 40px -30px rgba(15, 23, 42, 0.45);
+  }
+</style>

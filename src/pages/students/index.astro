@@ -19,6 +19,7 @@
 import Base from '../../layouts/Base.astro';
 import Section from '../../components/Section.astro';
 import PageHero from '../../components/PageHero.astro';
+import studentsPhoto from '../../assets/training/training-students.jpg';
 import CompassRule from '../../components/CompassRule.astro';
 import Button from '../../components/Button.astro';
 import { getCollection } from 'astro:content';
@@ -61,6 +62,7 @@ const notUs = [
     eyebrow="For students"
     title="Straight answers about technology, from people two years ahead of you."
     lede="We run practical workshops and answer honest questions about technology careers. Nobody pays us to send you anywhere."
+    image={studentsPhoto}
   >
     <div class="mt-10 flex flex-wrap gap-4">
       {wa && <Button href={wa} note="Usually a reply within a day" arrow>Message us on WhatsApp</Button>}

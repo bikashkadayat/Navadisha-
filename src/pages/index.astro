@@ -20,7 +20,6 @@ import Base from '../layouts/Base.astro';
 import Section from '../components/Section.astro';
 import Button from '../components/Button.astro';
 import CompassRule from '../components/CompassRule.astro';
-import LayeredHorizon from '../components/LayeredHorizon.astro';
 import PathLine from '../components/PathLine.astro';
 import BridgeDiagram from '../components/BridgeDiagram.astro';
 import CaseStudyFeature from '../components/CaseStudyFeature.astro';
@@ -28,6 +27,15 @@ import TeamCard from '../components/TeamCard.astro';
 import ProgramCard from '../components/ProgramCard.astro';
 import ConversionBand from '../components/ConversionBand.astro';
 import { getCollection } from 'astro:content';
+/* Picture, not Image: <Image> takes a single `format` and silently ignores a
+   `formats` array, so it shipped WebP only. <Picture> emits an AVIF source with
+   a WebP fallback, which matters most on the LCP element. */
+import { Picture } from 'astro:assets';
+import { workImageFor } from '../data/work-images.ts';
+import heroPhoto from '../assets/training/training-session.jpg';
+import eduPhoto from '../assets/training/training-students.jpg';
+import techPhoto from '../assets/projects/ktmkawadi.webp';
+import programmesPhoto from '../assets/training/training-classroom.jpg';
 
 const [work, team, programs] = await Promise.all([
   getCollection('work', ({ data }) => !data.draft),
@@ -37,8 +45,13 @@ const [work, team, programs] = await Promise.all([
 
 // Only delivered engagements count as proof. `illustrative` pieces are honest
 // and useful but they are not evidence, so they do not satisfy this threshold.
-const realCases = work.filter((w) => !w.data.illustrative && w.data.featured);
+const realCases = work
+  .filter((w) => !w.data.illustrative && w.data.featured)
+  // Newest first, so the grid has a defined order instead of inheriting
+  // whatever sequence the glob loader happened to return.
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 const useGrid = realCases.length >= 3;
+const featuredCases = realCases.slice(0, 3);
 const feature = realCases[0];
 
 const founders = team.sort((a, b) => a.data.order - b.data.order);
@@ -80,6 +93,7 @@ const pillars = [
     ],
     href: '/institutions/',
     cta: 'For institutions',
+    photo: eduPhoto,
   },
   {
     key: 'technology' as const,
@@ -95,6 +109,7 @@ const pillars = [
     ],
     href: '/services/',
     cta: 'Explore services',
+    photo: techPhoto,
   },
 ];
 
@@ -110,10 +125,13 @@ const inDevelopment = ['Networking Training', 'Digital Skills Training', 'Corpor
 <Base
   title="Navadisha — Education & technology consulting, Kathmandu"
   description="Navadisha advises Nepali institutions on direction and digital capability, builds the systems they run on, and prepares people for industry."
-  heroTone="dark"
 >
-  {/* ══════════ S2 · HERO ══════════ */}
-  <Section tone="inverse" width="wide" labelledby="hero-h" class="!pb-10 sm:!pb-14">
+  {/* ══════════ S2 · HERO ══════════
+       Light ground. Measured at 91.9% dark above the fold before this change,
+       which is where the whole-site impression of "heavy" was actually formed —
+       interior pages already sat at 8.7–11.5%. Presence now comes from the
+       gradient wash and the compass geometry, not from an inverted band. */}
+  <Section width="wide" labelledby="hero-h" class="hero-band !pb-12 sm:!pb-16">
     <div class="grid items-center gap-14 lg:grid-cols-12">
       <div class="lg:col-span-7">
         <h1
@@ -125,7 +143,7 @@ const inDevelopment = ['Networking Training', 'Digital Skills Training', 'Corpor
 
         <p
           class="mt-8 measure"
-          style="font-size: var(--text-body-lg); color: var(--text-on-inverse-muted);"
+          style="font-size: var(--text-body-lg); color: var(--text-secondary);"
         >
           Navadisha is a Kathmandu consulting practice working across education and technology —
           advising institutions, building the systems they run on, and preparing people for the
@@ -141,7 +159,7 @@ const inDevelopment = ['Networking Training', 'Digital Skills Training', 'Corpor
              — the exact failure the reference audit found on nxn.com.pk. */}
         <ul
           class="mt-14 flex flex-wrap gap-x-10 gap-y-3 text-sm"
-          style="color: var(--text-on-inverse-faint);"
+          style="color: var(--text-tertiary);"
         >
           <li>Founder-led · Baneshwar, Kathmandu</li>
           <li>Education and technology practices</li>
@@ -149,28 +167,62 @@ const inDevelopment = ['Networking Training', 'Digital Skills Training', 'Corpor
         </ul>
       </div>
 
-      {/* Compass + bridge motif, drawn from the logo. Loads after the text on
-           mobile: on 4G the routing decision must arrive before decoration. */}
-      <div class="order-last lg:col-span-5" aria-hidden="true">
-        <svg viewBox="0 0 400 400" class="w-full max-w-sm lg:max-w-none" role="presentation" focusable="false">
-          <circle cx="200" cy="200" r="150" fill="none" stroke="var(--color-base-700)" stroke-width="1.5" />
-          <circle cx="200" cy="200" r="112" fill="none" stroke="var(--color-base-800)" stroke-width="1" />
+      {/* A real photograph from a delivered Navadisha session, not stock. That
+           changes the accessibility treatment: an atmospheric image is
+           decorative and takes alt="", but this one is evidence, so it carries
+           a description of what is actually in the frame. The description
+           states what is visible and nothing more — no reach, no outcome, no
+           claim the photograph cannot support. */}
+      <div class="order-last lg:col-span-5">
+        <div class="hero-figure">
+          <Picture
+            src={heroPhoto}
+            alt="A Navadisha digital literacy session in progress, with a facilitator presenting a slide listing basic computer, internet, digital-tool, data and online-safety skills."
+            widths={[480, 720, 1120]}
+            sizes="(min-width: 1024px) 38vw, 92vw"
+            formats={['avif']}
+            fallbackFormat="webp"
+            quality={70}
+            loading="eager"
+            fetchpriority="high"
+            class="hero-photo"
+          />
+          {/* The compass sits in an opaque badge rather than directly over the
+               photograph. Drawn straight onto the image its 1–1.5px strokes
+               would break up over the detail and disappear against the lighter
+               areas — legible in neither. The badge keeps the brand geometry
+               and keeps it readable. */}
+          <svg
+            viewBox="0 0 400 400"
+            class="hero-compass"
+            role="presentation"
+            focusable="false"
+            aria-hidden="true"
+          >
+          {/* Strokes are heavier than the full-size version was: the badge
+               renders the same 400-unit viewBox into ~110px, so the 1–1.5px
+               weights that read correctly at 400px scaled down to nothing. */}
+          <circle cx="200" cy="200" r="150" fill="none" stroke="var(--color-base-300)" stroke-width="5" />
+          <circle cx="200" cy="200" r="112" fill="none" stroke="var(--color-base-200)" stroke-width="4" />
           {/* cardinal ticks */}
-          <path d="M200 34 v22 M200 344 v22 M34 200 h22 M344 200 h22" stroke="var(--color-base-600)" stroke-width="2" stroke-linecap="round" />
+          <path d="M200 34 v22 M200 344 v22 M34 200 h22 M344 200 h22" stroke="var(--color-base-500)" stroke-width="7" stroke-linecap="round" />
           {/* layered horizon inside the ring — Khaptad patan geometry */}
-          <path d="M78 250 h96 v-22 h84 v-20 h64" fill="none" stroke="var(--color-base-600)" stroke-width="1.5" />
+          <path d="M78 250 h96 v-22 h84 v-20 h64" fill="none" stroke="var(--color-base-400)" stroke-width="5" />
           {/* the bridge */}
-          <path d="M96 286 Q200 214 304 286" fill="none" stroke="var(--pillar-tech-fill)" stroke-width="3" stroke-linecap="round" />
-          <path d="M120 286 v-18 M160 286 v-30 M200 286 v-36 M240 286 v-30 M280 286 v-18" stroke="var(--color-base-600)" stroke-width="1.5" stroke-linecap="round" />
+          <path d="M96 286 Q200 214 304 286" fill="none" stroke="var(--pillar-tech-fill)" stroke-width="8" stroke-linecap="round" />
+          <path d="M120 286 v-18 M160 286 v-30 M200 286 v-36 M240 286 v-30 M280 286 v-18" stroke="var(--color-base-300)" stroke-width="4.5" stroke-linecap="round" />
           {/* direction arrow */}
-          <path d="M244 168 L300 112 M300 112 h-30 M300 112 v30" fill="none" stroke="var(--pillar-edu-fill)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
-          <circle cx="200" cy="200" r="5" fill="var(--color-neutral-50)" />
-        </svg>
+          <path d="M244 168 L300 112 M300 112 h-30 M300 112 v30" fill="none" stroke="var(--pillar-edu-fill)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" />
+          <circle cx="200" cy="200" r="12" fill="var(--color-base-600)" />
+          </svg>
+        </div>
       </div>
     </div>
   </Section>
 
-  <LayeredHorizon to="var(--surface-page)" />
+  {/* The horizon device marked the hero→page ground change. Both bands are now
+       white, and its own rule is "never between two same-tone sections", so it
+       is gone rather than kept as decoration. */}
 
   {/* ══════════ S3 · THE BRIDGE ══════════ */}
   <Section labelledby="bridge-h">
@@ -222,9 +274,26 @@ const inDevelopment = ['Networking Training', 'Digital Skills Training', 'Corpor
           <a
             href={p.href}
             data-pillar={p.key}
-            class="pillar-card group block rounded-xl border p-9"
+            class="pillar-card group block overflow-hidden rounded-xl border"
             style="background-color: var(--surface-raised); border-color: var(--border-subtle); border-left-width: 3px; border-left-color: var(--pillar-fill);"
           >
+            {/* 16:9 band at the card head. Atmospheric only — see
+                 src/data/photo-credits.ts for why alt is empty and why no
+                 caption implies these are Navadisha's institutions. */}
+            <Picture
+              src={p.photo}
+              alt=""
+              widths={[400, 640, 900]}
+              sizes="(min-width: 1024px) 44vw, 92vw"
+              formats={['avif']}
+              fallbackFormat="webp"
+              quality={68}
+              loading="lazy"
+              decoding="async"
+              class="pillar-photo"
+            />
+
+            <div class="p-9">
             <p
               class="text-[0.6875rem] font-bold uppercase tracking-[0.14em]"
               style="color: var(--pillar);"
@@ -249,6 +318,7 @@ const inDevelopment = ['Networking Training', 'Digital Skills Training', 'Corpor
               {p.cta}
               <span class="pillar-arrow" aria-hidden="true">→</span>
             </p>
+            </div>
           </a>
         ))
       }
@@ -292,7 +362,7 @@ const inDevelopment = ['Networking Training', 'Digital Skills Training', 'Corpor
   {/* ══════════ S6 · SELECTED WORK ══════════ */}
   {
     feature && (
-      <Section tone="sunken" labelledby="work-h">
+      <Section labelledby="work-h">
         <CompassRule />
         <p
           class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]"
@@ -307,21 +377,40 @@ const inDevelopment = ['Networking Training', 'Digital Skills Training', 'Corpor
         <div class="mt-10">
           {useGrid ? (
             <div class="grid gap-6 md:grid-cols-3">
-              {realCases.slice(0, 3).map((c) => (
-                <a
-                  href={`/work/${c.id}/`}
-                  class="block rounded-xl border p-6"
-                  style="background-color: var(--surface-raised); border-color: var(--border-subtle);"
-                >
-                  <p class="text-[0.6875rem] font-bold uppercase tracking-[0.13em]" style="color: var(--text-tertiary);">
-                    {c.data.client}
-                  </p>
-                  <p class="mt-3" style="font-family: var(--font-display); font-size: var(--text-heading-sm); font-weight: 720;">
-                    {c.data.title}
-                  </p>
-                  <p class="mt-2 text-sm" style="color: var(--text-secondary);">{c.data.challenge}</p>
-                </a>
-              ))}
+              {featuredCases.map((c) => {
+                const shot = workImageFor(c.id);
+                return (
+                  <a
+                    href={`/work/${c.id}/`}
+                    class="work-card group block overflow-hidden rounded-xl border"
+                    style="background-color: var(--surface-raised); border-color: var(--border-subtle);"
+                  >
+                    {shot && (
+                      <Picture
+                        src={shot.src}
+                        alt={shot.alt}
+                        widths={[360, 560, 760]}
+                        sizes="(min-width: 768px) 30vw, 92vw"
+                        formats={['avif']}
+                        fallbackFormat="webp"
+                        quality={70}
+                        loading="lazy"
+                        decoding="async"
+                        class="work-shot"
+                      />
+                    )}
+                    <div class="p-6">
+                      <p class="text-[0.6875rem] font-bold uppercase tracking-[0.13em]" style="color: var(--text-tertiary);">
+                        {c.data.client}
+                      </p>
+                      <p class="mt-3" style="font-family: var(--font-display); font-size: var(--text-heading-sm); font-weight: 720; line-height: 1.3;">
+                        {c.data.title}
+                      </p>
+                      <p class="mt-3 text-sm" style="color: var(--text-secondary);">{c.data.challenge}</p>
+                    </div>
+                  </a>
+                );
+              })}
             </div>
           ) : (
             <CaseStudyFeature caseStudy={feature} />
@@ -331,8 +420,11 @@ const inDevelopment = ['Networking Training', 'Digital Skills Training', 'Corpor
     )
   }
 
-  {/* ══════════ S7 · PROGRAMMES ══════════ */}
-  <Section labelledby="programs-h">
+  {/* ══════════ S7 · PROGRAMMES ══════════
+       Grey is now reserved for the two catalogue-like sections — pillars and
+       programmes. Alternating it every section, as before, is what made the
+       page read as a template rhythm rather than an argument. */}
+  <Section tone="sunken" labelledby="programs-h">
     <CompassRule />
     <p
       class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]"
@@ -354,6 +446,32 @@ const inDevelopment = ['Networking Training', 'Digital Skills Training', 'Corpor
       ready to deliver, not before.
     </p>
 
+    {/* ONE band for the section, deliberately NOT an image per programme card.
+         This is the load-bearing distinction on the page: the photograph shows
+         a digital literacy programme that HAS been delivered, while every card
+         below is `planned` or `in-development`. Attaching it to those cards
+         would assert that they have run — precisely the claim the status
+         taxonomy exists to prevent. The caption names which programme it
+         actually shows, so the two cannot be conflated by a reader either. */}
+    <figure class="mt-12">
+      <Picture
+        src={programmesPhoto}
+        alt="Students seated in a classroom during a Navadisha digital literacy session, facing a screen reading “Digital skills are important”."
+        widths={[640, 1000, 1400]}
+        sizes="(min-width: 1024px) 72rem, 92vw"
+        formats={['avif']}
+        fallbackFormat="webp"
+        quality={66}
+        loading="lazy"
+        decoding="async"
+        class="band-photo"
+      />
+      <figcaption class="mt-3 text-sm" style="color: var(--text-tertiary);">
+        A delivered session from our digital literacy programme in the Musahar community. The
+        programmes listed below are separate, and have not yet run.
+      </figcaption>
+    </figure>
+
     <div class="mt-12 space-y-3">
       <ProgramCard
         title="AI for Students"
@@ -367,7 +485,7 @@ const inDevelopment = ['Networking Training', 'Digital Skills Training', 'Corpor
   </Section>
 
   {/* ══════════ S8 · THE PEOPLE ══════════ */}
-  <Section tone="sunken" labelledby="people-h">
+  <Section labelledby="people-h">
     <CompassRule />
     <p
       class="mt-6 text-[0.6875rem] font-bold uppercase tracking-[0.14em]"
@@ -412,7 +530,107 @@ const inDevelopment = ['Networking Training', 'Digital Skills Training', 'Corpor
   <ConversionBand />
 </Base>
 
+{/* is:global is REQUIRED, not stylistic. `hero-band` reaches the <section> as a
+    prop string that Astro's scoped-style analysis cannot see, so in a scoped
+    block the whole rule is pruned as unused and the wash silently never ships. */}
+<style is:global>
+  /* Hero wash. The ground stays true white; presence comes from three low
+     opacity radial tints — blue for the base, orange and teal as the two pillar
+     signals. Section sets background-color inline, so background-image layers
+     over it without a specificity fight. */
+  .hero-band {
+    background-image:
+      radial-gradient(
+        1180px 720px at 76% 22%,
+        color-mix(in srgb, var(--color-base-500) 26%, transparent),
+        transparent 66%
+      ),
+      radial-gradient(
+        620px 460px at 96% 4%,
+        color-mix(in srgb, var(--color-edu-500) 16%, transparent),
+        transparent 70%
+      ),
+      radial-gradient(
+        900px 620px at 2% 96%,
+        color-mix(in srgb, var(--color-tech-500) 13%, transparent),
+        transparent 72%
+      );
+  }
+  /* Hero figure — photograph in a rounded frame with the compass badge
+     overlapping its lower-left corner. */
+  .hero-figure {
+    position: relative;
+    max-width: 34rem;
+    margin-inline: auto;
+  }
+  @media (min-width: 1024px) {
+    .hero-figure { max-width: none; }
+  }
+  .hero-photo {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 0.75rem;
+    border: 1px solid var(--border-subtle);
+    /* Very low, wide shadow: enough to lift the frame off a white ground
+       without the drop-shadow weight the brief ruled out. */
+    box-shadow: 0 18px 40px -28px rgba(15, 23, 42, 0.45);
+  }
+  .hero-compass {
+    position: absolute;
+    left: -0.75rem;
+    bottom: -1.25rem;
+    width: 6.5rem;
+    height: 6.5rem;
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+    background-color: var(--surface-raised);
+    border: 1px solid var(--border-subtle);
+    box-shadow: 0 12px 28px -20px rgba(15, 23, 42, 0.5);
+  }
+  @media (min-width: 1024px) {
+    .hero-compass { width: 8.5rem; height: 8.5rem; left: -1.5rem; bottom: -1.75rem; }
+  }
+
+  /* Card-head band. object-fit keeps the 16:9 crop stable regardless of the
+     source ratio, so cards in a row always align. */
+  /* Work card screenshot. */
+  .work-shot {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    object-position: top;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .pillar-photo {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    /* The card clips this via overflow-hidden; the left accent border must stay
+       visible, so no radius is set here. */
+  }
+  /* Full-width section band. */
+  .band-photo {
+    display: block;
+    width: 100%;
+    aspect-ratio: 21 / 9;
+    object-fit: cover;
+    border-radius: 0.75rem;
+    border: 1px solid var(--border-subtle);
+  }
+
+  /* The wash is a light-mode device. On the dark ground it would sit as three
+     muddy blooms over an already-tinted surface, so it is dropped. */
+  :root[data-theme='dark'] .hero-band { background-image: none; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) .hero-band { background-image: none; }
+  }
+</style>
+
 <style>
+  /* Scoped — these classes are applied in this template, so Astro sees them. */
   .pillar-card {
     transition:
       transform 150ms ease-out,
