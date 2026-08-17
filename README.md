@@ -169,11 +169,18 @@ In CI these come from **repository variables**, not from `.env`:
 
 | Document | Covers |
 |---|---|
-| [`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md) | Pages, Cloudflare, DNS, SSL, cache purge, rollback |
-| [`docs/LAUNCH-CHECKLIST.md`](./docs/LAUNCH-CHECKLIST.md) | Pre-launch, launch day, post-launch, rollback |
+| [`docs/FINAL-AUDIT-REPORT.md`](./docs/FINAL-AUDIT-REPORT.md) | **Readiness score, risks, launch decision** |
+| [`docs/PRODUCTION-DEPLOYMENT.md`](./docs/PRODUCTION-DEPLOYMENT.md) | Pre-deployment, deployment, post-deployment, rollback |
+| [`docs/LAUNCH-DAY-RUNBOOK.md`](./docs/LAUNCH-DAY-RUNBOOK.md) | Timed launch procedure, smoke tests, emergency rollback |
+| [`docs/COMMANDS.md`](./docs/COMMANDS.md) | **Copy-paste terminal reference** — deploy, verify, roll back |
+| [`docs/POST-LAUNCH-MONITORING.md`](./docs/POST-LAUNCH-MONITORING.md) | Cadence, thresholds, trigger-based updates |
+| [`docs/DEPLOYMENT-AUDIT.md`](./docs/DEPLOYMENT-AUDIT.md) | Config audit — astro.config, CNAME, robots, sitemap, canonicals, OG |
+| [`docs/DNS-VERIFICATION.md`](./docs/DNS-VERIFICATION.md) | DNS, SSL, HTTPS, redirects, proxy, HSTS |
+| [`docs/EMAIL-SETUP.md`](./docs/EMAIL-SETUP.md) | Sender setup, domain verification, SPF, DKIM, DMARC |
+| [`docs/WORKER-DEPLOYMENT-CHECKLIST.md`](./docs/WORKER-DEPLOYMENT-CHECKLIST.md) | Worker audit + verification gate |
 | [`docs/OPERATIONS.md`](./docs/OPERATIONS.md) | Updating content, programmes, case studies, articles, navigation |
 | [`docs/SECURITY-REVIEW.md`](./docs/SECURITY-REVIEW.md) | CSP, headers, HSTS, form abuse, Turnstile |
-| [`worker/DEPLOYMENT.md`](./worker/DEPLOYMENT.md) | Worker setup, KV, secrets, testing, verification |
+| [`worker/DEPLOYMENT.md`](./worker/DEPLOYMENT.md) | Worker procedure — wrangler, KV, secrets, testing |
 | [`brand/README.md`](./brand/README.md) | Brand assets, palette, typography |
 | [`brand/LOGO-SPEC.md`](./brand/LOGO-SPEC.md) | SVG logo redraw requirements |
 | [`src/content/README.md`](./src/content/README.md) | Content authoring guide |
