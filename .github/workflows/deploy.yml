@@ -40,7 +40,14 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          SITE_URL: ${{ vars.SITE_URL || 'https://navadisha.com.np' }}
+          # Confirmed production origin. The repository variable overrides it;
+          # the fallback matches astro.config.mjs so a missing variable can no
+          # longer silently build with a different host than local.
+          SITE_URL: ${{ vars.SITE_URL || 'https://navadisha.bikashkadayat.com.np' }}
+          # Baked into the client bundle at build time. Empty until the Worker
+          # is deployed — the form then fails gracefully rather than silently.
+          PUBLIC_FORM_ENDPOINT: ${{ vars.PUBLIC_FORM_ENDPOINT }}
+          PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.PUBLIC_TURNSTILE_SITE_KEY }}
 
       # Performance budgets are a launch gate, not a follow-up (§15.3).
       # Enable once the identity and content land — failing CI on an
